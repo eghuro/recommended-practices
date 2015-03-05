@@ -8,10 +8,10 @@ using System.Diagnostics;
 namespace HuffmanskeKapky
 {
 //NOTE: pro odsazovani pouzity 4 mezery - dle MS specifikace
-    class Vrchol: IComparable<vrchol>
+    class Vrchol: IComparable<Vrchol>
     {
 	// NOTE: promenne jsou verejne, lepsi je mit soukrome a pripadne poskytnout API pomoci setter/getter metod (nebo C# properties)
-        public vrchol Psyn;        // NOTE: mezery na konci radku
+        public Vrchol Psyn;        // NOTE: mezery na konci radku
         public int vaha;
         public byte znak;
         public Vrchol Lsyn;  // NOTE: mozna lepsi spojit promenne typu vrchol na jeden radek
@@ -40,7 +40,10 @@ namespace HuffmanskeKapky
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                return false;
+            }
         }
 
         public static int SectiVahy(Vrchol prvni, Vrchol druhy)

@@ -8,19 +8,19 @@ using System.Diagnostics;
 namespace HuffmanskeKapky
 {
 //NOTE: pro odsazovani pouzity 4 mezery - dle MS specifikace
-    class vrchol: IComparable<vrchol>
+    class Vrchol: IComparable<Vrchol>
     {
 	// NOTE: promenne jsou verejne, lepsi je mit soukrome a pripadne poskytnout API pomoci setter/getter metod (nebo C# properties)
-        public vrchol Psyn;        // NOTE: mezery na konci radku
+        public Vrchol Psyn;        // NOTE: mezery na konci radku
         public int vaha;
         public byte znak;
-        public vrchol Lsyn;  // NOTE: mozna lepsi spojit promenne typu vrchol na jeden radek
+        public Vrchol Lsyn;  // NOTE: mozna lepsi spojit promenne typu vrchol na jeden radek
         
         int stari;
 
         static int cisloVrchola;
 
-        public vrchol(int vaha, byte znak, vrchol Lsyn, vrchol Psyn)
+        public Vrchol(int vaha, byte znak, Vrchol Lsyn, Vrchol Psyn)
         {
             this.vaha = vaha;
             this.znak = znak;
@@ -43,7 +43,7 @@ namespace HuffmanskeKapky
             else return false;
         }
 
-        public static int SectiVahy(vrchol prvni, vrchol druhy)
+        public static int SectiVahy(Vrchol prvni, Vrchol druhy)
         {
             return prvni.vaha + druhy.vaha;  // NOTE: vrchol je objekt, neni testovano, zda neni nahodou NULL
         }
@@ -53,7 +53,7 @@ namespace HuffmanskeKapky
         /// </summary>
         /// <param name="rank"></param>
         /// <returns></returns>
-        public vrchol ZvecVahu(int rank)
+        public Vrchol ZvecVahu(int rank)
         {
             vaha += rank;
             return this;
@@ -64,7 +64,7 @@ namespace HuffmanskeKapky
         /// </summary>
         /// <param name="druhy"></param>
         /// <returns></returns>
-        public bool BudeVrcholVlevo(vrchol druhy)
+        public bool BudeVrcholVlevo(Vrchol druhy)
         {  // NOTE: opet netestujeme parametr
            // NOTE: ocenil bych komentare, abych nemusel premyslet, co se tu deje a zda je to spravne
 	   // NOTE: rozbit do nekolika boolu a neopakovat dve stejne podminky v ruznych kombinacich ...?
@@ -105,7 +105,7 @@ namespace HuffmanskeKapky
 
         #region IComparable Members
 
-        public int CompareTo(vrchol obj)  // NOTE: neni od veci popsat - co to je #region, proc 0, 1, -1
+        public int CompareTo(Vrchol obj)  // NOTE: neni od veci popsat - co to je #region, proc 0, 1, -1
         {
             if (this == obj)
             {
@@ -125,11 +125,11 @@ namespace HuffmanskeKapky
         #endregion
     }
 
-    class strom
+    class Strom
     {
-        private vrchol koren;  // NOTE: neni konsistentni - jinde soukrome promenne nejsou oznaceny private
+        private Vrchol koren;  // NOTE: neni konsistentni - jinde soukrome promenne nejsou oznaceny private
 
-        public strom(SortedDictionary<int, List<vrchol>> vrcholy)
+        public Strom(SortedDictionary<int, List<Vrchol>> vrcholy)
         {
             postavStrom(vrcholy);
 		// NOTE: neni zjevne, zda se inicializuje promenna koren
@@ -137,18 +137,18 @@ namespace HuffmanskeKapky
 
         int pocetStromu = 0;  // NOTE: pouziva se pouze v postavStrom, ma byt lokalni
 
-        private void postavStrom(SortedDictionary<int, List<vrchol>> HuffmanskyLes)  // NOTE: metoda je sice privatni, ale dela nejake netrivialni operace - potreba komentare, co se zde deje
+        private void postavStrom(SortedDictionary<int, List<Vrchol>> HuffmanskyLes)  // NOTE: metoda je sice privatni, ale dela nejake netrivialni operace - potreba komentare, co se zde deje
         {
             List<vrchol> seznam;  // NOTE: spatne odsazeni
-                vrchol pom1;  // NOTE: mozna zvolit lepsi jmena vrcholu, aby v new vrchol nize bylo zjevne, co to je; proc pom1 a pom3, kde je pom2
-                vrchol pom3;
-                vrchol novy;
-                vrchol lichy = null;  // NOTE: pripsal bych nazvum promennych suffix oznacujici, ze jde o vrchol
+                Vrchol pom1;  // NOTE: mozna zvolit lepsi jmena vrcholu, aby v new vrchol nize bylo zjevne, co to je; proc pom1 a pom3, kde je pom2
+                Vrchol pom3;
+                Vrchol novy;
+                Vrchol lichy = null;  // NOTE: pripsal bych nazvum promennych suffix oznacujici, ze jde o vrchol
                 int ZbyvaZpracovat = 0;  // NOTE: ZbyvaZpracovat bude vyvolavat zdani promenne tridy nebo jine globalnejsi promenne - nikoliv lokalni, navic nekonsistentni se zbytkem
                 int rank;
 		// NOTE: zde potrebuji jen ZbyvaZpracovat
 
-                foreach (KeyValuePair<int,List<vrchol>> item in HuffmanskyLes)  // NOTE: chybi mezera za int,
+                foreach (KeyValuePair<int,List<Vrchol>> item in HuffmanskyLes)  // NOTE: chybi mezera za int,
                 {
                     ZbyvaZpracovat += item.Value.Count;
                 }
@@ -175,15 +175,15 @@ namespace HuffmanskeKapky
 
                         if (pom1.BudeVrcholVlevo(pom3))
                         {
-                            novy = new vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
+                            novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
                         }
-                        else novy = new vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
+                        else novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
 
                         if (HuffmanskyLes.ContainsKey(novy.vaha))
                         {
                             HuffmanskyLes[novy.vaha].Add(novy);
                         }
-                        else HuffmanskyLes.Add(novy.vaha, new List<vrchol>() { novy });
+                        else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
                         
                         
                         ZbyvaZpracovat--;
@@ -205,15 +205,15 @@ namespace HuffmanskeKapky
 			// NOTE: strida se pouziti jednoradkoveho tela if-else v {} a bez {}
                     if (lichy.BudeVrcholVlevo(pom1))
                     {
-                        novy = new vrchol(lichy.vaha + pom1.vaha, lichy.znak, lichy, pom1);
+                        novy = new Vrchol(lichy.vaha + pom1.vaha, lichy.znak, lichy, pom1);
                     }
-                    else novy = new vrchol(pom1.vaha + lichy.vaha, pom1.znak, pom1, lichy);
+                    else novy = new Vrchol(pom1.vaha + lichy.vaha, pom1.znak, pom1, lichy);
 
                     if (HuffmanskyLes.ContainsKey(novy.vaha))
                     {
                         HuffmanskyLes[novy.vaha].Add(novy);
                     }
-                    else HuffmanskyLes.Add(novy.vaha, new List<vrchol>() { novy });
+                    else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
 
                     ZbyvaZpracovat--;
 
@@ -224,15 +224,15 @@ namespace HuffmanskeKapky
 
                         if (pom1.BudeVrcholVlevo(pom3))
                         {
-                            novy = new vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
+                            novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
                         }
-                        else novy = new vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
+                        else novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
 
                         if (HuffmanskyLes.ContainsKey(novy.vaha))
                         {
                             HuffmanskyLes[novy.vaha].Add(novy);
                         }
-                        else HuffmanskyLes.Add(novy.vaha, new List<vrchol>() { novy });
+                        else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
 
                         ZbyvaZpracovat--;
                     }
@@ -257,7 +257,7 @@ namespace HuffmanskeKapky
             VypisStrom2(this.koren, "");
         }
         
-        public void VypisStrom2(vrchol vrch, string pre)  // NOTE: verejna metoda bez komentare, navic popsat parametry neni od veci - pre je asi prefix, ale kdo to ma vedet, popsat tvar vypisu atd.
+        public void VypisStrom2(Vrchol vrch, string pre)  // NOTE: verejna metoda bez komentare, navic popsat parametry neni od veci - pre je asi prefix, ale kdo to ma vedet, popsat tvar vypisu atd.
         {
             bool bylVlevo = false;  // NOTE: presunout pod if
 
@@ -318,17 +318,17 @@ namespace HuffmanskeKapky
             return true;  
         }
 
-        public static SortedDictionary<int, List<vrchol>> PrectiSoubor(string nazev)  // NOTE: verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
+        public static SortedDictionary<int, List<Vrchol>> PrectiSoubor(string nazev)  // NOTE: verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
         {
 
             if (!(OtevrSoubor(nazev))) return null;  // NOTE: vlastne zbytecne, jelikoz OtevrSoubor vzdy vrati true
             else
             {
 		// NOTE: lze pochopit, co se zhruba deje, ale komentar, co delaji jednotlive cykly neni na skodu
-                SortedDictionary<int, List<vrchol>> vrcholy = new SortedDictionary<int, List<vrchol>>();
+                SortedDictionary<int, List<Vrchol>> vrcholy = new SortedDictionary<int, List<Vrchol>>();
                 byte a = 0;
              
-                vrchol[] prvky = new vrchol[256];  // NOTE: zadratovana konstanta
+                Vrchol[] prvky = new Vrchol[256];  // NOTE: zadratovana konstanta
                 byte[] bafr = new byte[0x4000];  // NOTE: zadratovana konstanta
 
                 for (int i = 0; i < vstup.Length / 0x4000; i++)  // NOTE: zadratovana konstanta, mozna uzavorkovat vyraz, aby bylo jasne, ze se chova dle autorova zameru; vstup -> Nacitacka.vstup
@@ -340,7 +340,7 @@ namespace HuffmanskeKapky
                         a = bafr[j];
                         if (prvky[a] == null)
                         {
-                            prvky[a] = new vrchol(1, (byte)a, null, null);
+                            prvky[a] = new Vrchol(1, (byte)a, null, null);
                             //   vrcholy.Add(prvky[a]);
                         }
                         else
@@ -355,7 +355,7 @@ namespace HuffmanskeKapky
                     a =(byte) vstup.ReadByte();  // NOTE: co kdyz nacteme znak mimo rozsah pole?
                     if (prvky[a] == null)
                     {
-                        prvky[a] = new vrchol(1, (byte)a, null, null);  // NOTE: cast z byte do byte
+                        prvky[a] = new Vrchol(1, (byte)a, null, null);  // NOTE: cast z byte do byte
                         //   vrcholy.Add(prvky[a]);
                     }
                     else
@@ -372,10 +372,10 @@ namespace HuffmanskeKapky
                         {
                             vrcholy[prvky[i].vaha].Add(prvky[i]);
                     }
-                    else vrcholy.Add(prvky[i].vaha, new List<vrchol>() { prvky[i] });
+                    else vrcholy.Add(prvky[i].vaha, new List<Vrchol>() { prvky[i] });
                     }  // NOTE: hodne spatne odsazeni neni na prvni pohled vubec jasne, jaka } se vaze ke ktere {
                 }
-                foreach (KeyValuePair<int,List<vrchol>> item in vrcholy)
+                foreach (KeyValuePair<int,List<Vrchol>> item in vrcholy)
                 {
                     item.Value.Sort();
                 }
@@ -388,7 +388,7 @@ namespace HuffmanskeKapky
     class Program  // NOTE: nebo program? nebo Vrchol, Strom
     {
 	// NOTE: promenne maji byl lokalni v Main
-        static SortedDictionary<int, List<vrchol>> vrcholy;
+        static SortedDictionary<int, List<Vrchol>> vrcholy;
         static strom Huffman;  // NOTE: jmeno promenne zacina velkym pismenem
      //   static Stopwatch sw = new Stopwatch();
 
