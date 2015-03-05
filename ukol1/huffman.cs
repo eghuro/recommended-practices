@@ -7,13 +7,14 @@ using System.Diagnostics;
 
 namespace HuffmanskeKapky
 {
-
+//NOTE: pro odsazovani pouzity 4 mezery - dle MS specifikace
     class vrchol: IComparable<vrchol>
     {
-        public vrchol Psyn;        
+	// NOTE: promenne jsou verejne, lepsi je mit soukrome a pripadne poskytnout API pomoci setter/getter metod (nebo C# properties)
+        public vrchol Psyn;        // NOTE: mezery na konci radku
         public int vaha;
         public byte znak;
-        public vrchol Lsyn;
+        public vrchol Lsyn;  // NOTE: mozna lepsi spojit promenne typu vrchol na jeden radek
         
         int stari;
 
@@ -25,8 +26,8 @@ namespace HuffmanskeKapky
             this.znak = znak;
             this.Lsyn = Lsyn;
             this.Psyn = Psyn;
-            stari = cisloVrchola;
-            cisloVrchola++;
+            stari = cisloVrchola; // NOTE: cislo vrchola neni na zacatku inicializovano, lepsi je v definici rovnou dosadit 0 ci 1
+            cisloVrchola++;  // NOTE: cisloVrchola staticka polozka, lepsi pouzit vrchol.cisloVrchola
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace HuffmanskeKapky
 
         public static int SectiVahy(vrchol prvni, vrchol druhy)
         {
-            return prvni.vaha + druhy.vaha;
+            return prvni.vaha + druhy.vaha;  // NOTE: vrchol je objekt, neni testovano, zda neni nahodou NULL
         }
 
         /// <summary>
@@ -64,7 +65,9 @@ namespace HuffmanskeKapky
         /// <param name="druhy"></param>
         /// <returns></returns>
         public bool BudeVrcholVlevo(vrchol druhy)
-        {
+        {  // NOTE: opet netestujeme parametr
+           // NOTE: ocenil bych komentare, abych nemusel premyslet, co se tu deje a zda je to spravne
+	   // NOTE: rozbit do nekolika boolu a neopakovat dve stejne podminky v ruznych kombinacich ...?
             if (druhy.vaha > vaha)
             {
                 return true;
@@ -102,7 +105,7 @@ namespace HuffmanskeKapky
 
         #region IComparable Members
 
-        public int CompareTo(vrchol obj)
+        public int CompareTo(vrchol obj)  // NOTE: neni od veci popsat - co to je #region, proc 0, 1, -1
         {
             if (this == obj)
             {
@@ -124,43 +127,49 @@ namespace HuffmanskeKapky
 
     class strom
     {
-        private vrchol koren;
+        private vrchol koren;  // NOTE: neni konsistentni - jinde soukrome promenne nejsou oznaceny private
 
         public strom(SortedDictionary<int, List<vrchol>> vrcholy)
         {
             postavStrom(vrcholy);
+		// NOTE: neni zjevne, zda se inicializuje promenna koren
         }
 
-        int pocetStromu = 0;
+        int pocetStromu = 0;  // NOTE: pouziva se pouze v postavStrom, ma byt lokalni
 
-        private void postavStrom(SortedDictionary<int, List<vrchol>> HuffmanskyLes)
+        private void postavStrom(SortedDictionary<int, List<vrchol>> HuffmanskyLes)  // NOTE: metoda je sice privatni, ale dela nejake netrivialni operace - potreba komentare, co se zde deje
         {
-            List<vrchol> seznam;
-                vrchol pom1;
+            List<vrchol> seznam;  // NOTE: spatne odsazeni
+                vrchol pom1;  // NOTE: mozna zvolit lepsi jmena vrcholu, aby v new vrchol nize bylo zjevne, co to je; proc pom1 a pom3, kde je pom2
                 vrchol pom3;
                 vrchol novy;
-                vrchol lichy = null;
-                int ZbyvaZpracovat = 0;
+                vrchol lichy = null;  // NOTE: pripsal bych nazvum promennych suffix oznacujici, ze jde o vrchol
+                int ZbyvaZpracovat = 0;  // NOTE: ZbyvaZpracovat bude vyvolavat zdani promenne tridy nebo jine globalnejsi promenne - nikoliv lokalni, navic nekonsistentni se zbytkem
                 int rank;
+		// NOTE: zde potrebuji jen ZbyvaZpracovat
 
-                foreach (KeyValuePair<int,List<vrchol>> item in HuffmanskyLes)
+                foreach (KeyValuePair<int,List<vrchol>> item in HuffmanskyLes)  // NOTE: chybi mezera za int,
                 {
                     ZbyvaZpracovat += item.Value.Count;
                 }
 
+		//NOTE: pocetStromu potreba az zde
             if (ZbyvaZpracovat != 1) {
                 pocetStromu = pocetStromu + 1;
             }
 
-            while (ZbyvaZpracovat != 1)
+		// NOTE: lichy potrebuji az zde
+            while (ZbyvaZpracovat != 1)  // NOTE: v tele cyklu netrivialni kod - potreba komentaru, co se tu vlastne deje
             {
+		//seznam a rank potrebuji az zde
                 seznam = HuffmanskyLes[HuffmanskyLes.Keys.ElementAt(0)];
                 rank = HuffmanskyLes.Keys.ElementAt(0);
 
                 if (lichy == null)
                 {
                     for (int i = 0; i < seznam.Count - 1; i++)
-                    {
+                    {  // NOTE: tento kod se dale opakuje, je zahodno jej vlozit do vlastni metody
+			// pom1, pom3->pom2, novy potrebuji az zde resp. v pomocne metode
                         pom1 = seznam[i];
                         pom3 = seznam[++i];
 
@@ -193,6 +202,7 @@ namespace HuffmanskeKapky
                 else 
                 {
                     pom1 = seznam[0];
+			// NOTE: strida se pouziti jednoradkoveho tela if-else v {} a bez {}
                     if (lichy.BudeVrcholVlevo(pom1))
                     {
                         novy = new vrchol(lichy.vaha + pom1.vaha, lichy.znak, lichy, pom1);
@@ -234,28 +244,28 @@ namespace HuffmanskeKapky
                 }
                 HuffmanskyLes.Remove(rank);
             }
-            koren = HuffmanskyLes[HuffmanskyLes.Keys.ElementAt(0)][0];
+            koren = HuffmanskyLes[HuffmanskyLes.Keys.ElementAt(0)][0];  // NOTE: komentar proc takto, mozna je lepsi dat tento prikaz do konstruktoru
         }
        
-        public void VypisStrom()
+        public void VypisStrom()  // NOTE: verejna metoda bez komentare, ktera nic nedela
         {
             // VypisStrom(this.koren);
         }
 
-        public void VypisStrom2()
+        public void VypisStrom2()  // NOTE: verejna metoda bez komentare
         {
             VypisStrom2(this.koren, "");
         }
         
-        public void VypisStrom2(vrchol vrch, string pre)
+        public void VypisStrom2(vrchol vrch, string pre)  // NOTE: verejna metoda bez komentare, navic popsat parametry neni od veci - pre je asi prefix, ale kdo to ma vedet, popsat tvar vypisu atd.
         {
-            bool bylVlevo = false;
+            bool bylVlevo = false;  // NOTE: presunout pod if
 
             if (vrch.JeList()) {
-                if ((vrch.znak >= 32) && (vrch.znak <= 0x7E))
+                if ((vrch.znak >= 32) && (vrch.znak <= 0x7E))  // NOTE: zadratovane konstanty, nekonsistence mezi desitkovym a sesnactkovym zapisem
                 {
                     Console.Write(" ['{0}':{1}]\n", (char) vrch.znak, vrch.vaha);
-                    return;
+                    return; // NOTE: toto resi return pod else {}
                 }
                 else
                 {
@@ -268,13 +278,14 @@ namespace HuffmanskeKapky
                 // bylVlevo = true;
             }
                 
+	    // NOTE: toto je provede vzdy kdyz by se spadlo do else vetve - proto by to melo vyt v else vetvi a odpustime si return v if - prehlednost
             if (!bylVlevo)
             {
                 Console.Write("{0,4} -+- ", vrch.vaha);
                 bylVlevo = true;
             }
             pre = pre + "      ";
-            if (bylVlevo)
+            if (bylVlevo)  // NOTE: jsou pouzity dva if-y, vyvolava se zdani, ze se jde do jedne nebo druhe sekce, avsak pri pozornem cteni si vsimneme, ze se vzdy oba nepodminene provedou :(
             {
                 VypisStrom2(vrch.Psyn, pre + "|  ");
                 Console.Write("{0}|\n", pre);
@@ -284,16 +295,16 @@ namespace HuffmanskeKapky
         }
     }
 
-    class Nacitacka
+    class Nacitacka  // NOTE: najednou je jmeno tridy s velkym pismenem
     {
         private static FileStream vstup;
 
-        public static bool OtevrSoubor(string nazev)
+        public static bool OtevrSoubor(string nazev)  // NOTE: metoda by mohla byt void - vzdy vrati true, verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
         {
             try
             {
-                vstup = new FileStream(nazev, FileMode.Open, FileAccess.Read);
-                if (!(vstup.CanRead))
+                vstup = new FileStream(nazev, FileMode.Open, FileAccess.Read);  // NOTE: alespon Nacitacka.vstup, pouvazovat nad potrebou staticke promenne
+                if (!(vstup.CanRead))  // NOTE: nacitacka.vstup
                 {
                     throw new Exception();
                 }
@@ -304,26 +315,27 @@ namespace HuffmanskeKapky
                 Environment.Exit(0);
                 //    return false;
             }
-            return true;
+            return true;  
         }
 
-        public static SortedDictionary<int, List<vrchol>> PrectiSoubor(string nazev)
+        public static SortedDictionary<int, List<vrchol>> PrectiSoubor(string nazev)  // NOTE: verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
         {
 
-            if (!(OtevrSoubor(nazev))) return null;
+            if (!(OtevrSoubor(nazev))) return null;  // NOTE: vlastne zbytecne, jelikoz OtevrSoubor vzdy vrati true
             else
             {
+		// NOTE: lze pochopit, co se zhruba deje, ale komentar, co delaji jednotlive cykly neni na skodu
                 SortedDictionary<int, List<vrchol>> vrcholy = new SortedDictionary<int, List<vrchol>>();
                 byte a = 0;
              
-                vrchol[] prvky = new vrchol[256];
-                byte[] bafr = new byte[0x4000];
+                vrchol[] prvky = new vrchol[256];  // NOTE: zadratovana konstanta
+                byte[] bafr = new byte[0x4000];  // NOTE: zadratovana konstanta
 
-                for (int i = 0; i < vstup.Length / 0x4000; i++)
+                for (int i = 0; i < vstup.Length / 0x4000; i++)  // NOTE: zadratovana konstanta, mozna uzavorkovat vyraz, aby bylo jasne, ze se chova dle autorova zameru; vstup -> Nacitacka.vstup
                 {
-                    vstup.Read(bafr, 0, 16384);
+                    vstup.Read(bafr, 0, 16384);  // NOTE: zadratovana konstanta; vstup -> Nacitacka.vstup
 
-                    for (int j = 0; j < 16384; j++)
+                    for (int j = 0; j < 16384; j++)  // NOTE: zadratovana konstanta
                     {
                         a = bafr[j];
                         if (prvky[a] == null)
@@ -338,12 +350,12 @@ namespace HuffmanskeKapky
                     }
                 }
 
-                for (int i = 0; i < vstup.Length % 0x4000; i++)
+                for (int i = 0; i < vstup.Length % 0x4000; i++)  // NOTE: zadratovana konstanta; vstup -> Nacitacka.vstup
                 {
-                    a =(byte) vstup.ReadByte();
+                    a =(byte) vstup.ReadByte();  // NOTE: co kdyz nacteme znak mimo rozsah pole?
                     if (prvky[a] == null)
                     {
-                        prvky[a] = new vrchol(1, (byte)a, null, null);
+                        prvky[a] = new vrchol(1, (byte)a, null, null);  // NOTE: cast z byte do byte
                         //   vrcholy.Add(prvky[a]);
                     }
                     else
@@ -352,16 +364,16 @@ namespace HuffmanskeKapky
                     }
                 }
 
-                for (int i = 0; i < 256; i++)
+                for (int i = 0; i < 256; i++)  // NOTE: zadratovana konstanta
                 {
-                    if (prvky[i]!= null)
-	                {
+                    if (prvky[i]!= null)  // NOTE: chybi mezera pred !=
+	                {  // NOTE: nekonsistentni odsazeni
                         if (vrcholy.ContainsKey(prvky[i].vaha))
                         {
                             vrcholy[prvky[i].vaha].Add(prvky[i]);
                     }
                     else vrcholy.Add(prvky[i].vaha, new List<vrchol>() { prvky[i] });
-                    }
+                    }  // NOTE: hodne spatne odsazeni neni na prvni pohled vubec jasne, jaka } se vaze ke ktere {
                 }
                 foreach (KeyValuePair<int,List<vrchol>> item in vrcholy)
                 {
@@ -373,13 +385,14 @@ namespace HuffmanskeKapky
 
     }
 
-    class Program
+    class Program  // NOTE: nebo program? nebo Vrchol, Strom
     {
+	// NOTE: promenne maji byl lokalni v Main
         static SortedDictionary<int, List<vrchol>> vrcholy;
-        static strom Huffman;
+        static strom Huffman;  // NOTE: jmeno promenne zacina velkym pismenem
      //   static Stopwatch sw = new Stopwatch();
 
-        static void Main(string[] args)
+        static void Main(string[] args)  // NOTE: mnoho zakomentovaneho kodu, co tu dela? - vyhodit nebo napsat komentar
         {
        //     sw.Start();
 
