@@ -40,7 +40,10 @@ namespace HuffmanskeKapky
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                return false;
+            }
         }
 
         public static int SectiVahy(Vrchol prvni, Vrchol druhy)

@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace HuffmanskeKapky
+namespace HuffmanTree
 {
 //NOTE: pro odsazovani pouzity 4 mezery - dle MS specifikace
     class Vrchol: IComparable<Vrchol>
