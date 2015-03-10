@@ -10,10 +10,26 @@ namespace Huffman
 
     class Node
     {
-        public Node leftChild = null;
-        public Node rightChild = null;
-        public int frequency;
-        public byte symbol;
+        private Node leftChild = null;
+        private Node rightChild = null;
+        private int frequency;
+        private byte symbol;
+
+	public int getFrequency() {
+	    return frequency;
+	}
+
+	public byte getSymbol() {
+	    return symbol;
+	}
+
+	public Node getRightChild() {
+	    return rightChild;
+	}
+
+	public Node getLeftChild() {
+	    return leftChild;
+	}
 
         public Node(byte symbol, int frequency)
         {            
@@ -61,19 +77,14 @@ namespace Huffman
 
         public Tree(String source)
         {
-            process(source);
-        }
-
-        public void process(String source)
-        {
             Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
             List<Node> nodes = createFrequencyNodes(frequencies);
-            build(nodes);
+            build(nodes); // divny nazev - spatne se cte - build nodes? alternativy buildTree? this.build? ...
         }
 
-        public Dictionary<byte, int> createFrequenciesFromSource(String source)
+        private Dictionary<byte, int> createFrequenciesFromSource(String source)
         {
-            Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
+            Dictionary<byte, int> frequencies = new Dictionary<byte, int>(); //
 
             for (int i = 0; i < source.Length; i++)
             {
@@ -91,9 +102,9 @@ namespace Huffman
         }
 
 
-        public List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
+        private List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
         {            
-            List<Node> nodes = new List<Node>();
+            List<Node> nodes = new List<Node>();//
 
             foreach (KeyValuePair<byte, int> symbol in frequencies)
             {
@@ -107,7 +118,7 @@ namespace Huffman
         {
             while (nodes.Count > 1)
             {
-                List<Node> orderedNodes = nodes.OrderBy(node => node.frequency).ThenBy(node => node.symbol).ToList<Node>();
+                List<Node> orderedNodes = nodes.OrderBy(node => node.getFrequency()).ThenBy(node => node.getSymbol()).ToList<Node>();
 
                 if (orderedNodes.Count >= 2)
                 {
@@ -133,39 +144,35 @@ namespace Huffman
 
         public void VypisStrom2(Node node, string pre)
         {
-            bool bylVlevo = false;
+            
 
             if (node.isLeaf())
             {
-                if ((node.symbol >= 32) && (node.symbol <= 0x7E))
+                if ((node.getSymbol() >= 32) && (node.getSymbol() <= 0x7E)) // fce s podminkou a nahradit cisla charem
                 {
-                    Console.Write(" ['{0}':{1}]\n", (char)node.symbol, node.frequency);
-                    return;
+                    Console.Write(" ['{0}':{1}]\n", (char)node.getSymbol(), node.getFrequency());
+                    
                 }
                 else
                 {
-                    Console.Write(" [{0}:{1}]\n", node.symbol, node.frequency);
+                    Console.Write(" [{0}:{1}]\n", node.getSymbol(), node.getFrequency());
                 }
-                return;
+                
             }
             else
             {
-                // bylVlevo = true;
-            }
-
-            if (!bylVlevo)
-            {
-                Console.Write("{0,4} -+- ", node.frequency);
+		 Console.Write("{0,4} -+- ", node.getFrequency());
                 bylVlevo = true;
-            }
-            pre = pre + "      ";
-            if (bylVlevo)
-            {
-                VypisStrom2(node.rightChild, pre + "|  ");
+            
+          	  pre = pre + "      ";
+                VypisStrom2(node.getRightChild(), pre + "|  ");
                 Console.Write("{0}|\n", pre);
                 Console.Write("{0}`- ", pre);
-                VypisStrom2(node.leftChild, pre + "   ");
+                VypisStrom2(node.getLeftChild(), pre + "   ");
             }
+
+               
+            
         }
     }
 
