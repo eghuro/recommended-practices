@@ -14,16 +14,11 @@ namespace Huffman
         public Node rightChild = null;
         public int frequency;
         public byte symbol;
-        int stari;
-
-        static int cisloVrchola = 0;
 
         public Node(byte symbol, int frequency)
         {            
             this.symbol = symbol;
             this.frequency = frequency;
-            stari = cisloVrchola;
-            cisloVrchola++;
         }
 
         public Node(Node leftChild, Node rightChild)
@@ -32,8 +27,6 @@ namespace Huffman
             this.symbol = leftChild.symbol;
             this.leftChild = leftChild;
             this.rightChild = rightChild;
-            stari = cisloVrchola;
-            cisloVrchola++;
         }
 
         /// <summary>
@@ -64,23 +57,57 @@ namespace Huffman
 
     class Tree
     {
-        private Node root;
-        private List<Node> nodes = new List<Node>();
+        private Node root = null;
 
-        public Tree(Dictionary<byte, int> frequencies)
+        public Tree(String source)
         {
+            process(source);
+        }
+
+        public void process(String source)
+        {
+            Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
+            List<Node> nodes = createFrequencyNodes(frequencies);
+            build(nodes);
+        }
+
+        public Dictionary<byte, int> createFrequenciesFromSource(String source)
+        {
+            Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                byte symbol = (byte)source[i];
+
+                if (!frequencies.ContainsKey(symbol))
+                {
+                    frequencies.Add(symbol, 0);
+                }
+
+                frequencies[symbol]++;
+            }
+
+            return frequencies;
+        }
+
+
+        public List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
+        {            
+            List<Node> nodes = new List<Node>();
+
             foreach (KeyValuePair<byte, int> symbol in frequencies)
             {
                 nodes.Add(new Node(symbol.Key, symbol.Value));
             }
-            build();
+
+            return nodes;
         }
 
-        private void build()
+        private void build(List<Node> nodes)
         {
             while (nodes.Count > 1)
             {
-                List<Node> orderedNodes = nodes.OrderBy(node => node.frequency).ToList<Node>();
+                List<Node> orderedNodes = nodes.OrderBy(node => node.frequency).ThenBy(node => node.symbol).ToList<Node>();
 
                 if (orderedNodes.Count >= 2)
                 {
@@ -91,17 +118,17 @@ namespace Huffman
                     nodes.Remove(taken[1]);
                     nodes.Add(parent);
                 }
-
-                this.root = nodes.FirstOrDefault();
-
             }
-            
-        }
 
+            this.root = nodes.FirstOrDefault();
+        }
 
         public void print()
         {
-            VypisStrom2(this.root, "");
+            if (this.root != null)
+            {
+                VypisStrom2(this.root, "");
+            }
         }
 
         public void VypisStrom2(Node node, string pre)
@@ -142,71 +169,27 @@ namespace Huffman
         }
     }
 
-    class Nacitacka
+    class Loader
     {
-        private static FileStream input;
 
-        public static bool OtevrSoubor(string nazev)
+        public static String sourceFromFile(string fileName)
         {
+            String source = "";
+
             try
             {
-                input = new FileStream(nazev, FileMode.Open, FileAccess.Read);
-                if (!(input.CanRead))
+                using (StreamReader sr = new StreamReader(fileName))
                 {
-                    throw new Exception();
+                    source = sr.ReadToEnd();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Console.Write("File Error");
                 Environment.Exit(0);
-                //    return false;
             }
-            return true;
-        }
 
-        public static Dictionary<byte, int> PrectiSoubor(string nazev)
-        {
-
-            if (!(OtevrSoubor(nazev))) return null;
-            else
-            {
-                Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
-                byte a = 0;
-
-                byte[] bafr = new byte[0x4000];
-
-                for (int i = 0; i < input.Length / 0x4000; i++)
-                {
-                    input.Read(bafr, 0, 16384);
-
-                    for (int j = 0; j < 16384; j++)
-                    {
-                        a = bafr[j];
-
-                        if (!frequencies.ContainsKey((byte)a))
-                        {
-                            frequencies.Add((byte)a, 0);
-                        }
-
-                        frequencies[(byte)a]++;
-                    }
-                }
-
-                for (int i = 0; i < input.Length % 0x4000; i++)
-                {
-                    a = (byte)input.ReadByte();
-
-                    if (!frequencies.ContainsKey((byte)a))
-                    {
-                        frequencies.Add((byte)a, 0);
-                    }
-
-                    frequencies[(byte)a]++;
-                }
-
-                return frequencies;
-            }
+            return source;
         }
 
     }
@@ -216,8 +199,7 @@ namespace Huffman
         //   static Stopwatch sw = new Stopwatch();
 
         static void Main(string[] args)
-        {
-            Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
+        {            
             Tree huffmanTree;
             //     sw.Start();
 
@@ -226,12 +208,12 @@ namespace Huffman
                 Console.Write("Argument Error");
                 Environment.Exit(0);
             }
-            frequencies = Nacitacka.PrectiSoubor(args[0]);
 
+            String source = Loader.sourceFromFile(args[0]);
 
-            if ((frequencies != null) && (frequencies.Count != 0))
+            if (source.Length > 0)
             {
-                huffmanTree = new Tree(frequencies);
+                huffmanTree = new Tree(source);
                 Console.Write("\n");
                 huffmanTree.print();
                 Console.Write("\n");
