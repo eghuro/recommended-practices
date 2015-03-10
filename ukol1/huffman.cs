@@ -1,278 +1,123 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace HuffmanTree
+namespace Huffman
 {
-//NOTE: pro odsazovani pouzity 4 mezery - dle MS specifikace
-    class Vrchol: IComparable<Vrchol>
+
+    class Node
     {
-	// NOTE: promenne jsou verejne, lepsi je mit soukrome a pripadne poskytnout API pomoci setter/getter metod (nebo C# properties)
-        public Vrchol Psyn;        // NOTE: mezery na konci radku
-        public int vaha;
-        public byte znak;
-        public Vrchol Lsyn;  // NOTE: mozna lepsi spojit promenne typu vrchol na jeden radek
-        
+        public Node leftChild = null;
+        public Node rightChild = null;
+        public int frequency;
+        public byte symbol;
         int stari;
 
-        static int cisloVrchola;
+        static int cisloVrchola = 0;
 
-        public Vrchol(int vaha, byte znak, Vrchol Lsyn, Vrchol Psyn)
+        public Node(byte symbol, int frequency)
+        {            
+            this.symbol = symbol;
+            this.frequency = frequency;
+            stari = cisloVrchola;
+            cisloVrchola++;
+        }
+
+        public Node(Node leftChild, Node rightChild)
         {
-            this.vaha = vaha;
-            this.znak = znak;
-            this.Lsyn = Lsyn;
-            this.Psyn = Psyn;
-            stari = cisloVrchola; // NOTE: cislo vrchola neni na zacatku inicializovano, lepsi je v definici rovnou dosadit 0 ci 1
-            cisloVrchola++;  // NOTE: cisloVrchola staticka polozka, lepsi pouzit vrchol.cisloVrchola
+            this.frequency = leftChild.frequency + rightChild.frequency;
+            this.symbol = leftChild.symbol;
+            this.leftChild = leftChild;
+            this.rightChild = rightChild;
+            stari = cisloVrchola;
+            cisloVrchola++;
         }
 
         /// <summary>
         /// Kdyz nema jedineho syna vraci true.
         /// </summary>
         /// <returns></returns>
-        public bool JeList()
+        public bool isLeaf()
         {
-            if ((Lsyn == null) && (Psyn == null))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (leftChild == null && rightChild == null);
         }
 
-        public static int SectiVahy(Vrchol prvni, Vrchol druhy)
+        public static int SectiVahy(Node prvni, Node druhy)
         {
-            return prvni.vaha + druhy.vaha;  // NOTE: vrchol je objekt, neni testovano, zda neni nahodou NULL
+            return prvni.frequency + druhy.frequency;
         }
 
         /// <summary>
-        /// Zvetsi vahu vrcholu o zadany int, vraci upraveny vrchol.
+        /// Zvetsi vahu vrcholu o zadany int, vraci upraveny Node.
         /// </summary>
-        /// <param name="rank"></param>
+        /// <param name="frequency"></param>
         /// <returns></returns>
-        public Vrchol ZvecVahu(int rank)
+        public Node increaseFrequency(int frequency)
         {
-            vaha += rank;
+            this.frequency += frequency;
             return this;
         }
+    }
 
-        /// <summary>
-        /// True o sobe vrchol rekne jestli bude v Huffmanskem strome nalevo od druheho vrcholu.
-        /// </summary>
-        /// <param name="druhy"></param>
-        /// <returns></returns>
-        public bool BudeVrcholVlevo(Vrchol druhy)
-        {  // NOTE: opet netestujeme parametr
-           // NOTE: ocenil bych komentare, abych nemusel premyslet, co se tu deje a zda je to spravne
-	   // NOTE: rozbit do nekolika boolu a neopakovat dve stejne podminky v ruznych kombinacich ...?
-            if (druhy.vaha > vaha)
+    class Tree
+    {
+        private Node root;
+        private List<Node> nodes = new List<Node>();
+
+        public Tree(Dictionary<byte, int> frequencies)
+        {
+            foreach (KeyValuePair<byte, int> symbol in frequencies)
             {
-                return true;
+                nodes.Add(new Node(symbol.Key, symbol.Value));
             }
-            else if (druhy.vaha < vaha)
-            {
-                return false;
-            }
-            else if (druhy.JeList() && !(JeList()))
-            {
-                return false;
-            }
-            else if (JeList() && !(druhy.JeList()))
-            {
-                return true;
-            }
-            else if ((JeList()) && (druhy.JeList()) && (znak < druhy.znak))
-            {
-                return true;
-            }
-            else if ((JeList()) && (druhy.JeList()) && (znak > druhy.znak))
-            {
-                return false;
-            }
-            else if (stari < druhy.stari)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            build();
         }
 
-
-        #region IComparable Members
-
-        public int CompareTo(Vrchol obj)  // NOTE: neni od veci popsat - co to je #region, proc 0, 1, -1
+        private void build()
         {
-            if (this == obj)
+            while (nodes.Count > 1)
             {
-                return 0;
-            }
-            else if (BudeVrcholVlevo(obj))
-            {
-                return -1;
-            }
-            else 
-            {
-                return 1;
+                List<Node> orderedNodes = nodes.OrderBy(node => node.frequency).ToList<Node>();
+
+                if (orderedNodes.Count >= 2)
+                {
+                    List<Node> taken = orderedNodes.Take(2).ToList<Node>();
+                    Node parent = new Node(taken[0], taken[1]);
+
+                    nodes.Remove(taken[0]);
+                    nodes.Remove(taken[1]);
+                    nodes.Add(parent);
+                }
+
+                this.root = nodes.FirstOrDefault();
+
             }
             
         }
 
-        #endregion
-    }
 
-    class Strom
-    {
-        private Vrchol koren;  // NOTE: neni konsistentni - jinde soukrome promenne nejsou oznaceny private
-
-        public Strom(SortedDictionary<int, List<Vrchol>> vrcholy)
+        public void print()
         {
-            postavStrom(vrcholy);
-		// NOTE: neni zjevne, zda se inicializuje promenna koren
+            VypisStrom2(this.root, "");
         }
 
-        int pocetStromu = 0;  // NOTE: pouziva se pouze v postavStrom, ma byt lokalni
-
-        private void postavStrom(SortedDictionary<int, List<Vrchol>> HuffmanskyLes)  // NOTE: metoda je sice privatni, ale dela nejake netrivialni operace - potreba komentare, co se zde deje
+        public void VypisStrom2(Node node, string pre)
         {
-            List<vrchol> seznam;  // NOTE: spatne odsazeni
-                Vrchol pom1;  // NOTE: mozna zvolit lepsi jmena vrcholu, aby v new vrchol nize bylo zjevne, co to je; proc pom1 a pom3, kde je pom2
-                Vrchol pom3;
-                Vrchol novy;
-                Vrchol lichy = null;  // NOTE: pripsal bych nazvum promennych suffix oznacujici, ze jde o vrchol
-                int ZbyvaZpracovat = 0;  // NOTE: ZbyvaZpracovat bude vyvolavat zdani promenne tridy nebo jine globalnejsi promenne - nikoliv lokalni, navic nekonsistentni se zbytkem
-                int rank;
-		// NOTE: zde potrebuji jen ZbyvaZpracovat
+            bool bylVlevo = false;
 
-                foreach (KeyValuePair<int,List<Vrchol>> item in HuffmanskyLes)  // NOTE: chybi mezera za int,
-                {
-                    ZbyvaZpracovat += item.Value.Count;
-                }
-
-		//NOTE: pocetStromu potreba az zde
-            if (ZbyvaZpracovat != 1) {
-                pocetStromu = pocetStromu + 1;
-            }
-
-		// NOTE: lichy potrebuji az zde
-            while (ZbyvaZpracovat != 1)  // NOTE: v tele cyklu netrivialni kod - potreba komentaru, co se tu vlastne deje
+            if (node.isLeaf())
             {
-		//seznam a rank potrebuji az zde
-                seznam = HuffmanskyLes[HuffmanskyLes.Keys.ElementAt(0)];
-                rank = HuffmanskyLes.Keys.ElementAt(0);
-
-                if (lichy == null)
+                if ((node.symbol >= 32) && (node.symbol <= 0x7E))
                 {
-                    for (int i = 0; i < seznam.Count - 1; i++)
-                    {  // NOTE: tento kod se dale opakuje, je zahodno jej vlozit do vlastni metody
-			// pom1, pom3->pom2, novy potrebuji az zde resp. v pomocne metode
-                        pom1 = seznam[i];
-                        pom3 = seznam[++i];
-
-                        if (pom1.BudeVrcholVlevo(pom3))
-                        {
-                            novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
-                        }
-                        else novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
-
-                        if (HuffmanskyLes.ContainsKey(novy.vaha))
-                        {
-                            HuffmanskyLes[novy.vaha].Add(novy);
-                        }
-                        else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
-                        
-                        
-                        ZbyvaZpracovat--;
-                    }
-                    if (seznam.Count % 2 == 1)
-                    {
-                        lichy = seznam[seznam.Count - 1];
-
-                    }
-                    else
-                    {
-                        lichy = null;
-                    }
-
-                }
-                else 
-                {
-                    pom1 = seznam[0];
-			// NOTE: strida se pouziti jednoradkoveho tela if-else v {} a bez {}
-                    if (lichy.BudeVrcholVlevo(pom1))
-                    {
-                        novy = new Vrchol(lichy.vaha + pom1.vaha, lichy.znak, lichy, pom1);
-                    }
-                    else novy = new Vrchol(pom1.vaha + lichy.vaha, pom1.znak, pom1, lichy);
-
-                    if (HuffmanskyLes.ContainsKey(novy.vaha))
-                    {
-                        HuffmanskyLes[novy.vaha].Add(novy);
-                    }
-                    else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
-
-                    ZbyvaZpracovat--;
-
-                    for (int i = 1; i < seznam.Count - 1; i++)
-                    {
-                        pom1 = seznam[i];
-                        pom3 = seznam[++i];
-
-                        if (pom1.BudeVrcholVlevo(pom3))
-                        {
-                            novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom1, pom3);
-                        }
-                        else novy = new Vrchol(pom1.vaha + pom3.vaha, pom1.znak, pom3, pom1);
-
-                        if (HuffmanskyLes.ContainsKey(novy.vaha))
-                        {
-                            HuffmanskyLes[novy.vaha].Add(novy);
-                        }
-                        else HuffmanskyLes.Add(novy.vaha, new List<Vrchol>() { novy });
-
-                        ZbyvaZpracovat--;
-                    }
-                    if (seznam.Count % 2 == 0)
-                    {
-                        lichy = seznam[seznam.Count - 1];
-                    }
-                    else lichy = null;
-                }
-                HuffmanskyLes.Remove(rank);
-            }
-            koren = HuffmanskyLes[HuffmanskyLes.Keys.ElementAt(0)][0];  // NOTE: komentar proc takto, mozna je lepsi dat tento prikaz do konstruktoru
-        }
-       
-        public void VypisStrom()  // NOTE: verejna metoda bez komentare, ktera nic nedela
-        {
-            // VypisStrom(this.koren);
-        }
-
-        public void VypisStrom2()  // NOTE: verejna metoda bez komentare
-        {
-            VypisStrom2(this.koren, "");
-        }
-        
-        public void VypisStrom2(Vrchol vrch, string pre)  // NOTE: verejna metoda bez komentare, navic popsat parametry neni od veci - pre je asi prefix, ale kdo to ma vedet, popsat tvar vypisu atd.
-        {
-            bool bylVlevo = false;  // NOTE: presunout pod if
-
-            if (vrch.JeList()) {
-                if ((vrch.znak >= 32) && (vrch.znak <= 0x7E))  // NOTE: zadratovane konstanty, nekonsistence mezi desitkovym a sesnactkovym zapisem
-                {
-                    Console.Write(" ['{0}':{1}]\n", (char) vrch.znak, vrch.vaha);
-                    return; // NOTE: toto resi return pod else {}
+                    Console.Write(" ['{0}':{1}]\n", (char)node.symbol, node.frequency);
+                    return;
                 }
                 else
                 {
-                    Console.Write(" [{0}:{1}]\n", vrch.znak, vrch.vaha);
+                    Console.Write(" [{0}:{1}]\n", node.symbol, node.frequency);
                 }
                 return;
             }
@@ -280,34 +125,33 @@ namespace HuffmanTree
             {
                 // bylVlevo = true;
             }
-                
-	    // NOTE: toto je provede vzdy kdyz by se spadlo do else vetve - proto by to melo vyt v else vetvi a odpustime si return v if - prehlednost
+
             if (!bylVlevo)
             {
-                Console.Write("{0,4} -+- ", vrch.vaha);
+                Console.Write("{0,4} -+- ", node.frequency);
                 bylVlevo = true;
             }
             pre = pre + "      ";
-            if (bylVlevo)  // NOTE: jsou pouzity dva if-y, vyvolava se zdani, ze se jde do jedne nebo druhe sekce, avsak pri pozornem cteni si vsimneme, ze se vzdy oba nepodminene provedou :(
+            if (bylVlevo)
             {
-                VypisStrom2(vrch.Psyn, pre + "|  ");
+                VypisStrom2(node.rightChild, pre + "|  ");
                 Console.Write("{0}|\n", pre);
                 Console.Write("{0}`- ", pre);
-                VypisStrom2(vrch.Lsyn, pre + "   ");
+                VypisStrom2(node.leftChild, pre + "   ");
             }
         }
     }
 
-    class Nacitacka  // NOTE: najednou je jmeno tridy s velkym pismenem
+    class Nacitacka
     {
-        private static FileStream vstup;
+        private static FileStream input;
 
-        public static bool OtevrSoubor(string nazev)  // NOTE: metoda by mohla byt void - vzdy vrati true, verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
+        public static bool OtevrSoubor(string nazev)
         {
             try
             {
-                vstup = new FileStream(nazev, FileMode.Open, FileAccess.Read);  // NOTE: alespon Nacitacka.vstup, pouvazovat nad potrebou staticke promenne
-                if (!(vstup.CanRead))  // NOTE: nacitacka.vstup
+                input = new FileStream(nazev, FileMode.Open, FileAccess.Read);
+                if (!(input.CanRead))
                 {
                     throw new Exception();
                 }
@@ -318,110 +162,87 @@ namespace HuffmanTree
                 Environment.Exit(0);
                 //    return false;
             }
-            return true;  
+            return true;
         }
 
-        public static SortedDictionary<int, List<Vrchol>> PrectiSoubor(string nazev)  // NOTE: verejna metoda bez komentare (ikdyz je zhruba jasne, co dela)
+        public static Dictionary<byte, int> PrectiSoubor(string nazev)
         {
 
-            if (!(OtevrSoubor(nazev))) return null;  // NOTE: vlastne zbytecne, jelikoz OtevrSoubor vzdy vrati true
+            if (!(OtevrSoubor(nazev))) return null;
             else
             {
-		// NOTE: lze pochopit, co se zhruba deje, ale komentar, co delaji jednotlive cykly neni na skodu
-                SortedDictionary<int, List<Vrchol>> vrcholy = new SortedDictionary<int, List<Vrchol>>();
+                Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
                 byte a = 0;
-             
-                Vrchol[] prvky = new Vrchol[256];  // NOTE: zadratovana konstanta
-                byte[] bafr = new byte[0x4000];  // NOTE: zadratovana konstanta
 
-                for (int i = 0; i < vstup.Length / 0x4000; i++)  // NOTE: zadratovana konstanta, mozna uzavorkovat vyraz, aby bylo jasne, ze se chova dle autorova zameru; vstup -> Nacitacka.vstup
+                byte[] bafr = new byte[0x4000];
+
+                for (int i = 0; i < input.Length / 0x4000; i++)
                 {
-                    vstup.Read(bafr, 0, 16384);  // NOTE: zadratovana konstanta; vstup -> Nacitacka.vstup
+                    input.Read(bafr, 0, 16384);
 
-                    for (int j = 0; j < 16384; j++)  // NOTE: zadratovana konstanta
+                    for (int j = 0; j < 16384; j++)
                     {
                         a = bafr[j];
-                        if (prvky[a] == null)
+
+                        if (!frequencies.ContainsKey((byte)a))
                         {
-                            prvky[a] = new Vrchol(1, (byte)a, null, null);
-                            //   vrcholy.Add(prvky[a]);
+                            frequencies.Add((byte)a, 0);
                         }
-                        else
-                        {
-                            prvky[a].vaha++;
-                        }
+
+                        frequencies[(byte)a]++;
                     }
                 }
 
-                for (int i = 0; i < vstup.Length % 0x4000; i++)  // NOTE: zadratovana konstanta; vstup -> Nacitacka.vstup
+                for (int i = 0; i < input.Length % 0x4000; i++)
                 {
-                    a =(byte) vstup.ReadByte();  // NOTE: co kdyz nacteme znak mimo rozsah pole?
-                    if (prvky[a] == null)
+                    a = (byte)input.ReadByte();
+
+                    if (!frequencies.ContainsKey((byte)a))
                     {
-                        prvky[a] = new Vrchol(1, (byte)a, null, null);  // NOTE: cast z byte do byte
-                        //   vrcholy.Add(prvky[a]);
+                        frequencies.Add((byte)a, 0);
                     }
-                    else
-                    {
-                        prvky[a].vaha++;
-                    }
+
+                    frequencies[(byte)a]++;
                 }
 
-                for (int i = 0; i < 256; i++)  // NOTE: zadratovana konstanta
-                {
-                    if (prvky[i]!= null)  // NOTE: chybi mezera pred !=
-	                {  // NOTE: nekonsistentni odsazeni
-                        if (vrcholy.ContainsKey(prvky[i].vaha))
-                        {
-                            vrcholy[prvky[i].vaha].Add(prvky[i]);
-                    }
-                    else vrcholy.Add(prvky[i].vaha, new List<Vrchol>() { prvky[i] });
-                    }  // NOTE: hodne spatne odsazeni neni na prvni pohled vubec jasne, jaka } se vaze ke ktere {
-                }
-                foreach (KeyValuePair<int,List<Vrchol>> item in vrcholy)
-                {
-                    item.Value.Sort();
-                }
-                return vrcholy;
+                return frequencies;
             }
         }
 
     }
 
-    class Program  // NOTE: nebo program? nebo Vrchol, Strom
-    {
-	// NOTE: promenne maji byl lokalni v Main
-        static SortedDictionary<int, List<Vrchol>> vrcholy;
-        static strom Huffman;  // NOTE: jmeno promenne zacina velkym pismenem
-     //   static Stopwatch sw = new Stopwatch();
+    class Program
+    {        
+        //   static Stopwatch sw = new Stopwatch();
 
-        static void Main(string[] args)  // NOTE: mnoho zakomentovaneho kodu, co tu dela? - vyhodit nebo napsat komentar
+        static void Main(string[] args)
         {
-       //     sw.Start();
+            Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
+            Tree huffmanTree;
+            //     sw.Start();
 
             if (args.Length != 1)
             {
                 Console.Write("Argument Error");
                 Environment.Exit(0);
             }
-            vrcholy = Nacitacka.PrectiSoubor(args[0]);
+            frequencies = Nacitacka.PrectiSoubor(args[0]);
 
 
-            if ((vrcholy != null) && (vrcholy.Count != 0))
+            if ((frequencies != null) && (frequencies.Count != 0))
             {
-                Huffman = new strom(vrcholy);
-                Huffman.VypisStrom();
-                //Console.Write("\n");
-                Huffman.VypisStrom2();
+                huffmanTree = new Tree(frequencies);
+                Console.Write("\n");
+                huffmanTree.print();
                 Console.Write("\n");
             }
 
-      /*      sw.Stop();
-            string ExecutionTimeTaken = string.Format("Minutes :{0}\nSeconds :{1}\n Mili seconds :{2}", sw.Elapsed.Minutes, sw.Elapsed.Seconds, sw.Elapsed.TotalMilliseconds);
-            Console.Write(ExecutionTimeTaken);
-            Console.ReadKey();
-
-            Console.ReadKey(); */
+            /*      sw.Stop();
+                  string ExecutionTimeTaken = string.Format("Minutes :{0}\nSeconds :{1}\n Mili seconds :{2}", sw.Elapsed.Minutes, sw.Elapsed.Seconds, sw.Elapsed.TotalMilliseconds);
+                  Console.Write(ExecutionTimeTaken);
+                  Console.ReadKey();
+*/
+                  Console.ReadKey(); 
         }
     }
 }
