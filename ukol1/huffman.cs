@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace Huffman
 {
 	class Node
-    {
+	{
 		private Node leftChild = null;
 		private Node rightChild = null;
 		private int frequency;
@@ -44,10 +44,10 @@ namespace Huffman
 			return leftChild;
 		}
 
-        /// <summary>
-        /// Kdyz nema jedineho syna vraci true.
-        /// </summary>
-        /// <returns></returns>
+		/// <summary>
+		/// Kdyz nema jedineho syna vraci true.
+		/// </summary>
+		/// <returns></returns>
 		public bool IsLeaf()
 		{
 			return (leftChild == null) && (rightChild == null);
@@ -57,7 +57,7 @@ namespace Huffman
         {
             return prvni.GetFrequency() + druhy.GetFrequency();
         }
-
+		
 		/// <summary  >
 		/// Zvetsi vahu vrcholu o zadany int, vraci upraveny Node.
 		/// </summary>
@@ -79,7 +79,7 @@ namespace Huffman
 			Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
 			List<Node> nodes = createFrequencyNodes(frequencies);
 			build(nodes); // TODO: divny nazev - spatne se cte - build nodes? alternativy buildTree? this.build? ...
-        }
+		}
 
 		private Dictionary<byte, int> createFrequenciesFromSource(String source)
 		{
@@ -98,12 +98,11 @@ namespace Huffman
 			}
 
 			return frequencies;
-        }
-
-
+		}
+		
 		private List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
 		{            
-			List<Node> nodes = new List<Node>();//
+			List<Node> nodes = new List<Node>();
 
 			foreach (KeyValuePair<byte, int> symbol in frequencies)
 			{
@@ -117,7 +116,7 @@ namespace Huffman
 		{
  			while (nodes.Count > 1)
 			{
-				List<Node> orderedNodes = nodes.OrderBy(node => node.getFrequency()).ThenBy(node => node.getSymbol()).ToList<Node>();
+				List<Node> orderedNodes = nodes.OrderBy(node => node.getFrequency()).ThenBy(node => node.getSymbol()).ToList<Node>(); // TODO: moc dlouhe ...
 
  				if (orderedNodes.Count >= 2)
 				{
@@ -156,15 +155,26 @@ namespace Huffman
 
 		private void printLeaf(Node node)
 		{
-			if ((node.GetSymbol () >= 32) && (node.GetSymbol () <= 0x7E)) { // fce s podminkou a nahradit cisla charem
+			// TODO: rozdil mezi vetvemi je minimalni, co to dela?
+			if (isPrintable(node.GetSymbol())) {  
 				Console.Write (" ['{0}':{1}]\n", (char)node.GetSymbol (), node.GetFrequency ());
 			} else {
 				Console.Write (" [{0}:{1}]\n", node.GetSymbol (), node.GetFrequency ());
-			} 
+			}
+		}
+
+		private bool isPrintable(byte b)
+		{
+			// v ASCII 0x32 (mezera) az 0x7E (vlnka) jsou tisknutelne znaky
+			const byte begin = 0x32;  // mezera
+			const byte end = 0x7E;  // vlnka
+
+			return ((b >= begin) && (b <= end));
 		}
 
 		private void printInner (Node node, string pre)
 		{
+			//TODO: nejak opravit hardcoded konstanty
 			Console.Write ("{0,4} -+- ", node.getFrequency ());
 
 			pre = pre + "      ";
