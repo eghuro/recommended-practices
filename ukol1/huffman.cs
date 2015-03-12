@@ -7,193 +7,190 @@ using System.Diagnostics;
 
 namespace Huffman
 {
-
-    class Node
+	class Node
     {
-        private Node leftChild = null;
-        private Node rightChild = null;
-        private int frequency;
-        private byte symbol;
+		private Node leftChild = null;
+		private Node rightChild = null;
+		private int frequency;
+		private byte symbol;
 
-	public int getFrequency() {
-	    return frequency;
-	}
+		public Node(byte symbol, int frequency) 
+		{            
+			this.symbol = symbol;
+			this.frequency = frequency;
+		}
 
-	public byte getSymbol() {
-	    return symbol;
-	}
+		public Node(Node leftChild, Node rightChild)
+		{
+			this.frequency = leftChild.frequency + rightChild.frequency;
+			this.symbol = leftChild.symbol;
+			this.leftChild = leftChild;
+			this.rightChild = rightChild;
+		}
 
-	public Node getRightChild() {
-	    return rightChild;
-	}
+		public int GetFrequency() {
+			return frequency;
+		}
 
-	public Node getLeftChild() {
-	    return leftChild;
-	}
+		public byte GetSymbol() {
+			return symbol;
+		}
 
-        public Node(byte symbol, int frequency)
-        {            
-            this.symbol = symbol;
-            this.frequency = frequency;
-        }
+		public Node GetRightChild() {
+			return rightChild;
+		}
 
-        public Node(Node leftChild, Node rightChild)
-        {
-            this.frequency = leftChild.frequency + rightChild.frequency;
-            this.symbol = leftChild.symbol;
-            this.leftChild = leftChild;
-            this.rightChild = rightChild;
-        }
+		public Node GetLeftChild() {
+			return leftChild;
+		}
 
         /// <summary>
         /// Kdyz nema jedineho syna vraci true.
         /// </summary>
         /// <returns></returns>
-        public bool isLeaf()
+		public bool IsLeaf()
+		{
+			return (leftChild == null) && (rightChild == null);
+		}
+
+		public static int SumWeight(Node prvni, Node druhy) // NOTE: nepouziva se
         {
-            return (leftChild == null && rightChild == null);
+            return prvni.GetFrequency() + druhy.GetFrequency();
         }
 
-        public static int SectiVahy(Node prvni, Node druhy)
-        {
-            return prvni.frequency + druhy.frequency;
-        }
-
-        /// <summary>
-        /// Zvetsi vahu vrcholu o zadany int, vraci upraveny Node.
-        /// </summary>
-        /// <param name="frequency"></param>
-        /// <returns></returns>
-        public Node increaseFrequency(int frequency)
-        {
-            this.frequency += frequency;
-            return this;
-        }
+		/// <summary  >
+		/// Zvetsi vahu vrcholu o zadany int, vraci upraveny Node.
+		/// </summary>
+		/// <param name="frequency"></param>
+		/// <returns></returns>
+		public Node IncreaseFrequency(int frequency) // NOTE: nepouziva se
+		{
+			this.frequency += frequency;
+			return this;
+		}
     }
 
     class Tree
     {
-        private Node root = null;
+		private Node root = null;
 
-        public Tree(String source)
-        {
-            Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
-            List<Node> nodes = createFrequencyNodes(frequencies);
-            build(nodes); // divny nazev - spatne se cte - build nodes? alternativy buildTree? this.build? ...
+		public Tree(String source)
+		{
+			Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
+			List<Node> nodes = createFrequencyNodes(frequencies);
+			build(nodes); // TODO: divny nazev - spatne se cte - build nodes? alternativy buildTree? this.build? ...
         }
 
-        private Dictionary<byte, int> createFrequenciesFromSource(String source)
-        {
-            Dictionary<byte, int> frequencies = new Dictionary<byte, int>(); //
+		private Dictionary<byte, int> createFrequenciesFromSource(String source)
+		{
+			Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
 
-            for (int i = 0; i < source.Length; i++)
-            {
-                byte symbol = (byte)source[i];
+			for (int i = 0; i < source.Length; i++)
+			{
+				byte symbol = (byte)source[i];
+			
+				if (!frequencies.ContainsKey(symbol))
+				{
+					frequencies.Add(symbol, 0);
+				}
 
-                if (!frequencies.ContainsKey(symbol))
-                {
-                    frequencies.Add(symbol, 0);
-                }
+				frequencies[symbol]++;
+			}
 
-                frequencies[symbol]++;
-            }
-
-            return frequencies;
+			return frequencies;
         }
 
 
-        private List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
-        {            
-            List<Node> nodes = new List<Node>();//
+		private List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
+		{            
+			List<Node> nodes = new List<Node>();//
 
-            foreach (KeyValuePair<byte, int> symbol in frequencies)
-            {
-                nodes.Add(new Node(symbol.Key, symbol.Value));
-            }
+			foreach (KeyValuePair<byte, int> symbol in frequencies)
+			{
+				nodes.Add(new Node(symbol.Key, symbol.Value));
+			}
 
-            return nodes;
-        }
+			return nodes;
+		}
 
-        private void build(List<Node> nodes)
-        {
-            while (nodes.Count > 1)
-            {
-                List<Node> orderedNodes = nodes.OrderBy(node => node.getFrequency()).ThenBy(node => node.getSymbol()).ToList<Node>();
+		private void build(List<Node> nodes)
+		{
+ 			while (nodes.Count > 1)
+			{
+				List<Node> orderedNodes = nodes.OrderBy(node => node.getFrequency()).ThenBy(node => node.getSymbol()).ToList<Node>();
 
-                if (orderedNodes.Count >= 2)
-                {
-                    List<Node> taken = orderedNodes.Take(2).ToList<Node>();
-                    Node parent = new Node(taken[0], taken[1]);
+ 				if (orderedNodes.Count >= 2)
+				{
+					List<Node> taken = orderedNodes.Take(2).ToList<Node>();
+					Node parent = new Node(taken[0], taken[1]);
 
-                    nodes.Remove(taken[0]);
-                    nodes.Remove(taken[1]);
-                    nodes.Add(parent);
-                }
-            }
+					nodes.Remove(taken[0]);
+					nodes.Remove(taken[1]);
+					nodes.Add(parent);
+ 				}
+			}
 
-            this.root = nodes.FirstOrDefault();
+			this.root = nodes.FirstOrDefault();
         }
 
         public void print()
         {
-            if (this.root != null)
-            {
-                VypisStrom2(this.root, "");
-            }
-        }
+			if (this.root != null)
+			{
+				print2(this.root, "");
+			}
+		}
 
-        public void VypisStrom2(Node node, string pre)
-        {
-            
-
-            if (node.isLeaf())
-            {
-                if ((node.getSymbol() >= 32) && (node.getSymbol() <= 0x7E)) // fce s podminkou a nahradit cisla charem
-                {
-                    Console.Write(" ['{0}':{1}]\n", (char)node.getSymbol(), node.getFrequency());
-                    
-                }
-                else
-                {
-                    Console.Write(" [{0}:{1}]\n", node.getSymbol(), node.getFrequency());
-                }
-                
+		private void print2(Node node, string pre)
+		{
+ 			if (node.IsLeaf())
+			{
+				printLeaf (node);     
+				//TODO: printLeaf nepouziva pre, je to korektni? nema printInner volat opet printInner? ...
             }
             else
             {
-		 Console.Write("{0,4} -+- ", node.getFrequency());
-                bylVlevo = true;
-            
-          	  pre = pre + "      ";
-                VypisStrom2(node.getRightChild(), pre + "|  ");
-                Console.Write("{0}|\n", pre);
-                Console.Write("{0}`- ", pre);
-                VypisStrom2(node.getLeftChild(), pre + "   ");
-            }
-
-               
-            
+				printInner (node, pre);
+            } 
         }
-    }
 
-    class Loader
-    {
+		private void printLeaf(Node node)
+		{
+			if ((node.GetSymbol () >= 32) && (node.GetSymbol () <= 0x7E)) { // fce s podminkou a nahradit cisla charem
+				Console.Write (" ['{0}':{1}]\n", (char)node.GetSymbol (), node.GetFrequency ());
+			} else {
+				Console.Write (" [{0}:{1}]\n", node.GetSymbol (), node.GetFrequency ());
+			} 
+		}
 
-        public static String sourceFromFile(string fileName)
-        {
-            String source = "";
+		private void printInner (Node node, string pre)
+		{
+			Console.Write ("{0,4} -+- ", node.getFrequency ());
 
-            try
-            {
-                using (StreamReader sr = new StreamReader(fileName))
-                {
-                    source = sr.ReadToEnd();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Write("File Error");
-                Environment.Exit(0);
+			pre = pre + "      ";
+			print2 (node.GetRightChild (), pre + "|  ");
+			Console.Write ("{0}|\n", pre);
+			Console.Write ("{0}`- ", pre);
+			print2 (node.GetLeftChild (), pre + "   ");
+		}
+	}
+
+	class Loader
+	{
+		public static String sourceFromFile(string fileName)
+		{
+			String source = "";
+
+ 			try
+			{
+				using (StreamReader sr = new StreamReader(fileName))
+				{
+					source = sr.ReadToEnd();
+				}
+ 			}
+ 			catch (Exception e)
+			{
+				Program.Error ("File Error");
             }
 
             return source;
@@ -203,24 +200,28 @@ namespace Huffman
 
     class Program
     {        
+		public static void Error(string message)
+		{
+			Console.Write(message);
+			Environment.Exit(0);
+		}
         //   static Stopwatch sw = new Stopwatch();
 
         static void Main(string[] args)
-        {            
-            Tree huffmanTree;
+        {                 
             //     sw.Start();
 
             if (args.Length != 1)
             {
-                Console.Write("Argument Error");
-                Environment.Exit(0);
+				Program.Error ("Argument Error");
             }
 
             String source = Loader.sourceFromFile(args[0]);
 
             if (source.Length > 0)
             {
-                huffmanTree = new Tree(source);
+				Tree huffmanTree = new Tree(source);
+				// TODO: print se vola jen zde - doplnit Console.Write("\n") do print nebo nasledujici radky do private metody Program
                 Console.Write("\n");
                 huffmanTree.print();
                 Console.Write("\n");
@@ -231,7 +232,7 @@ namespace Huffman
                   Console.Write(ExecutionTimeTaken);
                   Console.ReadKey();
 */
-                  Console.ReadKey(); 
+			Console.ReadKey(); 
         }
     }
 }
