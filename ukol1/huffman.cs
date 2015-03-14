@@ -7,14 +7,6 @@ using System.Diagnostics;
 
 namespace Huffman
 {
-    class NodeHelper
-    {
-        public static int SumWeight(Node firstNode, Node secondNode) // NOTE: nepouziva se
-        {
-            return firstNode.GetFrequency() + secondNode.GetFrequency();
-        }
-    }
-
     class Node
     {
         private Node leftChild = null;
@@ -32,7 +24,7 @@ namespace Huffman
         {
             this.leftChild = leftChild;
             this.rightChild = rightChild;
-            this.frequency = NodeHelper.SumWeight(leftChild, rightChild);
+            this.frequency = NodeHelper.SumFrequencies(leftChild, rightChild);
             this.symbol = leftChild.GetSymbol();
         }
 
@@ -72,6 +64,13 @@ namespace Huffman
         {
             this.frequency += frequency;
             return this;
+        }
+    }
+    class NodeHelper
+    {
+        public static int SumFrequencies(Node firstNode, Node secondNode)
+        {
+            return firstNode.GetFrequency() + secondNode.GetFrequency();
         }
     }
 

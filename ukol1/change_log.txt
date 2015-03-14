@@ -1,0 +1,105 @@
+Namespace HuffmanskeKapky 
+=======
+* premenovane na Huffman
+
+Trieda Nacitacka
+=======
+* premenovana na Loader
+* povodne metody odstranene
+* vytvorena nova metoda sourceFromFile() - nacita cely subor do stringu 
+  a tento string sa moze dat konstruktoru strom
+
+Funkcia SortedDictionary()
+----------- 
+* ako uz bolo spomenute, tak metoda bola odstranena a presunuta do triedy
+  strom(po novom Tree)
+* zbytocne riesi freqencie v stringu - toto sa tu nemalo riesit
+* zbytocne vytvorene velke polia prvky a bafr - stacilo pouzit napr. List
+* vtipne a chaoticky riesenie prvych dvoch for-cyklov
+
+Trieda vrchol
+=======
+* premenovana na Node
+* premenne premenovane na angl. nazvy
+* premenne nastavene ako privatne a vytvorenie getterov(settery netreba)
+* odstraneny interface IComparable - zbytocnost
+
+Kontsturktor
+-----------
+* ma zbytocne vela parametrov a obcas maju posledne 2 premenne(Lsyn, Psyn) 
+  "null" hodnotu
+* rozdeleny na 2 konstruktory:
+    1. vytvori vrchol z vahy a symbolu(znaku)
+    2. vytvori vrchol(rodica) z dvoch vrcholov(synov)
+* rozdelenim konstruktorov sa nestane, ze volame konstruktor s "null" 
+  parametrami
+  
+Funkcia JeList()
+-----------
+* premenovana na IsLeaf()
+* staci iba jeden return - teda vratit vysledok z podmienky
+
+Staticka funkcia SectiVahy()
+-----------
+* premenovana na SumFrequencies()
+* tato funkcia nemusi mat nic spolocne s aktualnym vrcholom
+* vyzera lepsie, ked sa vytiahne napr. do triedy NodeHelper, ktora je obecnejsia
+* v povodnej triede sa nepuzivala - teraz sa pouzije pri 2. kontrukture
+  (pravdou je, ze prehladnejsie by bolo scitat frekvencie v kontruktore Node)
+  
+Funkcia ZvecVahu()
+-----------  
+* nepouziva sa
+* premenovana na IncreaseFrequency()
+
+Funkcia BudeVrcholVlevo()
+-----------
+* zbytocne vela if a komplikovane na pochopenie
+* tato funkcia pomahala pri vytvoreni rodica a spojeni vrcholov(synov) 
+  a spravne rozlozenie synov - toto si podla mna ma riesit strom a nie list
+* funkcia odstranena kvoli svojej zbytocnej komplikovanosti - riesi sa to
+  elegatnejsie v triede strom(po novom Tree)  
+
+Trieda Strom
+=======
+* premenovana na Tree
+* po novom prijima string a z spocita pocet vyskytov jednotlivych znakov
+* z poctov vyskytov vytvori vrcholy (presunute z triedy Nacitacka)
+
+Metoda VypisStrom()
+-----------
+* premenovana na buildIt() - mozno by sa hodilo aj buildTree, ale trieda sa 
+  uz vola Tree - bolo by to len duplikovanie nazvu
+* chvilku trvalo pochopit pri debugovani, ze co to vlastne robi
+* pri refactorovani sa to prepisalo na jednoduchsie:
+  1. vstupny parameter je List s vrcholmi (frekvencie su kluce)
+  2. spusti sa while cyklus a spracovava vrcholy v Liste
+  3. zoradia sa vrcholy(od najmensej frekvencie), potom ich zoradi podla 
+      znakov(podla hodnoty bytu) - tymto sme vyriesili funkciu BudeVrcholVlevo,
+      ktora bola v triede vrchol
+  4. synovia sa z Listu vyhodia    
+  5. zo synov sa vytvori rodic a znova sa umiestni do Listu a so spocitanou 
+      frekvenciou   
+  6. pokracuje sa while cyklom az kym neostane jeden vrchol, ktory je korenom
+      stromu
+* v povodnej funkcii vela if-ov
+* zbytocne zle zadefinovany Dictionary, kde sa znaky s rovnakymi frekvenciami 
+  ukladali do 2. rozmerneho Dictionary
+* zbytocne riesenie licheho/sudeho poctu vrcholov v Dictionary
+* kod sa opakoval (dalo sa to rozdelid do funkcii a usetrit na duplicite)
+* premenne chaoticky nazvane (lichy, novy, pom1, pom3, seznam, rank ...)
+* zbytocna premenna ZbyvaZpracovat
+
+Metody VypisStrom a pretazenie
+-----------
+* premenovana na print()
+* pretazenie tejto metody privatnou s 2 parametrami
+* vyhodena zbytocna premenna bylVlevo - nema tam vyznam
+* rozdelene do viacerych funkcii
+* vytvorenie konstant pre hodnoty 32 a 0x7E, ktore nic nehovoria(vytvorenie 
+  zmysluplnych nazvov) 
+
+
+
+ 
+   
