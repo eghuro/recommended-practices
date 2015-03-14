@@ -7,13 +7,13 @@ Trieda Nacitacka
 * premenovana na Loader
 * povodne metody odstranene
 * vytvorena nova metoda sourceFromFile() - nacita cely subor do stringu 
-  a tento string sa moze dat konstruktoru strom
+  a tento string sa moze dat konstruktoru triedy Strom
 
 Funkcia SortedDictionary()
 ----------- 
 * ako uz bolo spomenute, tak metoda bola odstranena a presunuta do triedy
   strom(po novom Tree)
-* zbytocne riesi freqencie v stringu - toto sa tu nemalo riesit
+* zbytocne riesi frekvencie v stringu - toto sa tu nemalo riesit
 * zbytocne vytvorene velke polia prvky a bafr - stacilo pouzit napr. List
 * vtipne a chaoticky riesenie prvych dvoch for-cyklov
 
@@ -24,7 +24,7 @@ Trieda vrchol
 * premenne nastavene ako privatne a vytvorenie getterov(settery netreba)
 * odstraneny interface IComparable - zbytocnost
 
-Kontsturktor
+Konsturktor
 -----------
 * ma zbytocne vela parametrov a obcas maju posledne 2 premenne(Lsyn, Psyn) 
   "null" hodnotu
@@ -43,7 +43,7 @@ Staticka funkcia SectiVahy()
 -----------
 * premenovana na SumFrequencies()
 * tato funkcia nemusi mat nic spolocne s aktualnym vrcholom
-* vyzera lepsie, ked sa vytiahne napr. do triedy NodeHelper, ktora je obecnejsia
+* vyzera lepsie, ked sa vytiahne  do triedy NodeHelper, ktora je obecnejsia
 * v povodnej triede sa nepuzivala - teraz sa pouzije pri 2. kontrukture
   (pravdou je, ze prehladnejsie by bolo scitat frekvencie v kontruktore Node)
   
@@ -66,10 +66,12 @@ Trieda Strom
 * po novom prijima string a z spocita pocet vyskytov jednotlivych znakov
 * z poctov vyskytov vytvori vrcholy (presunute z triedy Nacitacka)
 
-Metoda VypisStrom()
+Metoda postavStrom()
 -----------
 * premenovana na buildIt() - mozno by sa hodilo aj buildTree, ale trieda sa 
-  uz vola Tree - bolo by to len duplikovanie nazvu
+  uz vola Tree - bolo by to len duplikovanie nazvu, zmenit nazov na build
+  sme zavrhli, pretoze v kombinacii s parametrom nodes (vrcholy) implikovalo
+  stavbu vrcholov
 * chvilku trvalo pochopit pri debugovani, ze co to vlastne robi
 * pri refactorovani sa to prepisalo na jednoduchsie:
   1. vstupny parameter je List s vrcholmi (frekvencie su kluce)
@@ -89,6 +91,8 @@ Metoda VypisStrom()
 * kod sa opakoval (dalo sa to rozdelid do funkcii a usetrit na duplicite)
 * premenne chaoticky nazvane (lichy, novy, pom1, pom3, seznam, rank ...)
 * zbytocna premenna ZbyvaZpracovat
+* nejaky kod presunut do konstruktoru, zbytek se rozdelil do nekolika kratkych
+  funkci
 
 Metody VypisStrom a pretazenie
 -----------
@@ -97,9 +101,4 @@ Metody VypisStrom a pretazenie
 * vyhodena zbytocna premenna bylVlevo - nema tam vyznam
 * rozdelene do viacerych funkcii
 * vytvorenie konstant pre hodnoty 32 a 0x7E, ktore nic nehovoria(vytvorenie 
-  zmysluplnych nazvov) 
-
-
-
- 
-   
+  zmysluplnych nazvov) a uzavreni podminky do pojmenovane funkce
