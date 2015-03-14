@@ -66,6 +66,7 @@ namespace Huffman
             return this;
         }
     }
+
     class NodeHelper
     {
         public static int SumFrequencies(Node firstNode, Node secondNode)
@@ -125,7 +126,7 @@ namespace Huffman
         {
             while (nodes.Count > 1)
             {
-                List<Node> orderedNodes = nodes.OrderBy(node => node.GetFrequency()).ThenBy(node => node.GetSymbol()).ToList<Node>(); // TODO: moc dlouhe ...
+                List<Node> orderedNodes = nodes.OrderBy(node => node.GetFrequency()).ThenBy(node => node.GetSymbol()).ToList<Node>();..
 
                 if (orderedNodes.Count >= 2)
                 {
@@ -170,7 +171,6 @@ namespace Huffman
 
         private void printLeaf(Node node)
         {
-            // TODO: rozdil mezi vetvemi je minimalni, co to dela?
             if (isPrintable(node.GetSymbol()))
             {
                 Console.WriteLine(" ['{0}':{1}]", (char)node.GetSymbol(), node.GetFrequency());
@@ -234,7 +234,6 @@ namespace Huffman
             if (source.Length > 0)
             {
                 Tree huffmanTree = new Tree(source);
-                // TODO: print se vola jen zde - doplnit Console.Write("\n") do print nebo nasledujici radky do private metody Program
                 Console.WriteLine();
                 huffmanTree.print();
                 Console.WriteLine();
