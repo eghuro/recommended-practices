@@ -30,10 +30,10 @@ namespace Huffman
 
         public Node(Node leftChild, Node rightChild)
         {
-            this.frequency = leftChild.frequency + rightChild.frequency;
-            this.symbol = leftChild.symbol;
             this.leftChild = leftChild;
             this.rightChild = rightChild;
+            this.frequency = NodeHelper.SumWeight(leftChild, rightChild);
+            this.symbol = leftChild.GetSymbol();
         }
 
         public int GetFrequency()
@@ -46,23 +46,21 @@ namespace Huffman
             return symbol;
         }
 
-        public Node GetRightChild()
-        {
-            return rightChild;
-        }
-
         public Node GetLeftChild()
         {
             return leftChild;
         }
-
+        public Node GetRightChild()
+        {
+            return rightChild;
+        }
         /// <summary>
         /// Kdyz nema jedineho syna vraci true.
         /// </summary>
         /// <returns></returns>
         public bool IsLeaf()
         {
-            return (leftChild == null) && (rightChild == null);
+            return ((leftChild == null) && (rightChild == null));
         }
 
         /// <summary  >
@@ -79,16 +77,21 @@ namespace Huffman
 
     class Tree
     {
+        private const byte SpaceAsciiCode = 32;
+        private const byte TildeAsciiCode = 126;
+
+        private string source;
         private Node root = null;
 
         public Tree(string source)
         {
-            Dictionary<byte, int> frequencies = createFrequenciesFromSource(source);
+            this.source = source;
+            Dictionary<byte, int> frequencies = createFrequenciesFromSource();
             List<Node> nodes = createFrequencyNodes(frequencies);
-            buildIt(nodes); // TODO: divny nazev - spatne se cte - buildIt nodes? alternativy buildTree? this.buildIt? ...
+            buildIt(nodes);
         }
 
-        private Dictionary<byte, int> createFrequenciesFromSource(string source)
+        private Dictionary<byte, int> createFrequenciesFromSource()
         {
             Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
 
@@ -127,11 +130,11 @@ namespace Huffman
 
                 if (orderedNodes.Count >= 2)
                 {
-                    List<Node> taken = orderedNodes.Take(2).ToList<Node>();
-                    Node parent = new Node(taken[0], taken[1]);
+                    List<Node> firstTwoOrderedNodes = orderedNodes.Take(2).ToList<Node>();
+                    Node parent = new Node(firstTwoOrderedNodes[0], firstTwoOrderedNodes[1]);
 
-                    nodes.Remove(taken[0]);
-                    nodes.Remove(taken[1]);
+                    nodes.Remove(firstTwoOrderedNodes[0]);
+                    nodes.Remove(firstTwoOrderedNodes[1]);
                     nodes.Add(parent);
                 }
             }
@@ -152,11 +155,17 @@ namespace Huffman
             if (node.IsLeaf())
             {
                 printLeaf(node);
-                //TODO: printLeaf nepouziva pre, je to korektni? nema printInner volat opet printInner? ...
             }
             else
             {
-                printInner(node, pre);
+                //TODO: nejak opravit hardcoded konstanty
+                Console.Write("{0,4} -+- ", node.GetFrequency());
+
+                pre = pre + "      ";
+                print(node.GetRightChild(), pre + "|  ");
+                Console.WriteLine("{0}|", pre);
+                Console.Write("{0}`- ", pre);
+                print(node.GetLeftChild(), pre + "   ");
             }
         }
 
@@ -175,22 +184,7 @@ namespace Huffman
 
         private bool isPrintable(byte b)
         {
-            // v ASCII 32 (mezera) az 126 (vlnka) jsou tisknutelne znaky
-            const byte begin = 32;  // mezera
-            const byte end = 126;  // vlnka
-            return ((b >= begin) && (b <= end));
-        }
-
-        private void printInner(Node node, string pre)
-        {
-            //TODO: nejak opravit hardcoded konstanty
-            Console.Write("{0,4} -+- ", node.GetFrequency());
-
-            pre = pre + "      ";
-            print(node.GetRightChild(), pre + "|  ");
-            Console.WriteLine("{0}|", pre);
-            Console.Write("{0}`- ", pre);
-            print(node.GetLeftChild(), pre + "   ");
+            return ((b >= SpaceAsciiCode) && (b <= TildeAsciiCode));
         }
     }
 
@@ -225,7 +219,7 @@ namespace Huffman
         {
             Console.Write(message);
             Environment.Exit(0);
-        }        
+        }
 
         static void Main(string[] args)
         {
