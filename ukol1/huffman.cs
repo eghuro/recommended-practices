@@ -80,18 +80,23 @@ namespace Huffman
         private const byte SpaceAsciiCode = 32;
         private const byte TildeAsciiCode = 126;
 
+        private const string FrequencySeparator = " -+- ";
+        private const string LineSeparator = "  |  ";
+        private const string LeftChildSeparator = "  `- ";
+        private const int MaxFrequencyLength = 4;
+
         private string source;
         private Node root = null;
 
         public Tree(string source)
         {
             this.source = source;
-            Dictionary<byte, int> frequencies = createFrequenciesFromSource();
-            List<Node> nodes = createFrequencyNodes(frequencies);
-            buildIt(nodes);
+            Dictionary<byte, int> frequencies = CreateFrequenciesFromSource();
+            List<Node> nodes = CreateFrequencyNodes(frequencies);
+            BuildIt(nodes);
         }
 
-        private Dictionary<byte, int> createFrequenciesFromSource()
+        private Dictionary<byte, int> CreateFrequenciesFromSource()
         {
             Dictionary<byte, int> frequencies = new Dictionary<byte, int>();
 
@@ -110,7 +115,7 @@ namespace Huffman
             return frequencies;
         }
 
-        private List<Node> createFrequencyNodes(Dictionary<byte, int> frequencies)
+        private List<Node> CreateFrequencyNodes(Dictionary<byte, int> frequencies)
         {
             List<Node> nodes = new List<Node>();
 
@@ -122,11 +127,13 @@ namespace Huffman
             return nodes;
         }
 
-        private void buildIt(List<Node> nodes)
+        private void BuildIt(List<Node> nodes)
         {
             while (nodes.Count > 1)
             {
-                List<Node> orderedNodes = nodes.OrderBy(node => node.GetFrequency()).ThenBy(node => node.GetSymbol()).ToList<Node>();
+                List<Node> orderedNodes = nodes.OrderBy(node => node.GetFrequency())
+                                                .ThenBy(node => node.GetSymbol())
+                                                .ToList<Node>();
 
                 if (orderedNodes.Count >= 2)
                 {
@@ -142,35 +149,61 @@ namespace Huffman
             this.root = nodes.FirstOrDefault();
         }
 
-        public void print()
+        public void Print()
         {
             if (this.root != null)
             {
-                print(this.root, "");
+                PrintRecursive(this.root, "");
             }
         }
 
-        private void print(Node node, string pre)
+        private void PrintRecursive(Node node, string outputPrefix)
         {
             if (node.IsLeaf())
             {
-                printLeaf(node);
+                PrintLeaf(node);
             }
             else
             {
-                Console.Write("{0,4} -+- ", node.GetFrequency());
+                Console.Write("{0," + MaxFrequencyLength + "}{1}", node.GetFrequency(), FrequencySeparator);
 
-                pre = pre + "      ";
-                print(node.GetRightChild(), pre + "|  ");
-                Console.WriteLine("{0}|", pre);
-                Console.Write("{0}`- ", pre);
-                print(node.GetLeftChild(), pre + "   ");
+                outputPrefix = IncreasePrefix(outputPrefix);
+
+                PrintRecursive(node.GetRightChild(), GetRightChildPrefix(outputPrefix));
+
+                PrintLineSeparator(outputPrefix);
+
+                PrintRecursive(node.GetLeftChild(), GetLeftChildPrefix(outputPrefix));
             }
         }
 
-        private void printLeaf(Node node)
+        private string IncreasePrefix(string outputPrefix)
         {
-            if (isPrintable(node.GetSymbol()))
+            string space = new string(' ', MaxFrequencyLength);
+            return outputPrefix + space;
+
+        }
+
+        private string GetRightChildPrefix(string outputPrefix)
+        {
+            return outputPrefix + LineSeparator;
+        }
+
+        private string GetLeftChildPrefix(string outputPrefix)
+        {
+            string space = new String(' ', MaxFrequencyLength + 1);
+            return outputPrefix + space;
+        }
+
+        private void PrintLineSeparator(string outputPrefix)
+        {
+            Console.WriteLine(outputPrefix + LineSeparator);
+            Console.Write(outputPrefix + LeftChildSeparator);
+        }
+
+        private void PrintLeaf(Node node)
+        {
+            if (IsPrintable(node.GetSymbol()))
             {
                 Console.WriteLine(" ['{0}':{1}]", (char)node.GetSymbol(), node.GetFrequency());
             }
@@ -180,15 +213,15 @@ namespace Huffman
             }
         }
 
-        private bool isPrintable(byte b)
+        private bool IsPrintable(byte charAsciiCode)
         {
-            return ((b >= SpaceAsciiCode) && (b <= TildeAsciiCode));
+            return ((charAsciiCode >= SpaceAsciiCode) && (charAsciiCode <= TildeAsciiCode));
         }
     }
 
     class Loader
     {
-        public static string sourceFromFile(string fileName)
+        public static string SourceFromFile(string fileName)
         {
             string source = "";
 
@@ -228,13 +261,13 @@ namespace Huffman
                 Program.Error("Argument Error");
             }
 
-            string source = Loader.sourceFromFile(args[0]);
+            string source = Loader.SourceFromFile(args[0]);
 
             if (source.Length > 0)
             {
                 Tree huffmanTree = new Tree(source);
                 Console.WriteLine();
-                huffmanTree.print();
+                huffmanTree.Print();
                 Console.WriteLine();
             }
 

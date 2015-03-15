@@ -1,3 +1,9 @@
+Konvencie 
+=======
+* metody/funkcie prepisane na prve velke pismeno podla odporucani
+* osobne by sme radsej nechali metody/funkcie s malym pismenom, kedze je to
+  podla nas viac zauzivane a lepsie sa to cita v kode
+
 Namespace HuffmanskeKapky 
 =======
 * premenovane na Huffman
@@ -97,7 +103,7 @@ Metoda postavStrom()
 Metody VypisStrom a pretazenie
 -----------
 * premenovana na print()
-* pretazenie tejto metody privatnou s 2 parametrami
+* pretazena metoda premenovana na PrintRecursive()
 * vyhodena zbytocna premenna bylVlevo - nema tam vyznam
 * rozdelene do viacerych funkcii
 * vytvorenie konstant pre hodnoty 32 a 0x7E, ktore nic nehovoria(vytvorenie 
