@@ -158,7 +158,6 @@ namespace Huffman
             }
             else
             {
-                //TODO: nejak opravit hardcoded konstanty
                 Console.Write("{0,4} -+- ", node.GetFrequency());
 
                 pre = pre + "      ";
