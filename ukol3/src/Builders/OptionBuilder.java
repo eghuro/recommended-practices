@@ -19,7 +19,7 @@ public class OptionBuilder {
 	 * @see Option
 	 */
 	public static Option create(String name) {
-		return null;		
+		return new Option(name);		
 	}
 
 }

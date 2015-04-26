@@ -1,14 +1,22 @@
 package Elements;
 
 public abstract class Argument {
-	
+        // private final String NAME;
+        
+        private String description;
+        private String defaultValue;
+        private String separator;
+        private boolean acceptList;
+        private int minVal;
+        private int maxVal;
+    
 	/**
-	 * Vytvori argument s danym nazvom. 
+	 * Vytvori argument 
+         // s danym nazvom. 
 	 *
-	 * @param  name	nazov argumentu
+	 // * @param  name	nazov argumentu
 	 */	
-	public Argument(String name) {
-
+	public Argument() {
 	}
 	
 	/**
@@ -18,7 +26,8 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */	
 	public Argument setDescription(String description) {
-		return null;
+                this.description = description;
+		return this;
 	}
 	
 	/**
@@ -28,8 +37,13 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */	
 	public Argument setDefaultValue(String value) {
-		return null;
+                this.defaultValue = value;
+		return this;
 	}
+        
+        public String getDefaultValue() {
+            return this.defaultValue;
+        }
 	
 	/**
 	 * Nastavi, ze ci argument akceptuje niekolko(zoznam) hodnot oddelenych 
@@ -39,7 +53,8 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */	
 	public Argument acceptListOfValues(boolean accept) {
-		return null;
+                this.acceptList = accept;
+		return this;
 	}
 	
 	/**
@@ -49,7 +64,8 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */	
 	public Argument setListSeparator(String separator) {
-		return null;
+                this.separator = separator;
+		return this;
 	}	
 	
 	/**
@@ -59,7 +75,8 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
 	public Argument minListValues(int number) {
-		return null;
+                this.minVal = number;
+		return this;
 	}
 	
 	/**
@@ -69,7 +86,10 @@ public abstract class Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
 	public Argument maxListValues(int number) {
-		return null;
+                this.maxVal = number;
+		return this;
 	}
+        
+        public abstract boolean accept(String value);
 	
 }

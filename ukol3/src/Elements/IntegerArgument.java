@@ -2,9 +2,9 @@ package Elements;
 
 
 public class IntegerArgument extends Argument {
+        private int minValue, maxValue;
 
-	public IntegerArgument(String name) {
-		super(name);
+	public IntegerArgument() {
 	}
 	
 	/**
@@ -13,8 +13,9 @@ public class IntegerArgument extends Argument {
 	 * @param  value	min. hodnota
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMinValue(String value) {
-		return null;
+	public Argument setMinValue(int value) {
+                this.minValue = value;
+		return this;
 	}
 	
 	/**
@@ -23,8 +24,20 @@ public class IntegerArgument extends Argument {
 	 * @param  value	max. hodnota
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMaxValue(String value) {
-		return null;
+	public Argument setMaxValue(int value) {
+                this.maxValue = value;
+		return this;
 	}
+
+    @Override
+    public boolean accept(String value) {
+            System.out.println("Integer");
+            try{
+                Integer.parseInt(value);
+            }catch(NumberFormatException e) {
+                return false;
+            }
+            return true;
+    }
 
 }

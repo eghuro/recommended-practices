@@ -3,9 +3,13 @@ package Elements;
 
 public class BooleanArgument extends Argument {
 
-	public BooleanArgument(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
+	public BooleanArgument() {
 	}
+
+    @Override
+    public boolean accept(String value) {
+        System.out.println("Boolean");
+        return value.toLowerCase().equals("true");
+    }
 
 }

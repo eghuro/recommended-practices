@@ -18,7 +18,7 @@ public class ArgumentBuilder {
 	 * @see StringArgument
 	 */	
 	public static StringArgument stringType() {
-		return null;
+		return new StringArgument();
 	}
 	
 	/**
@@ -28,7 +28,7 @@ public class ArgumentBuilder {
 	 * @see IntegerArgument
 	 */	
 	public static IntegerArgument integerType() {
-		return null;
+		return new IntegerArgument();
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class ArgumentBuilder {
 	 * @see EnumeratedArgument
 	 */	
 	public static EnumeratedArgument enumType() {
-		return null;
+		return new EnumeratedArgument();
 	}	
 	
 	/**

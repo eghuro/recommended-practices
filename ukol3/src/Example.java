@@ -8,15 +8,13 @@ public class Example {
 	public static void main(String[] args) {
 		CommandLine line = new CommandLine();
 
-		Option verbose = OptionBuilder.create("v")
-										.setEquivalentName("verbose");
+		Option verbose = OptionBuilder.create("v").setEquivalentName("verbose");
 		
 		line.registerOption(verbose);
 		
-		Option size = OptionBuilder.create("s")
-									.setEquivalentName("size")
-									.setArgument(ArgumentBuilder.integerType()
-																	.setDefaultValue("42"));
+		Option size = OptionBuilder.create("s").setEquivalentName("size")
+                        .setArgument(ArgumentBuilder.integerType()
+                        .setDefaultValue("42"));
 				
 		line.registerOption(size);
 		

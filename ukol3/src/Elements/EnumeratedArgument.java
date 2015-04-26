@@ -1,11 +1,13 @@
 package Elements;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class EnumeratedArgument extends Argument {
-
-	public EnumeratedArgument(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
+        private final Set<String> VALUES;
+	public EnumeratedArgument() {
+                this.VALUES = new HashSet<>();
 	}
 	
 	/**
@@ -15,7 +17,14 @@ public class EnumeratedArgument extends Argument {
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
 	public Argument setPossibleValue(String value) {
-		return null;
+                VALUES.add(value);
+		return this;
 	}
+
+    @Override
+    public boolean accept(String value) {
+        System.out.println("Enum");
+        return VALUES.contains(value);
+    }
 
 }

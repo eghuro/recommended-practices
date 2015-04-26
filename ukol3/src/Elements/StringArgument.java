@@ -2,9 +2,9 @@ package Elements;
 
 
 public class StringArgument extends Argument {
-
-	public StringArgument(String name) {
-		super(name);
+        private int minLength, maxLength;
+        
+	public StringArgument() {
 	}
 	
 	/**
@@ -13,8 +13,9 @@ public class StringArgument extends Argument {
 	 * @param  minLength	min. dlzka
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMinLength(String minLength) {
-		return null;
+	public Argument setMinLength(int minLength) {
+                this.minLength = minLength;
+		return this;
 	}
 	
 	/**
@@ -23,8 +24,14 @@ public class StringArgument extends Argument {
 	 * @param  maxLength	max. dlzka
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMaxLength(String maxLength) {
-		return null;
+	public Argument setMaxLength(int maxLength) {
+                this.maxLength = maxLength;
+		return this;
 	}
 
+        @Override
+        public boolean accept(String value) {
+            System.out.println("String");
+            return value.startsWith("\"") && value.endsWith("\"");
+        }
 }

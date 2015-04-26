@@ -55,4 +55,11 @@ public class ParsedCommandLine {
 		return null;
 	}
 
+        public void setCommonArgument(String argument) {
+            
+        }
+        
+        public void setOption(String option, String value) {
+            
+        }
 }
