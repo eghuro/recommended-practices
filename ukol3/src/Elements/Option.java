@@ -5,11 +5,13 @@ import java.util.Set;
 
 public class Option {
         private final Set<String> SYNONYMS;
+        private final String NAME;
         private final boolean REQUIERD;
         private final String DESCRIPTION;
         private final Argument ARGUMENT;
         
         private Option(OptionBuilder builder) {
+            this.NAME = builder.NAME;
             this.ARGUMENT = builder.argument;
             this.DESCRIPTION = builder.description;
             this.REQUIERD = builder.required;
@@ -24,13 +26,28 @@ public class Option {
             return this.ARGUMENT;
         }
         
+        public boolean isRequired() {
+            return this.REQUIERD;
+        }
+        
+        public String getDesription() {
+            return this.DESCRIPTION;
+        }
+        
+        @Override
+        public String toString() {
+            return this.NAME;
+        }
+        
         public static class OptionBuilder {
             private final Set<String> SYNONYMS;
+            private final String NAME;
             private boolean required;
             private String description;
             private Argument argument;
             
             public OptionBuilder(String name) {
+                this.NAME = name;
                 this.SYNONYMS = new HashSet<>();
                 this.SYNONYMS.add(name);
                 this.argument = null;

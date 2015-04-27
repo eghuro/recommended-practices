@@ -9,12 +9,13 @@ public class Example {
 	public static void main(String[] args) {
 		CommandLine line = new CommandLine();
 
-                Option verbose = new Option.OptionBuilder("v").setEquivalentName("verbose").build();
+                Option verbose = new Option.OptionBuilder("v").setEquivalentName("verbose")
+                        .setDescription("be verbose").build();
 		
 		line.registerOption(verbose);
 		
-                Option size = new Option.OptionBuilder("s").setEquivalentName("size")
-                        .setArgument(ArgumentBuilder.integerType()
+                Option size = new Option.OptionBuilder("s").setRequired(true).setEquivalentName("size")
+                        .setDescription("size").setArgument(ArgumentBuilder.integerType()
                         .setDefaultValue("42")).build();
 				
 		line.registerOption(size);

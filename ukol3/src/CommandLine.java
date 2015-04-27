@@ -1,7 +1,9 @@
 import Elements.Argument;
 import Elements.Option;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,8 +32,33 @@ public class CommandLine {
      *
      * @return text pouzitia
      */	
-    public String getUsage() {
-        return null;
+    public String getUsage() {        
+        StringBuilder usage = new StringBuilder();
+        
+        usage.append("Usage:\n");
+        
+        Set<Option> options = new HashSet<>();
+        options.addAll(OPTIONS.values());
+        options.stream().map((option) -> {
+            if(!option.isRequired()) {
+                usage.append("[");
+            }
+            return option;
+        }).map((option) -> {
+            option.getNames().stream().forEach((optionString) -> {
+                usage.append("-").append(optionString).append(" | ");
+            });
+            return option;
+        }).map((option) -> {
+            usage.delete(usage.length()-3, usage.length());
+            if(!option.isRequired()) {
+                usage.append("]");
+            }
+            return option;
+        }).forEach((option) -> {
+            usage.append("\t").append(option.getDesription()).append("\n");
+        });
+        return usage.toString();
     }
         
     private enum State { 
@@ -67,7 +94,13 @@ public class CommandLine {
             }
             argumentIndex++;
         }
-        OPTIONS.keySet().stream().filter((optionName) -> (!result.hasOption(optionName))).map((optionName) -> OPTIONS.get(optionName)).forEach((option) -> {
+        
+        HashSet<Option> options = new HashSet<>();
+        options.addAll(OPTIONS.values());
+        options.stream().filter((option) -> (option.isRequired())).filter((option) -> (!result.hasOption(option.toString()))).forEach((Option option) -> {
+            result.setError("Required option not present: "+option.toString() + ((option.getDesription().length() > 0) ?" ("+option.getDesription()+")":null));
+        });
+        options.stream().filter((option) -> (!result.hasOption(option.toString()))).forEach((option) -> {
             result.setOption(option, option.getArgument().getDefaultValue());
         });
         return result;
