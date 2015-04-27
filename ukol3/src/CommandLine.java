@@ -81,6 +81,10 @@ public class CommandLine {
         return result;
     }
 
+    private enum State { 
+        OPTION, ARGUMENT
+    }
+    
     private void checkRequiredOptionsPresent(ParsedCommandLine result) {
         OPTIONS.stream().filter((option) -> (option.isRequired())).filter((option) -> (!result.hasOption(option.toString()))).forEach((Option option) -> {
             requiredOptionNotPresentError(result, option);
@@ -91,12 +95,6 @@ public class CommandLine {
         OPTIONS.stream().filter((option) -> (!result.hasOption(option.toString()))).forEach((option) -> {
             result.setOption(option, option.getArgument().getDefaultValue());
         });
-    }
-
-    private HashSet<Option> filterOptions(Map<String, Option> map) {
-        HashSet<Option> set = new HashSet<>();
-        set.addAll(map.values());
-        return set;
     }
 
     private void processArguments(String[] args, ParsedCommandLine result) {
@@ -116,29 +114,28 @@ public class CommandLine {
                     processCommonArgument(argument, result);
                     state = State.ARGUMENT;
                 } else {
-                    processLongOption(argument, result);
+                    parseLongOption(argument, result);
                 }
             }
             argumentIndex++;
         }
     }
         
-    private enum State { 
-        OPTION, ARGUMENT
-    }
-        
     private void processCommonArgument(String argument, ParsedCommandLine result) {
         result.setCommonArgument(argument);
     }
         
-    private void processLongOption(String argument, ParsedCommandLine result) {
+    private void parseLongOption(String argument, ParsedCommandLine result) {
         final String longOptionRegex = "--([a-zA-Z0-9]+)(=([a-zA-Z0-9]+))?";
         Pattern longArgument = Pattern.compile(longOptionRegex);
         Matcher matcher = longArgument.matcher(argument);
         
         boolean found = false;
         while(matcher.find()) {
-            parseLongOption(matcher, result);
+            String optionName = matcher.group(1);
+            String optionValue = matcher.group(3);
+            
+            processLongOption(optionName, optionValue, result);
             found = true;
         }
         if(!found) {
@@ -146,10 +143,7 @@ public class CommandLine {
         }
     }
         
-    private void parseLongOption(Matcher matcher, ParsedCommandLine result) {
-        String optionName = matcher.group(1);
-        String optionValue = matcher.group(3);
-
+    private void processLongOption(String optionName, String optionValue, ParsedCommandLine result) {
         Option option = OPTIONS_BY_NAME.get(optionName);
         if (option != null) {
             Argument optionArgument = option.getArgument();
