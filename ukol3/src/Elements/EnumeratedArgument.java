@@ -6,24 +6,39 @@ import java.util.Set;
 
 public class EnumeratedArgument extends Argument {
         private final Set<String> VALUES;
-	public EnumeratedArgument() {
-                this.VALUES = new HashSet<>();
+	public EnumeratedArgument(EnumeratedArgumentBuilder builder) {
+            super(builder);
+            this.VALUES = builder.VALUES;
 	}
-	
-	/**
+        
+    @Override
+    public boolean accept(String value) {
+        return VALUES.contains(value);
+    }
+    
+    protected static class EnumeratedArgumentBuilder extends Argument.ArgumentBuilder {
+        private final Set<String> VALUES;
+        
+        protected EnumeratedArgumentBuilder() {
+            this.VALUES = new HashSet<>();
+        }
+        
+        /**
 	 * Nastavi mozne vymenovane(enum) hodnoty. 
 	 *
 	 * @param  value	hodnota
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setPossibleValue(String value) {
+	public EnumeratedArgumentBuilder setPossibleValue(String value) {
                 VALUES.add(value);
 		return this;
 	}
-
-    @Override
-    public boolean accept(String value) {
-        return VALUES.contains(value);
+        
+        @Override
+        public Argument build() {
+            return new EnumeratedArgument(this);
+        }
+        
     }
 
 }

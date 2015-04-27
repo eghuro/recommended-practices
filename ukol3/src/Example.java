@@ -1,5 +1,4 @@
-import Builders.ArgumentBuilder;
-import Builders.OptionBuilder;
+import Elements.ArgumentBuilderFactory;
 import Elements.Option;
 import java.util.Arrays;
 
@@ -15,8 +14,8 @@ public class Example {
 		line.registerOption(verbose);
 		
                 Option size = new Option.OptionBuilder("s").setRequired(true).setEquivalentName("size")
-                        .setDescription("size").setArgument(ArgumentBuilder.integerType()
-                        .setDefaultValue("42")).build();
+                        .setDescription("size").setArgument(ArgumentBuilderFactory.getIntegerTypeBuilder().setDefaultValue("42").build()).build();
+
 				
 		line.registerOption(size);
 		

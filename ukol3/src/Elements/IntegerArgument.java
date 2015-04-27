@@ -1,19 +1,36 @@
 package Elements;
 
-
 public class IntegerArgument extends Argument {
-        private int minValue, maxValue;
+    private final int minValue, maxValue;
 
-	public IntegerArgument() {
-	}
-	
-	/**
+    public IntegerArgument(IntegerArgumentBuilder builder) {
+        super(builder);
+        this.minValue = builder.minValue;
+        this.maxValue = builder.maxValue;
+    }
+
+    @Override
+    public boolean accept(String value) {
+        try{
+            Integer.parseInt(value);
+        }catch(NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    public static class IntegerArgumentBuilder extends Argument.ArgumentBuilder {
+        private int minValue, maxValue;
+        
+        protected IntegerArgumentBuilder() {}
+        
+        /**
 	 * Nastavi minimalnu hodnotu cisla(integeru).
 	 *
 	 * @param  value	min. hodnota
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMinValue(int value) {
+	public IntegerArgumentBuilder setMinValue(int value) {
                 this.minValue = value;
 		return this;
 	}
@@ -24,19 +41,14 @@ public class IntegerArgument extends Argument {
 	 * @param  value	max. hodnota
 	 * @return vrati sam seba (kvoli chain of responsibility)
 	 */
-	public Argument setMaxValue(int value) {
+	public IntegerArgumentBuilder setMaxValue(int value) {
                 this.maxValue = value;
 		return this;
 	}
-
-    @Override
-    public boolean accept(String value) {
-            try{
-                Integer.parseInt(value);
-            }catch(NumberFormatException e) {
-                return false;
-            }
-            return true;
+        
+        @Override
+        public Argument build() {
+            return new IntegerArgument(this);
+        }
     }
-
 }

@@ -5,9 +5,10 @@ import Elements.EnumeratedArgument;
 import Elements.IntegerArgument;
 import Elements.StringArgument;
 
+@Deprecated
 public class ArgumentBuilder {
 
-	private ArgumentBuilder() {
+	public ArgumentBuilder() {
 	
 	}
 	
@@ -18,7 +19,7 @@ public class ArgumentBuilder {
 	 * @see StringArgument
 	 */	
 	public static StringArgument stringType() {
-		return new StringArgument();
+		return null;
 	}
 	
 	/**
@@ -28,7 +29,7 @@ public class ArgumentBuilder {
 	 * @see IntegerArgument
 	 */	
 	public static IntegerArgument integerType() {
-		return new IntegerArgument();
+		return null;
 	}
 	
 	/**
@@ -38,7 +39,7 @@ public class ArgumentBuilder {
 	 * @see EnumeratedArgument
 	 */	
 	public static EnumeratedArgument enumType() {
-		return new EnumeratedArgument();
+		return null;
 	}	
 	
 	/**
