@@ -1,6 +1,5 @@
 import Elements.Argument;
 import Elements.Option;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -21,10 +20,9 @@ public class CommandLine {
      * @see Option
      */	
     public void registerOption(Option option) {
-        for (String name : option.getNames()) {
+        option.getNames().stream().forEach((name) -> {
             OPTIONS.put(name, option);
-            System.out.println("Option: "+name);
-        }
+        });
     }
 	
     /**
@@ -48,8 +46,6 @@ public class CommandLine {
      * @see ParsedCommandLine
      */
     public ParsedCommandLine parse(String[] args) {
-        System.out.println(Arrays.toString(args));
-                
         ParsedCommandLine result = new ParsedCommandLine();
         State state = State.OPTION;            
         for(int argumentIndex = 0; argumentIndex < args.length;) {
@@ -71,11 +67,13 @@ public class CommandLine {
             }
             argumentIndex++;
         }
+        OPTIONS.keySet().stream().filter((optionName) -> (!result.hasOption(optionName))).map((optionName) -> OPTIONS.get(optionName)).forEach((option) -> {
+            result.setOption(option, option.getArgument().getDefaultValue());
+        });
         return result;
     }
         
     private void processCommonArgument(String argument, ParsedCommandLine result) {
-        System.out.println("Common argument: "+argument);
         result.setCommonArgument(argument);
     }
         
@@ -98,17 +96,13 @@ public class CommandLine {
         String optionName = matcher.group(1);
         String optionValue = matcher.group(3);
 
-        System.out.println("Option name: "+optionName);
-        System.out.println("Option value: "+optionValue);
-
         Option option = OPTIONS.get(optionName);
         if (option != null) {
-            System.out.println("Long option: "+optionName);
             Argument optionArgument = option.getArgument();
             if (optionValue == null) {
-                result.setOption(optionName, optionArgument.getDefaultValue());
+                result.setOption(option, optionArgument.getDefaultValue());
             } else if (optionArgument.accept(optionValue)) {
-                result.setOption(optionName, optionValue);
+                result.setOption(option, optionValue);
             } else {
                 System.out.println("ERROR");
             }
@@ -121,17 +115,17 @@ public class CommandLine {
        String optionName = argument.substring(1);
         Option option = OPTIONS.get(optionName);
         if (option != null) {
-            System.out.println("Option : "+optionName);
             Argument optionArgument = option.getArgument();
             if (optionArgument != null) {
                 argumentIndex++;
                 String parameter = args[argumentIndex];
-                System.out.println("Paramater: "+optionName+" : "+parameter);
                 if (optionArgument.accept(parameter)) {
-                    result.setOption(optionName, parameter);
+                    result.setOption(option, parameter);
                 } else {
                     System.out.println("ERROR1: "+parameter);
                 }
+            } else {
+                result.setOption(option, "");
             }
         } else {
             System.out.println("ERROR0: "+ optionName);

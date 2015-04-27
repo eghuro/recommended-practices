@@ -1,9 +1,16 @@
 import Elements.Option;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ParsedCommandLine {
-
+    private final HashMap<Option, String> OPTIONS;
+    private final LinkedList<String> COMMONS;
+    private final StringBuilder ERRORS;
+    
 	public ParsedCommandLine() {
-		
+            this.OPTIONS = new HashMap<>();
+            this.COMMONS = new LinkedList<>();
+            this.ERRORS = new StringBuilder();
 	}
 	
 	/**
@@ -13,7 +20,7 @@ public class ParsedCommandLine {
 	 * @return info, ze ci sa nachadza vlasnost v prikazovom riadku
 	 */	
 	public boolean hasOption(String optionName) {
-		return false;
+            return  (OPTIONS.keySet().stream().anyMatch((option) -> (option.getNames().contains(optionName))));
 	}
 
 	/**
@@ -23,7 +30,12 @@ public class ParsedCommandLine {
 	 * @return hodnota argumentu pre danu vlastnost z prikazoveho riadku
 	 */		
 	public String getOptionValue(String optionName) {
-		return null;
+            for (Option option : OPTIONS.keySet()) {
+                if(option.getNames().contains(optionName)) {
+                    return OPTIONS.get(option);
+                }
+            }
+            return null;
 	}
 
 	/**
@@ -32,7 +44,7 @@ public class ParsedCommandLine {
 	 * @return  uspech parsovania
 	 */		
 	public boolean success() {
-		return false;
+		return ERRORS.length()==0;
 	}
 	
 	/**
@@ -42,7 +54,7 @@ public class ParsedCommandLine {
 	 * @return  zoznam chyb
 	 */	  
 	public String getErrors() {
-		return null;
+		return ERRORS.toString();
 	}
 	
 	/**
@@ -52,14 +64,18 @@ public class ParsedCommandLine {
 	 * @return  zoznam argumentov
 	 */	       
 	public String[] getCommonArguments() {
-		return null;
+		return COMMONS.toArray(new String[0]);
 	}
 
         public void setCommonArgument(String argument) {
-            
+            COMMONS.addLast(argument);
         }
         
-        public void setOption(String option, String value) {
-            
+        public void setOption(Option option, String value) {
+            OPTIONS.put(option, value);
+        }
+        
+        public void setError(String error) {
+            ERRORS.append(error).append("\n");
         }
 }

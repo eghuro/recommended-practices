@@ -1,6 +1,7 @@
 import Builders.ArgumentBuilder;
 import Builders.OptionBuilder;
 import Elements.Option;
+import java.util.Arrays;
 
 
 public class Example {
@@ -21,13 +22,14 @@ public class Example {
 		ParsedCommandLine parsedOptions = line.parse(args);  
 		
 		if (parsedOptions.success()) {
-			
-			String hasOptionVerbose = (parsedOptions.hasOption("verbose"))? "true" : "false";
+                    
+                        String hasOptionVerbose = (parsedOptions.hasOption("verbose") ? "true" : "false");
+                        
 			System.out.println("verbose =" + hasOptionVerbose );
 			
 			System.out.println("size =" + parsedOptions.getOptionValue("size") );
 			
-			System.out.println("args =" + parsedOptions.getCommonArguments() );
+			System.out.println("args =" + Arrays.toString(parsedOptions.getCommonArguments()) );
 		}
 		else {
 			System.out.println(parsedOptions.getErrors());
