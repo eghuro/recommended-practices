@@ -1,4 +1,5 @@
-import Elements.ArgumentBuilderFactory;
+import Elements.Argument;
+import Elements.IntegerArgument;
 import Elements.Option;
 import java.util.Arrays;
 
@@ -13,10 +14,10 @@ public class Example {
 		
 		line.registerOption(verbose);
 		
-                Option size = new Option.OptionBuilder("s").setRequired(true).setEquivalentName("size")
-                        .setDescription("size").setArgument(ArgumentBuilderFactory.getIntegerTypeBuilder().setDefaultValue("42").build()).build();
-
-				
+                Option size = new Option.OptionBuilder("s").setRequired(true)
+                        .setEquivalentName("size").setDescription("size")
+                        .setArgument(new IntegerArgument.IntegerArgumentBuilder().setDefaultValue("42").build())
+                        .build();
 		line.registerOption(size);
 		
 		ParsedCommandLine parsedOptions = line.parse(args);  

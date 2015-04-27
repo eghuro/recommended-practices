@@ -22,8 +22,6 @@ public class IntegerArgument extends Argument {
     public static class IntegerArgumentBuilder extends Argument.ArgumentBuilder {
         private int minValue, maxValue;
         
-        protected IntegerArgumentBuilder() {}
-        
         /**
 	 * Nastavi minimalnu hodnotu cisla(integeru).
 	 *

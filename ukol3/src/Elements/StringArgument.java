@@ -18,8 +18,6 @@ public class StringArgument extends Argument {
         public static class StringArgumentBuilder extends Argument.ArgumentBuilder {
             private int minLength, maxLength;
             
-            protected StringArgumentBuilder() {}
-            
             /**
             * Nastavi minimalnu dlzku retazca (stringu) - argumentu.
             *

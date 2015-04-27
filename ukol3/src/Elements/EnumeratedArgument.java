@@ -16,10 +16,10 @@ public class EnumeratedArgument extends Argument {
         return VALUES.contains(value);
     }
     
-    protected static class EnumeratedArgumentBuilder extends Argument.ArgumentBuilder {
+    public static class EnumeratedArgumentBuilder extends Argument.ArgumentBuilder {
         private final Set<String> VALUES;
         
-        protected EnumeratedArgumentBuilder() {
+        public EnumeratedArgumentBuilder() {
             this.VALUES = new HashSet<>();
         }
         

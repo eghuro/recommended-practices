@@ -1,8 +1,6 @@
 package Elements;
 
 public abstract class Argument {
-        // private final String NAME;
-        
         private final String description;
         private final String defaultValue;
         private final String separator;
@@ -39,7 +37,7 @@ public abstract class Argument {
             private int minVal;
             private int maxVal;
             
-            public ArgumentBuilder(){}
+            protected ArgumentBuilder(){}
             
             public abstract Argument build();
         

@@ -12,14 +12,10 @@ public class BooleanArgument extends Argument {
         return value.toLowerCase().equals("true");
     }
     
-    protected static class BooleanArgumentBuilder extends Argument.ArgumentBuilder {
-        protected BooleanArgumentBuilder() {}
-        
+    public static class BooleanArgumentBuilder extends Argument.ArgumentBuilder {   
         @Override
         public Argument build() {
             return new BooleanArgument(this);
-        }
-        
+        }   
     }
-
 }
