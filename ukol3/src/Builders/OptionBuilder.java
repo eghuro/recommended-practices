@@ -3,7 +3,7 @@ import Elements.Argument;
 import Elements.BooleanArgument;
 import Elements.Option;
 
-
+@Deprecated
 public class OptionBuilder {
 
 	private OptionBuilder() {
@@ -19,7 +19,8 @@ public class OptionBuilder {
 	 * @see Option
 	 */
 	public static Option create(String name) {
-		return new Option(name);		
+		//return new Option(name);		
+                return null;
 	}
 
 }
