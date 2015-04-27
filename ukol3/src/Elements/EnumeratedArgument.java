@@ -23,7 +23,6 @@ public class EnumeratedArgument extends Argument {
 
     @Override
     public boolean accept(String value) {
-        System.out.println("Enum");
         return VALUES.contains(value);
     }
 

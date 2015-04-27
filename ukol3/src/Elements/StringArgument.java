@@ -31,7 +31,6 @@ public class StringArgument extends Argument {
 
         @Override
         public boolean accept(String value) {
-            System.out.println("String");
             return value.startsWith("\"") && value.endsWith("\"");
         }
 }

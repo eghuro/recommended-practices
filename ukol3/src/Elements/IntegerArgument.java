@@ -31,7 +31,6 @@ public class IntegerArgument extends Argument {
 
     @Override
     public boolean accept(String value) {
-            System.out.println("Integer");
             try{
                 Integer.parseInt(value);
             }catch(NumberFormatException e) {

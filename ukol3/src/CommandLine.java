@@ -98,7 +98,7 @@ public class CommandLine {
         HashSet<Option> options = new HashSet<>();
         options.addAll(OPTIONS.values());
         options.stream().filter((option) -> (option.isRequired())).filter((option) -> (!result.hasOption(option.toString()))).forEach((Option option) -> {
-            result.setError("Required option not present: "+option.toString() + ((option.getDesription().length() > 0) ?" ("+option.getDesription()+")":null));
+            requiredOptionNotPresentError(result, option);
         });
         options.stream().filter((option) -> (!result.hasOption(option.toString()))).forEach((option) -> {
             result.setOption(option, option.getArgument().getDefaultValue());
@@ -121,7 +121,7 @@ public class CommandLine {
             found = true;
         }
         if(!found) {
-            System.out.println("ERROR");
+            unknownParameterError(result, argument);
         }
     }
         
@@ -137,10 +137,10 @@ public class CommandLine {
             } else if (optionArgument.accept(optionValue)) {
                 result.setOption(option, optionValue);
             } else {
-                System.out.println("ERROR");
+                typeMismatchError(result,optionName,optionValue);
             }
         } else {
-            System.out.println("ERROR");
+            unknownParameterError(result, optionName);
         }
     }
         
@@ -155,14 +155,26 @@ public class CommandLine {
                 if (optionArgument.accept(parameter)) {
                     result.setOption(option, parameter);
                 } else {
-                    System.out.println("ERROR1: "+parameter);
+                    typeMismatchError(result, optionName, parameter);
                 }
             } else {
                 result.setOption(option, "");
             }
         } else {
-            System.out.println("ERROR0: "+ optionName);
+            unknownParameterError(result, optionName);
         }
         return argumentIndex;
+    }
+    
+    private void typeMismatchError(ParsedCommandLine result, String optionName, String optionValue) {
+        result.setError("Parameter type mismatch for "+optionName+" ("+optionValue+")");
+    }
+    
+    private void unknownParameterError(ParsedCommandLine result, String optionName) {
+        result.setError("Unknown parameter: "+optionName);
+    }
+    
+    private void requiredOptionNotPresentError(ParsedCommandLine result, Option option) {
+        result.setError("Required option not present: "+option.toString() + ((option.getDesription().length() > 0) ?" ("+option.getDesription()+")":null));
     }
 }
