@@ -1,9 +1,8 @@
-import Elements.Argument;
-import Elements.Option;
+import elements.Argument;
+import elements.Option;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,38 +10,34 @@ import java.util.regex.Pattern;
 public class CommandLine {
     private final Map<String, Option> OPTIONS_BY_NAME;
     private final HashSet<Option> OPTIONS;
-                
+
     public CommandLine() {
         this.OPTIONS_BY_NAME = new HashMap<>();
         this.OPTIONS = new HashSet<>();
     }
-	
+
     /**
-     * Zaregistrovanie vytvorenej vlastnosti.
-     *
-     * @param  option	option vytvorena vlasnost
-     * @see Option
-     */	
+    * Zaregistrovanie vytvorenej vlastnosti.
+    *
+    * @param option option vytvorena vlasnost
+    * @see Option
+    */
     public void registerOption(Option option) {
-        option.getNames().stream().forEach((name) -> {
+       option.getNames().stream().forEach((name) -> {
             OPTIONS_BY_NAME.put(name, option);
         });
         OPTIONS.add(option);
     }
-	
+
     /**
      * Vrati popis pouzitia (Helper) vlastnosti a argumentov.
      *
      * @return text pouzitia
-     */	
-    public String getUsage() {        
+     */
+    public String getUsage() {
         StringBuilder usage = new StringBuilder();
-        
         usage.append("Usage:\n");
-        
-        Set<Option> options = new HashSet<>();
-        options.addAll(OPTIONS_BY_NAME.values());
-        options.stream().map((option) -> {
+        OPTIONS.stream().map((option) -> {
             if(!option.isRequired()) {
                 usage.append("[");
             }
@@ -63,10 +58,10 @@ public class CommandLine {
         });
         return usage.toString();
     }
-    
+
     /**
      * Parsuje volby a argumenty prikazoveho riadka.
-     * 
+     *
      * @param args volby z prikazoveho riadka
      * @return vrati parsovany prikazovy riadok
      * @see ParsedCommandLine
@@ -74,17 +69,15 @@ public class CommandLine {
     public ParsedCommandLine parse(String[] args) {
         ParsedCommandLine result = new ParsedCommandLine();
         processArguments(args, result);
-        
         checkRequiredOptionsPresent(result);
         fillMissingOptionsWithDefaultValues(result);
-        
         return result;
     }
 
-    private enum State { 
+    private enum State {
         OPTION, ARGUMENT
     }
-    
+
     private void checkRequiredOptionsPresent(ParsedCommandLine result) {
         OPTIONS.stream().filter((option) -> (option.isRequired())).filter((option) -> (!result.hasOption(option.toString()))).forEach((Option option) -> {
             requiredOptionNotPresentError(result, option);
@@ -101,7 +94,7 @@ public class CommandLine {
         State state = State.OPTION;
         for(int argumentIndex = 0; argumentIndex < args.length;) {
             String argument = args[argumentIndex];
-                    
+
             if (state.equals(State.ARGUMENT)) {
                 processCommonArgument(argument, result);
             } else {
@@ -120,21 +113,19 @@ public class CommandLine {
             argumentIndex++;
         }
     }
-        
+
     private void processCommonArgument(String argument, ParsedCommandLine result) {
         result.setCommonArgument(argument);
     }
-        
+
     private void parseLongOption(String argument, ParsedCommandLine result) {
         final String longOptionRegex = "--([a-zA-Z0-9]+)(=([a-zA-Z0-9]+))?";
         Pattern longArgument = Pattern.compile(longOptionRegex);
         Matcher matcher = longArgument.matcher(argument);
-        
         boolean found = false;
         while(matcher.find()) {
             String optionName = matcher.group(1);
             String optionValue = matcher.group(3);
-            
             processLongOption(optionName, optionValue, result);
             found = true;
         }
@@ -142,7 +133,7 @@ public class CommandLine {
             unknownParameterError(result, argument);
         }
     }
-        
+
     private void processLongOption(String optionName, String optionValue, ParsedCommandLine result) {
         Option option = OPTIONS_BY_NAME.get(optionName);
         if (option != null) {
@@ -158,7 +149,7 @@ public class CommandLine {
             unknownParameterError(result, optionName);
         }
     }
-        
+
     private int processShortOption(String argument, ParsedCommandLine result, String[] args, int argumentIndex) {
        String optionName = argument.substring(1);
         Option option = OPTIONS_BY_NAME.get(optionName);
@@ -180,15 +171,15 @@ public class CommandLine {
         }
         return argumentIndex;
     }
-    
+
     private void typeMismatchError(ParsedCommandLine result, String optionName, String optionValue) {
         result.setError("Parameter type mismatch for "+optionName+" ("+optionValue+")");
     }
-    
+
     private void unknownParameterError(ParsedCommandLine result, String optionName) {
         result.setError("Unknown parameter: "+optionName);
     }
-    
+
     private void requiredOptionNotPresentError(ParsedCommandLine result, Option option) {
         result.setError("Required option not present: "+option.toString() + ((option.getDesription().length() > 0) ?" ("+option.getDesription()+")":null));
     }
