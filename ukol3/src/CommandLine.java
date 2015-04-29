@@ -21,8 +21,13 @@ public class CommandLine {
     *
     * @param option option vytvorena vlasnost
     * @see Option
+    * @throws NullPointerException
     */
-    public void registerOption(Option option) {
+    public final void registerOption(final Option option) {
+       if (option == null) {
+           throw new NullPointerException();
+       }
+       
        option.getNames().stream().forEach((name) -> {
             OPTIONS_BY_NAME.put(name, option);
         });
@@ -34,28 +39,40 @@ public class CommandLine {
      *
      * @return text pouzitia
      */
-    public String getUsage() {
+    public final String getUsage() {
         StringBuilder usage = new StringBuilder();
+        
         usage.append("Usage:\n");
         OPTIONS.stream().map((option) -> {
+            // hranata zavorka kolem nepovinnych options
             if(!option.isRequired()) {
                 usage.append("[");
             }
             return option;
         }).map((option) -> {
+            // vycet parametru: -p | --dlouhyParametr | --dalsiDlouhyParametr
             option.getNames().stream().forEach((optionString) -> {
-                usage.append("-").append(optionString).append(" | ");
+                usage.append("-");
+                if (optionString.length() > 1) {
+                    usage.append("-");
+                }
+                usage.append(optionString).append(" | ");
             });
             return option;
         }).map((option) -> {
+            // odmazat posledni " | "
             usage.delete(usage.length()-3, usage.length());
+            
+            // hranata zavorka kolem nepovinnych options
             if(!option.isRequired()) {
                 usage.append("]");
             }
             return option;
         }).forEach((option) -> {
+            // slovni popis
             usage.append("\t").append(option.getDesription()).append("\n");
         });
+        
         return usage.toString();
     }
 
@@ -65,12 +82,19 @@ public class CommandLine {
      * @param args volby z prikazoveho riadka
      * @return vrati parsovany prikazovy riadok
      * @see ParsedCommandLine
+     * @throws NullPointerException volby jsou null
      */
-    public ParsedCommandLine parse(String[] args) {
+    public final ParsedCommandLine parse(final String[] args) {
+        if (args == null) {
+            throw new NullPointerException("Arguments null");
+        }
+        
         ParsedCommandLine result = new ParsedCommandLine();
+        
         processArguments(args, result);
         checkRequiredOptionsPresent(result);
         fillMissingOptionsWithDefaultValues(result);
+        
         return result;
     }
 
@@ -79,29 +103,43 @@ public class CommandLine {
     }
 
     private void checkRequiredOptionsPresent(ParsedCommandLine result) {
-        OPTIONS.stream().filter((option) -> (option.isRequired())).filter((option) -> (!result.hasOption(option.toString()))).forEach((Option option) -> {
-            requiredOptionNotPresentError(result, option);
-        });
+        OPTIONS.stream()
+                .filter((option) -> (option.isRequired()))
+                .filter((option) -> (!result.hasOption(option.toString())))
+                .forEach((Option option) -> {
+                    // kazda option oznacena jako required, ktera neni nactena
+                    // se nahlasi jako error
+                    requiredOptionNotPresentError(result, option);
+                });
     }
 
     private void fillMissingOptionsWithDefaultValues(ParsedCommandLine result) {
-        OPTIONS.stream().filter((option) -> (!result.hasOption(option.toString()))).forEach((option) -> {
-            result.setOption(option, option.getArgument().getDefaultValue());
-        });
+        OPTIONS.stream()
+                .filter((option) -> (!result.hasOption(option.toString())))
+                .forEach((option) -> {
+                    result.setOption(
+                            option, 
+                            option.getArgument().getDefaultValue()
+                    );
+                });
     }
 
     private void processArguments(String[] args, ParsedCommandLine result) {
         State state = State.OPTION;
-        for(int argumentIndex = 0; argumentIndex < args.length;) {
+        int argumentIndex = 0;
+        
+        while (argumentIndex < args.length) {
             String argument = args[argumentIndex];
 
             if (state.equals(State.ARGUMENT)) {
                 processCommonArgument(argument, result);
             } else {
-                final String shortOptionRegex = "-[a-zA-Z0-9]{1}";
-                if (argument.matches(shortOptionRegex)) {
+                final String SHORT_OPTION_REGEX = "-[a-zA-Z0-9]{1}";
+                final String SEPARATOR = "--";
+                
+                if (argument.matches(SHORT_OPTION_REGEX)) {
                     argumentIndex = processShortOption(argument, result, args, argumentIndex);
-                } else if (argument.equals("--")) {
+                } else if (argument.equals(SEPARATOR)) {
                     state = State.ARGUMENT;
                 } else if (!argument.startsWith("-")) {
                     processCommonArgument(argument, result);
@@ -110,6 +148,7 @@ public class CommandLine {
                     parseLongOption(argument, result);
                 }
             }
+            
             argumentIndex++;
         }
     }
@@ -119,16 +158,19 @@ public class CommandLine {
     }
 
     private void parseLongOption(String argument, ParsedCommandLine result) {
-        final String longOptionRegex = "--([a-zA-Z0-9]+)(=([a-zA-Z0-9]+))?";
-        Pattern longArgument = Pattern.compile(longOptionRegex);
+        final String LONG_OPTION_REGEX = "--([a-zA-Z0-9]+)(=([a-zA-Z0-9]+))?";
+        Pattern longArgument = Pattern.compile(LONG_OPTION_REGEX);
         Matcher matcher = longArgument.matcher(argument);
         boolean found = false;
+        
         while(matcher.find()) {
             String optionName = matcher.group(1);
             String optionValue = matcher.group(3);
+            
             processLongOption(optionName, optionValue, result);
             found = true;
         }
+        
         if(!found) {
             unknownParameterError(result, argument);
         }
@@ -136,6 +178,7 @@ public class CommandLine {
 
     private void processLongOption(String optionName, String optionValue, ParsedCommandLine result) {
         Option option = OPTIONS_BY_NAME.get(optionName);
+        
         if (option != null) {
             Argument optionArgument = option.getArgument();
             if (optionValue == null) {
@@ -151,13 +194,16 @@ public class CommandLine {
     }
 
     private int processShortOption(String argument, ParsedCommandLine result, String[] args, int argumentIndex) {
-       String optionName = argument.substring(1);
+        String optionName = argument.substring(1);
         Option option = OPTIONS_BY_NAME.get(optionName);
+        
         if (option != null) {
             Argument optionArgument = option.getArgument();
+            
             if (optionArgument != null) {
                 argumentIndex++;
                 String parameter = args[argumentIndex];
+                
                 if (optionArgument.accept(parameter)) {
                     result.setOption(option, parameter);
                 } else {
@@ -169,11 +215,14 @@ public class CommandLine {
         } else {
             unknownParameterError(result, optionName);
         }
+        
         return argumentIndex;
     }
 
     private void typeMismatchError(ParsedCommandLine result, String optionName, String optionValue) {
-        result.setError("Parameter type mismatch for "+optionName+" ("+optionValue+")");
+        String err = "Parameter type mismatch for " +
+                optionName + " (" + optionValue + ")";
+        result.setError(err);
     }
 
     private void unknownParameterError(ParsedCommandLine result, String optionName) {
@@ -181,6 +230,8 @@ public class CommandLine {
     }
 
     private void requiredOptionNotPresentError(ParsedCommandLine result, Option option) {
-        result.setError("Required option not present: "+option.toString() + ((option.getDesription().length() > 0) ?" ("+option.getDesription()+")":null));
-    }
+        result.setError("Required option not present: " + option.toString() + 
+                ((option.getDesription().length() > 0) ? 
+                        (" ("+option.getDesription()+")") : null));
+    }   
 }

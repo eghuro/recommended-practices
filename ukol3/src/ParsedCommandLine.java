@@ -20,7 +20,8 @@ public class ParsedCommandLine {
     * @return info, ze ci sa nachadza vlasnost v prikazovom riadku
     */
     public boolean hasOption(String optionName) {
-        return  (OPTIONS.keySet().stream().anyMatch((option) -> (option.getNames().contains(optionName))));
+        return  (OPTIONS.keySet().stream()
+                .anyMatch((option) -> (option.getNames().contains(optionName))));
     }
 
     /**
