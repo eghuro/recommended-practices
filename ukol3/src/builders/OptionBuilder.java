@@ -32,7 +32,7 @@ public final class OptionBuilder {
 	}
 	
 	/**
-	 * Resets builder variables
+	 * Reset builder variables
 	 */
 	private static void reset() {
 		OptionBuilder.name = null;
@@ -43,7 +43,7 @@ public final class OptionBuilder {
 	}
 	
 	/**
-	 * Sets the name of the next option
+	 * Set the name of the next option
 	 * @param name option name
 	 * @return self (OptionBuilder)
 	 */
@@ -56,7 +56,7 @@ public final class OptionBuilder {
 	}
 	
 	/**
-	 * Sets the description of the next option
+	 * Set the description of the next option
 	 * @param description option description
 	 * @return self (OptionBuilder)
 	 */
