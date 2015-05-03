@@ -3,129 +3,179 @@ package elements;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Option.
- * @author alex
- */
 public final class Option {
-    private final Set<String> SYNONYMS;
-    private final String NAME;
-    private final boolean REQUIERD;
-    private final String DESCRIPTION;
-    private final Argument ARGUMENT;
+	/** Option name **/
+	private String name = "";
+	
+	/** Option synonyms **/
+    private Set<String> synonyms = new HashSet<>();
+    
+    /** Option description **/
+    private String description = "";
+    
+    /** Is option required? **/
+    private boolean required = false;
+    
+    /** Option argument object **/
+    private Argument argument = null;
 
     /**
-     * @param builder builder.
+     * Constructor for Option
+     * @param name option name
+     * @throws IllegalArgumentException
      */
-    private Option(final OptionBuilder builder) {
-        this.NAME = builder.NAME;
-        this.ARGUMENT = builder.argument;
-        this.DESCRIPTION = builder.description;
-        this.REQUIERD = builder.required;
-        this.SYNONYMS = builder.SYNONYMS;
+    public Option(String name) throws IllegalArgumentException {
+    	setName(name);
     }
-
+    
     /**
+     * Constructor for Option
+     * @param name option name
+     * @param description option description
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description) throws IllegalArgumentException {
+    	setName(name);
+    	setDescription(description);
+    }
+    
+    /**
+     * Constructor for Option
+     * @param name option name
+     * @param description option description
+     * @param required is option required
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description, boolean required) throws IllegalArgumentException {
+    	setName(name);
+    	setDescription(description);
+    	setRequired(required);
+    }
+    
+    /**
+     * Constructor for Option
+     * @param name option name
+     * @param description option description
+     * @param required is option required
+     * @param argument option Argument(object)
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description, boolean required, Argument argument) throws IllegalArgumentException {
+    	setName(name);
+    	setDescription(description);
+    	setRequired(required);
+    	setArgument(argument);
+    }
+    
+    /**
+     * Set option name
+     * @param name
+     * @throws IllegalArgumentException
+     */
+    private void setName(String name) throws IllegalArgumentException {
+    	if (name == null || name.length() == 0) {
+    		throw new IllegalArgumentException("Option name can't be empty.");
+    	}
+    	this.name = name;
+    }
+    
+    /**
+     * Set option name synonym
+     * @param name option name
+     * @throws IllegalArgumentException
+     */
+    public void addSynonym(String name) throws IllegalArgumentException {
+    	if (name == null || name.length() == 0) {
+    		throw new IllegalArgumentException("Option name can't be empty.");
+    	}
+    	synonyms.add(name);
+    }
+    
+    /**
+     * Set option name synonyms
+     * @param nameSynonyms set of name synonyms
+     */
+    public void addSynonyms(Set<String> nameSynonyms) {
+    	synonyms.addAll(nameSynonyms);
+    }
+    
+    /**
+     * Set option description
+     * @param description
+     */
+    public void setDescription(String description) {
+    	this.description = description;
+    }
+    
+    /**
+     * Option will be required
+     */
+    public void setRequired() {
+    	setRequired(true);
+    }
+    
+    /**
+     * Set required option
+     * @param required will be option required?
+     */
+    public void setRequired(boolean required) {
+    	this.required = required;
+    }
+    
+    /**
+     * Set option Argument(object)
+     * @param argument option argument
+     * @throws IllegalArgumentException
+     */
+    public void setArgument(Argument argument) throws IllegalArgumentException {
+    	if (argument == null) {
+    		throw new IllegalArgumentException("Option argument can't be null object.");
+    	}
+    	this.argument = argument;
+    }
+    
+    /**
+     * Get option names
      * @return set of names for this option
      */
     public Set<String> getNames() {
-        return this.SYNONYMS;
+        return this.synonyms;
     }
 
     /**
+     * Get Argument(object) for this option
      * @return Argument for this option
      */
     public Argument getArgument() {
-        return this.ARGUMENT;
+        return this.argument;
+    }
+    
+    /**
+     * Whether has option argument
+     * @return has this option argument?
+     */
+    public boolean hasArgument() {
+    	return (this.argument == null);
     }
 
     /**
+     * Whether is option required
      * @return is this option required?
      */
     public boolean isRequired() {
-        return this.REQUIERD;
+        return this.required;
     }
 
     /**
+     * Get description of the option
      * @return description of the option
      */
     public String getDesription() {
-        return this.DESCRIPTION;
+        return this.description;
     }
 
     @Override
     public String toString() {
-        return this.NAME;
-    }
-
-    public static class OptionBuilder {
-        private final Set<String> SYNONYMS;
-        private final String NAME;
-        private boolean required;
-        private String description;
-        private Argument argument;
-
-        public OptionBuilder(String name) {
-            this.NAME = name;
-            this.SYNONYMS = new HashSet<>();
-            this.SYNONYMS.add(name);
-            this.argument = null;
-            this.description = "";
-            this.required = false;
-        }
-
-        /**
-         * @return Built option
-         */
-        public final Option build() {
-            return new Option(this);
-        }
-
-        /**
-         * Nastavi ekvivaletne meno (synonymum) pre vlastnost.
-	 * Pri kazdom pridani sa prida ekvivaletne meno do mnoziny mien.
-	 *
-	 * @param  name	ekvivaletne meno
-	 * @return vrati sam seba (kvoli chain of responsibility)
-	 */
-        public final OptionBuilder setEquivalentName(final String name) {
-            SYNONYMS.add(name);
-            return this;
-        }
-
-        /**
-	 * Nastavenie volby ako povinna. V pripade, ze volba nebude mat
-	 * argumenty, tak vyhodi varovanie, kedze nema zmysel aby bola
-	 * volba bez argumentov povinna.
-	 *
-	 * @param  isRequired je volba povinna?
-	 * @return vrati sam seba (kvoli chain of responsibility)
-	 */
-        public final OptionBuilder setRequired(final boolean isRequired) {
-            this.required = isRequired;
-            return this;
-        }
-
-        /**
-	 * Nastavenie popisu volby pre napovedu.
-	 *
-	 * @param  newDescription popis volby
-	 * @return vrati sam seba (kvoli chain of responsibility)
-	 */
-        public final OptionBuilder setDescription(final String newDescription) {
-            this.description = newDescription;
-            return this;
-        }
-
-        /**
-	 * Nastavenie argumentu pre volbu.
-	 *
-	 * @param  newArgument prijimany ARGUMENT pre volbu
-	 * @return vrati sam seba (kvoli chain of responsibility)
-	 */
-        public final OptionBuilder setArgument(final Argument newArgument) {
-            this.argument = newArgument;
-            return this;
-        }
+        return this.name;
     }
 }

@@ -1,12 +1,10 @@
 import elements.IntegerArgument;
 import elements.Option;
+
 import java.util.Arrays;
 
+import builders.OptionBuilder;
 
-/**
- * Priklad pouziti knihovny.
- * @author Alexander Mansurov <alexander.mansurov@gmail.com>
- */
 public final class Example {
     /**
      * Utility class - bez verejneho konstruktoru.
@@ -20,21 +18,21 @@ public final class Example {
     public static void main(final String[] args) {
         CommandLine line = new CommandLine();
 
-        Option verbose = new Option.OptionBuilder("v")
-                .setEquivalentName("verbose")
-                .setDescription("be verbose").build();
+        Option verbose = OptionBuilder.withName("v")
+                						.addNameSynonym("verbose")
+                						.withDescription("be verbose")
+                						.create();
         line.registerOption(verbose);
 
-        Option size = new Option.OptionBuilder("s")
-                .setRequired(true)
-                .setEquivalentName("size")
-                .setDescription("size")
-                .setArgument(
-                    new IntegerArgument
-                            .IntegerArgumentBuilder()
-                            .setDefaultValue("42")
-                            .build())
-                .build();
+        Option size = OptionBuilder.withName("size")
+        							.setRequired()
+        							.withDescription("size")
+        							.setArgument(
+        										new IntegerArgument
+        											.IntegerArgumentBuilder()
+        											.setDefaultValue("42")
+        											.build())
+        							.create();
         line.registerOption(size);
 
         ParsedCommandLine parsedOptions = line.parse(args);

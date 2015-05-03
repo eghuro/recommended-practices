@@ -1,5 +1,6 @@
 import elements.Argument;
 import elements.Option;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class CommandLine {
      * @throws NullPointerException volby jsou null
      */
     public final ParsedCommandLine parse(final String[] args) {
-        if (args == null) {
+        if (args == null || args.length == 0) {
             throw new NullPointerException("Arguments null");
         }
         
