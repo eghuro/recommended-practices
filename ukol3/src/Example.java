@@ -45,8 +45,6 @@ public final class Example {
         } catch(ParseException exception) {
         	System.out.println(exception);
         	cmdLine.printUsage();
-        } finally {
-        	
         }
     }
 }
