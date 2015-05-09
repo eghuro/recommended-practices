@@ -1,60 +1,162 @@
 package elements;
 
-/**
- * StringArgument.
- * @author Alexander Mansurov <alexander.mansurov@gmail.com>
- */
-public final class StringArgument extends Argument {
-    private final int minLength, maxLength;
+import visitors.Visitor;
 
-    /**
-     * @param builder builder.
-     */
-    private StringArgument(final StringArgumentBuilder builder) {
-        super(builder);
-        this.maxLength = builder.maxLength;
-        this.minLength = builder.minLength;
+public class StringArgument extends Argument {
+	
+	/** Argument default value **/
+	String defaultValue = null;
+	
+	/** Argument min length **/
+	int minLength = 0;
+	
+	/** Argument max length **/
+	int maxLength = Integer.MAX_VALUE;
+
+	/**
+	 * Create argument with specific name
+	 * @param name argument name
+	 */
+	public StringArgument(String name) {
+		super(name);
+	}
+	
+	/**
+	 * Create argument with specific name and default value
+	 * @param name argument name
+	 * @param defaultValue default value
+	 * @throws IllegalArgumentException
+	 */
+	public StringArgument(String name, String defaultValue) throws IllegalArgumentException {
+		super(name);
+		setDefaultValue(defaultValue);
+	}
+	
+	/**
+	 * Create argument with specific name, default value, min. and max. string length
+	 * @param name argument name
+	 * @param defaultValue argument default value
+	 * @param minLength argument string min. length
+	 * @param maxLength argument string max. length
+	 * @throws IllegalArgumentException
+	 */
+	public StringArgument(String name, String defaultValue, int minLength, int maxLength) throws IllegalArgumentException {
+		super(name);
+		setDefaultValue(defaultValue);
+		setMinLength(minLength);
+		setMaxLength(maxLength);
+	}
+
+	/**
+	 * Set default value
+	 * @param defaultValue default value
+	 * @throws IllegalArgumentException
+	 */
+	public void setDefaultValue(String defaultValue) throws IllegalArgumentException {
+		super.setDefaultValue();
+		
+		validateDefaultValue(defaultValue, this.minLength, this.maxLength);
+		
+		this.defaultValue = defaultValue;
+		this.hasDefaultValue = true;		
+	}	
+	
+	/**
+	 * Get argument default value
+	 * @return argument default value
+	 */
+	public String getDefaultValue() {
+		return this.defaultValue;
+	}
+	
+	/**
+	 * Set argument string min. length
+	 * @param minLength argument string min. length
+	 * @throws IllegalArgumentException
+	 */
+	public void setMinLength(int minLength) throws IllegalArgumentException {
+		if (minLength < 0) {
+			throw new IllegalArgumentException("Minimum length can't be negative number.");
+		}
+		
+		if (minLength > this.maxLength) {
+			throw new IllegalArgumentException("Minimum length can't be greater than maximum length.");
+		}
+		
+		if (this.hasDefaultValue) {
+			validateDefaultValue(this.defaultValue, minLength, this.maxLength);
+		}
+		
+		this.minLength = minLength;
+	}
+	
+	/**
+	 * Get argument string min. length
+	 * @return argument string min. length
+	 */
+	public int getMinLength() {
+		return this.minLength;
+	}
+	
+	/**
+	 * Set argument string max. length
+	 * @param maxLength argument string max. length
+	 * @throws IllegalArgumentException
+	 */
+	public void setMaxLength(int maxLength) throws IllegalArgumentException {
+		if (maxLength < this.minLength) {
+			throw new IllegalArgumentException("Maximum length can't be lesser than minimum length.");
+		}
+		
+		if (maxLength < 1) {
+			throw new IllegalArgumentException("Maximum length can't be lesser than 1.");
+		}
+		
+		if (this.hasDefaultValue) {
+			validateDefaultValue(this.defaultValue, this.minLength, maxLength);
+		}
+		
+		this.maxLength = maxLength;		
+	}
+	
+	/**
+	 * Get argument string max. length
+	 * @return argument string max. length
+	 */
+	public int getMaxLength() {
+		return this.maxLength;
+	}
+	
+	/**
+	 * Validate default value length with min. and max. value length before setting
+	 * @param defaultValue argument default value
+	 * @param minLength argument string min. length
+	 * @param maxLength argument string max. length
+	 * @throws IllegalArgumentException
+	 */
+	protected void validateDefaultValue(String defaultValue, int minLength, int maxLength) throws IllegalArgumentException {
+		if (defaultValue.length() < minLength) {
+			throw new IllegalArgumentException("Default value length can't be lesser than minimum length.");
+		}
+		
+		if (defaultValue.length() > maxLength) {
+			throw new IllegalArgumentException("Default value length can't be greater than maximum length.");
+		}
+	}
+	
+	@Override
+	public String getDefaulValueToString() {
+		return this.defaultValue;
+	}
+	
+	@Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
     }
 
-    @Override
-    public boolean accept(final String value) {
-        return value.startsWith("\"") && value.endsWith("\"");
-    }
+	@Override
+	public void accept(Visitor visitor, Option option) {
+		visitor.visit(this, option);		
+	}
 
-    /**
-     * StringArgumentBuilder.
-     */
-    public static class StringArgumentBuilder extends Argument.ArgumentBuilder {
-        private int minLength, maxLength;
-
-        /**
-        * Nastavi minimalnu dlzku retazca (stringu) - argumentu.
-        *
-        * @param  newMinLength min. dlzka
-        * @return vrati sam seba
-        */
-       public final StringArgumentBuilder setMinLength(final int newMinLength) {
-            this.minLength = newMinLength;
-            return this;
-        }
-
-        /**
-        * Nastavi maximalnu dlzku retazca (stringu) - argumentu.
-        *
-        * @param  newMaxLength max. dlzka
-        * @return vrati sam seba (kvoli chain of responsibility)
-        */
-       public final StringArgumentBuilder setMaxLength(final int newMaxLength) {
-            this.maxLength = newMaxLength;
-            return this;
-        }
-
-       /**
-        * @return Build the argument
-        */
-        @Override
-        public final Argument build() {
-            return new StringArgument(this);
-        }
-    }
 }

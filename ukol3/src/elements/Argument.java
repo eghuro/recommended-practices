@@ -1,122 +1,90 @@
 package elements;
 
-/**
- * komentar.
- * @author Alexander Mansurov <alexander.mansurov@gmail.com>
- */
-public abstract class Argument {
-    private final String description;
-    private final String defaultValue;
-    private final String separator;
-    private final boolean acceptList;
-    private final int minVal;
-    private final int maxVal;
+public abstract class Argument implements VisitableArgument {
+	
+	/** Argument name for usage printing **/
+	protected String name = null;
+	
+	/** Argument is required **/
+	protected boolean required = false;
+	
+	/** Argument has default value **/
+	protected boolean hasDefaultValue = false;
 
-    /**
-    * Vytvori argument  s danym nazvom.
-    *
-    *  @param builder
-    */
-    protected Argument(final ArgumentBuilder builder) {
-        this.defaultValue = builder.defaultValue;
-        this.acceptList = builder.acceptList;
-        this.separator = builder.separator;
-        this.maxVal = builder.maxVal;
-        this.minVal = builder.minVal;
-        this.description = builder.description;
+	/**
+	 * Create argument with specific name
+	 * @param name argument name
+	 * @throws IllegalArgumentException
+	 */
+    public Argument(String name) throws IllegalArgumentException {
+    	if (name == null || name.length() == 0) {
+    		throw new IllegalArgumentException("Argument name can't be empty.");
+    	}
+    	
+    	if (!name.matches("^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$")) {
+    		throw new IllegalArgumentException("Invalid argument name - accepts letters, numbers, spaces and underscores.");
+    	}
+    	
+    	this.name = name;
     }
-
+    
     /**
-     *
-     * @param value
-     * @return
+     * Get argument name
+     * @return argument name
      */
-    public abstract boolean accept(String value);
-
-    public final String getDefaultValue() {
-        return this.defaultValue;
+    public String getName() {
+    	return this.name;
     }
-
+    
     /**
-    * ArgumentBuilder.
-    */
-    public static abstract class ArgumentBuilder {
-        private String description;
-        private String defaultValue;
-        private String separator;
-        private boolean acceptList;
-        private int minVal;
-        private int maxVal;
-
-        protected ArgumentBuilder(){}
-
-        public abstract Argument build();
-
-        /**
-        * Nastavi popis pre argument.
-        *
-        * @param description popis argumentu
-        * @return vrati sam seba
-        */
-        public final ArgumentBuilder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        /**
-        * Nastavi defaultnu hodnotu pre argument.
-        *
-        * @param value defaultna hodnota
-        * @return vrati sam seba
-        */
-        public final ArgumentBuilder setDefaultValue(String value) {
-            this.defaultValue = value;
-            return this;
-        }
-           
-        /**
-        * Nastavi, ze ci argument akceptuje niekolko(zoznam) hodnot oddelenych
-        * oddelovacom (napr: 1,2,4).
-        *
-        * @param accept akceptovat zoznam hodnot?
-        * @return vrati sam seba
-        */
-        public final ArgumentBuilder acceptListOfValues(boolean accept) {
-            this.acceptList = accept;
-            return this;
-        }
-
-        /**
-        * Nastavi separator pre zoznam hodnot (napr: ciarku). 
-        *
-        * @param separator znak, ktory sa pouzije ako separator
-        * @return vrati sam seba
-        */	
-        public final ArgumentBuilder setListSeparator(String separator) {
-            this.separator = separator;
-            return this;
-        }	
-
-        /**
-        * Nastavi minimalny pocet hodnot v zozname.
-        *
-        * @param number min. pocet hodnot
-        * @return vrati sam seba
-        */
-        public final ArgumentBuilder minListValues(int number) {
-            this.minVal = number;
-            return this;
-        }
-
-        /**
-        * Nastavi maximalny pocet hodnot v zozname.
-        *
-        * @param number max. pocet hodnot
-        * @return vrati sam seba
-        */
-        public final ArgumentBuilder maxListValues(int number) {
-            this.maxVal = number;
-            return this;
-        }
+     * Set required argument
+     * @throws IllegalArgumentException
+     */
+    public void setRequired() throws IllegalArgumentException {
+    	setRequired(true); 
     }
+    
+    /**
+     * Set required argument
+     * @param required will be option required?
+     * @throws IllegalArgumentException
+     */
+    public void setRequired(boolean required) throws IllegalArgumentException {
+    	if (this.hasDefaultValue) {
+    		throw new IllegalArgumentException("Can't set argument as required argument, because argument has default value.");
+    	}
+    	this.required = required;    	
+    }
+    
+    /**
+     * Set argument default value
+     * @throws IllegalArgumentException
+     */
+    public void setDefaultValue() throws IllegalArgumentException {
+    	if (this.required) {
+    		throw new IllegalArgumentException("Can't set argument default value, because argument is set as required argument.");
+    	}    	
+    }
+    
+    /**
+     * Whether is option required
+     * @return is option required?
+     */
+    public boolean isRequired() {
+    	return this.required;
+    }
+    
+    /**
+     * Whether has option default value
+     * @return has option default value?
+     */
+    public boolean hasDefaultValue() {
+    	return hasDefaultValue;
+    }
+     
+    /**
+     * Get argument string value
+     * @return argument string value
+     */
+    public abstract String getDefaulValueToString();
 }

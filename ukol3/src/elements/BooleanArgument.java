@@ -1,36 +1,64 @@
 package elements;
 
-/**
- *
- * @author Alexander Mansurov <alexander.mansurov@gmail.com>
- */
-public final class BooleanArgument extends Argument {
+import visitors.Visitor;
 
-    /**
-     *
-     * @param builder builder
-     */
-    private BooleanArgument(final BooleanArgumentBuilder builder) {
-        super(builder);
-    }
+public class BooleanArgument extends Argument {
 
-    @Override
-    public boolean accept(final String value) {
-        return value.toLowerCase().equals("true");
-    }
+	/** Argument default value **/
+	private boolean defaultValue = false;
+	
+	/**
+	 * Create argument with specific name
+	 * @param name argument name
+	 * @throws IllegalArgumentException
+	 */
+	public BooleanArgument(String name) throws IllegalArgumentException {
+		super(name);
+	}
+	
+	/**
+	 * Create argument with specific name and default value
+	 * @param name argument name
+	 * @param defaultValue default value
+	 * @throws IllegalArgumentException
+	 */
+	public BooleanArgument(String name, boolean defaultValue) throws IllegalArgumentException {
+		super(name);
+		setDefaultValue(defaultValue);
+	}
+	
+	/**
+     * Set argument default value
+	 * @param defaultValue argument default value
+	 * @throws IllegalArgumentException
+	 */
+	public void setDefaultValue(boolean defaultValue) throws IllegalArgumentException {
+		super.setDefaultValue();
+		this.defaultValue = defaultValue;
+		this.hasDefaultValue = true;		
+	}
+	
+	/**
+	 * Get argument default value
+	 * @return argument default value
+	 */
+	public boolean getDefaultValue() {
+		return this.defaultValue;
+	}
 
-    /**
-     * BooleanArgumentBuilder.
-     */
-    public static class BooleanArgumentBuilder extends
-            Argument.ArgumentBuilder {
-        /**
-         * Build.
-         * @return Argument
-         */
-        @Override
-        public final Argument build() {
-            return new BooleanArgument(this);
-        }
-    }
+	@Override
+	public String getDefaulValueToString() {
+		return (this.defaultValue)? "true" : "false";
+	}
+	
+	@Override
+    public void accept(Visitor visitor) {
+	    visitor.visit(this);
+	}
+
+	@Override
+	public void accept(Visitor visitor, Option option) {
+		visitor.visit(this, option);		
+	}
+
 }

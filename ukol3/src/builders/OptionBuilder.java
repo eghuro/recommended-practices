@@ -1,6 +1,5 @@
 package builders;
 
-import java.nio.file.attribute.AclEntry.Builder;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +20,9 @@ public final class OptionBuilder {
 	/** Is option required? **/
 	private static boolean required = false;
 	
+	/** Is option long? **/
+	private static boolean isLongOption = false;
+	
 	/** Option argument object **/
 	private static Argument argument = null;
 	
@@ -39,6 +41,7 @@ public final class OptionBuilder {
 		OptionBuilder.nameSynonyms = null;
 		OptionBuilder.description = null;
 		OptionBuilder.required = false;
+		OptionBuilder.isLongOption = false;
 		OptionBuilder.argument = null;	
 	}
 	
@@ -48,10 +51,7 @@ public final class OptionBuilder {
 	 * @return self (OptionBuilder)
 	 */
 	public static OptionBuilder withName(String name) {
-		OptionBuilder.name = name;
-		
-		addNameSynonym(name);
-		
+		OptionBuilder.name = name;		
 		return instance;
 	}
 	
@@ -70,7 +70,7 @@ public final class OptionBuilder {
 	 * @param name option name synonym
 	 * @return self (OptionBuilder)
 	 */
-	public static OptionBuilder addNameSynonym(String name) {
+	public static OptionBuilder withNameSynonym(String name) {
 		if (OptionBuilder.nameSynonyms == null) {
 			OptionBuilder.nameSynonyms = new HashSet<>();
 		}
@@ -84,26 +84,21 @@ public final class OptionBuilder {
 	 * The next option will be required
 	 * @return self (OptionBuilder)
 	 */
-	public static OptionBuilder setRequired() {
-		return setRequired(true);
-	}
-	
-	/**
-	 * Set required of the next option
-	 * @param required will be option required?
-	 * @return self (OptionBuilder)
-	 */
-	public static OptionBuilder setRequired(boolean required) {
-		OptionBuilder.required = required;
+	public static OptionBuilder isRequired() {
+		OptionBuilder.required = true;
 		return instance;
 	}
 	
 	/**
-	 * Set argument object of the next option
-	 * @param argument option argument object
+	 * The next option will be long
 	 * @return self (OptionBuilder)
 	 */
-	public static OptionBuilder setArgument(Argument argument) {
+	public static OptionBuilder isLongOption() {
+		OptionBuilder.isLongOption = true;
+		return instance;
+	}
+		
+	public static OptionBuilder hasArgument(Argument argument) {
 		OptionBuilder.argument = argument;
 		return instance;
 	}
@@ -131,6 +126,10 @@ public final class OptionBuilder {
 				option.setRequired();
 			}
 			
+			if (OptionBuilder.isLongOption) {
+				option.setLong();
+			}
+			
 			if (OptionBuilder.argument != null) {
 				option.setArgument(OptionBuilder.argument);
 			}
@@ -141,5 +140,17 @@ public final class OptionBuilder {
 		
 		return option;
 	}
-
+	
+	/**
+	 * Create Option(object) with desired parameters
+	 * @param optionName option name
+	 * @return created option
+	 * @throws IllegalArgumentException
+	 */
+	public static Option create(String optionName) throws IllegalArgumentException {
+		OptionBuilder.name = optionName;	
+		
+		return create();
+	}
+	
 }
