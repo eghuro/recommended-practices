@@ -28,7 +28,6 @@ public class ParserTest {
 		
         Option size = OptionBuilder.withName("s")
         								.withNameSynonym("size")
-						        		.isLongOption()
 						        		.hasArgument(IntegerArgBuilder.hasDefaultValue(15)
 						        										.acceptMinValue(-5)
 						        										.acceptMaxValue(20)
@@ -75,7 +74,7 @@ public class ParserTest {
 	
 	@Test
 	public void testRequiredOption() {
-		String[] arguments = "-verbose -save true".split(" ");
+		String[] arguments = "--verbose --save true".split(" ");
 		
         try {
         	parser.parse(arguments);            
@@ -83,9 +82,9 @@ public class ParserTest {
         	fail(exception.toString());
         }
         
-        assertTrue(parser.hasShortOption("v"));
-        assertTrue(parser.hasShortOption("verbose"));
-        assertEquals("true", parser.getShortOptionValue("save"));  
+        assertTrue(parser.hasOption("v"));
+        assertTrue(parser.hasOption("verbose"));
+        assertEquals("true", parser.getOptionValue("save"));  
         assertTrue(parser.getCommonArguments().isEmpty());
 	}
 	
@@ -99,8 +98,8 @@ public class ParserTest {
         	fail(exception.toString());
         }
         
-        assertEquals("15", parser.getLongOptionValue("size"));
-        assertEquals("15", parser.getLongOptionValue("s"));
+        assertEquals("15", parser.getOptionValue("size"));
+        assertEquals("15", parser.getOptionValue("s"));
         assertEquals(2, parser.getCommonArguments().size()); 
         assertEquals("-input.txt moje", String.join(" ", parser.getCommonArguments()));
 	}
@@ -129,7 +128,7 @@ public class ParserTest {
         	fail(exception.toString());
         }
         
-        assertEquals("input.txt", parser.getShortOptionValue("f"));
+        assertEquals("input.txt", parser.getOptionValue("f"));
 	}	
 	
 	@Test(expected=ParseException.class)
@@ -148,7 +147,7 @@ public class ParserTest {
 	
 	@Test
 	public void testEnumValue() {
-		String[] arguments = "-v -output print".split(" ");
+		String[] arguments = "-v --output print".split(" ");
 		
         try {
         	parser.parse(arguments);            
@@ -156,19 +155,19 @@ public class ParserTest {
         	fail(exception.toString());
         }
         
-        assertEquals("print", parser.getShortOptionValue("output"));
+        assertEquals("print", parser.getOptionValue("output"));
 	}
 	
 	@Test(expected=ParseException.class)
 	public void testBadEnumValue() throws ParseException {
-		String[] arguments = "-v -output shoow".split(" ");
+		String[] arguments = "-v --output shoow".split(" ");
 		
 		parser.parse(arguments);  	
 	}
 
 	@Test
 	public void testBooleanValue() {
-		String[] arguments = "-v -save false".split(" ");
+		String[] arguments = "-v --save false".split(" ");
 		
         try {
         	parser.parse(arguments);            
@@ -176,12 +175,12 @@ public class ParserTest {
         	fail(exception.toString());
         }
         
-        assertEquals("false", parser.getShortOptionValue("save"));	
+        assertEquals("false", parser.getOptionValue("save"));	
 	}
 	
 	@Test(expected=ParseException.class)
 	public void testBadBooleanValue() throws ParseException {
-		String[] arguments = "-v -save ano".split(" ");
+		String[] arguments = "-v --save ano".split(" ");
 		
 		parser.parse(arguments);  	
 	}

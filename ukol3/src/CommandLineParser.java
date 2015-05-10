@@ -59,7 +59,7 @@ public class CommandLineParser {
 				}
 				previousOption = argumentOption;
 			}			
-			else if (previousOption != null) {
+			else if (previousOption != null && previousOption.hasArgument()) {
 				this.optionsValues.put(previousOption, argument);				
 				previousOption = null;
 			}
@@ -116,10 +116,11 @@ public class CommandLineParser {
 	 * @param optionName option name
 	 * @return whether it was in command line arguments 
 	 */
-	private boolean hasOption(String optionName) {
+	public boolean hasOption(String optionName) {
+		String optionNameWithPrefix = getOptionPrefixName(optionName);
 		Set<Option> parsedOptions = this.optionsValues.keySet();
 		
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(optionName);
+		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(optionNameWithPrefix);
     	
     	for (Visitable option: parsedOptions) {
     		option.accept(searchVisitor);
@@ -129,33 +130,16 @@ public class CommandLineParser {
 	}	
 	
 	/**
-	 * Check if short option with specific name was in command line arguments
-	 * @param optionName option name
-	 * @return whether it was in command line arguments
-	 */
-	public boolean hasShortOption(String optionName) {
-		return hasOption(Option.SHORT_PREFIX + optionName);
-	}
-	
-	/**
-	 * Check if long option with specific name was in command line arguments
-	 * @param optionName option name
-	 * @return whether it was in command line arguments
-	 */
-	public boolean hasLongOption(String optionName) {
-		return hasOption(Option.LONG_PREFIX + optionName);
-	}
-	
-	/**
 	 * Get option argument value
 	 * @param optionName option name
 	 * @return option argument value
 	 */
-	private String getOptionValue(String optionName) {
+	public String getOptionValue(String optionName) {
+		String optionNameWithPrefix = getOptionPrefixName(optionName);
 		String optionValue = null;
 		Set<Option> parsedOptions = this.optionsValues.keySet();		
 		
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(optionName);
+		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(optionNameWithPrefix);
     	
     	for (Visitable option: parsedOptions) {
     		option.accept(searchVisitor);
@@ -180,22 +164,13 @@ public class CommandLineParser {
     	return optionValue;
 	}
 	
-	/**
-	 * Get short option argument value
-	 * @param optionName option name
-	 * @return option argument value
-	 */
-	public String getShortOptionValue(String optionName) {
-		return getOptionValue(Option.SHORT_PREFIX + optionName);
-	}
-	
-	/**
-	 * Get long option argument value
-	 * @param optionName option name
-	 * @return option argument value
-	 */
-	public String getLongOptionValue(String optionName) {
-		return getOptionValue(Option.LONG_PREFIX + optionName);
+	private String getOptionPrefixName(String optionName) {
+		if (optionName.length() > 1) {
+			return Option.LONG_PREFIX + optionName;
+		}
+		else {
+			return Option.SHORT_PREFIX + optionName;
+		}
 	}
 	
 	/**

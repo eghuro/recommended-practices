@@ -16,7 +16,7 @@ public final class Example {
         cmdLine.addOption(verbose);
 
         Option size = OptionBuilder.withName("size")
-        							.isLongOption()
+        							.withNameSynonym("s")
         							.isRequired()
         							.withDescription("Size of ...")
         							.hasArgument(IntegerArgBuilder.hasDefaultValue(42)
@@ -32,14 +32,14 @@ public final class Example {
         	
             String hasOptionVerbose;
             
-            if (parser.hasShortOption("verbose")) {
+            if (parser.hasOption("verbose")) {
                 hasOptionVerbose = "true";
             } else {
                 hasOptionVerbose = "false";
             }
             
             System.out.println("verbose = " + hasOptionVerbose);
-            System.out.println("size = " + parser.getLongOptionValue("size"));    
+            System.out.println("size = " + parser.getOptionValue("size"));    
             System.out.println("args = " + String.join(" ", parser.getCommonArguments()));
             
         } catch(ParseException exception) {

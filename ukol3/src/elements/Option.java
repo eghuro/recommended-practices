@@ -25,9 +25,6 @@ public class Option implements Visitable {
     /** Is option required? **/
     private boolean required = false;
     
-    /** Is option long? **/
-    private boolean longOption = false;
-    
     /** Option argument object **/
     private Argument argument = null;
 
@@ -102,7 +99,7 @@ public class Option implements Visitable {
      * @return option name with prefix
      */
     public String getNameWithPrefix() {
-    	if (isLong()) {    		
+    	if (this.name.length() > 1) {    		
     		return LONG_PREFIX + this.name;
     	}
     	else {
@@ -163,10 +160,10 @@ public class Option implements Visitable {
     	
     	for (String argumentSynonym: this.synonyms) {
     		String synonymWithPrefix = SHORT_PREFIX + argumentSynonym;
-        	
-    		if (this.isLong()) {    		
-        		synonymWithPrefix = LONG_PREFIX + argumentSynonym;
-        	}
+    		
+    		if (argumentSynonym.length() > 1) {
+    			synonymWithPrefix = LONG_PREFIX + argumentSynonym;
+    		}
     		
     		namesWithPrefix.add(synonymWithPrefix);
     	}
@@ -212,30 +209,7 @@ public class Option implements Visitable {
     public boolean isRequired() {
         return this.required;
     }
-    
-    /**
-     * Option will be long
-     */
-    public void setLong() {
-    	setLong(true);
-    }
-    
-    /**
-     * Set long option
-     * @param longOption will be option long?
-     */
-    public void setLong(boolean longOption) {
-    	this.longOption = longOption;
-    } 
-    
-    /**
-     * Whether is option long
-     * @return is this option long?
-     */
-    public boolean isLong() {
-        return this.longOption;
-    }
-    
+       
     /**
      * Set option Argument(object)
      * @param argument option argument

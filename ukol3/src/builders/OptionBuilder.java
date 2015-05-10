@@ -20,9 +20,6 @@ public final class OptionBuilder {
 	/** Is option required? **/
 	private static boolean required = false;
 	
-	/** Is option long? **/
-	private static boolean isLongOption = false;
-	
 	/** Option argument object **/
 	private static Argument argument = null;
 	
@@ -41,7 +38,6 @@ public final class OptionBuilder {
 		OptionBuilder.nameSynonyms = null;
 		OptionBuilder.description = null;
 		OptionBuilder.required = false;
-		OptionBuilder.isLongOption = false;
 		OptionBuilder.argument = null;	
 	}
 	
@@ -88,16 +84,7 @@ public final class OptionBuilder {
 		OptionBuilder.required = true;
 		return instance;
 	}
-	
-	/**
-	 * The next option will be long
-	 * @return self (OptionBuilder)
-	 */
-	public static OptionBuilder isLongOption() {
-		OptionBuilder.isLongOption = true;
-		return instance;
-	}
-		
+			
 	public static OptionBuilder hasArgument(Argument argument) {
 		OptionBuilder.argument = argument;
 		return instance;
@@ -124,10 +111,6 @@ public final class OptionBuilder {
 			
 			if (OptionBuilder.required) {
 				option.setRequired();
-			}
-			
-			if (OptionBuilder.isLongOption) {
-				option.setLong();
 			}
 			
 			if (OptionBuilder.argument != null) {
