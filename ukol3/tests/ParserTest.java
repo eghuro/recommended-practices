@@ -11,178 +11,190 @@ import builders.StringArgBuilder;
 import elements.Option;
 import exceptions.ParseException;
 
-
 public class ParserTest {
-	CommandLineParser parser;	
+
+	CommandLineParser parser;
 
 	@Before
 	public void setUp() throws Exception {
+
 		CommandLine cmdLine = new CommandLine();
-		
-        Option verbose = OptionBuilder.withName("v")
-        								.isRequired()
-										.withNameSynonym("verbose")
-										.create();
-        
+
+		Option verbose = OptionBuilder.withName("v").isRequired()
+				.withNameSynonym("verbose").create();
+
 		cmdLine.addOption(verbose);
-		
-        Option size = OptionBuilder.withName("s")
-        								.withNameSynonym("size")
-						        		.hasArgument(IntegerArgBuilder.hasDefaultValue(15)
-						        										.acceptMinValue(-5)
-						        										.acceptMaxValue(20)
-						        										.create("block size"))
-										.create();
 
-        cmdLine.addOption(size);
-        
-        Option width = OptionBuilder.withName("width")
-									.withNameSynonym("w")
-					        		.hasArgument(IntegerArgBuilder.isRequired()
-					        										.acceptMinValue(100)
-					        										.acceptMaxValue(100)
-					        										.create("width size"))
-									.create();    
-        
-        Option output = OptionBuilder.withName("output")
-						        		.hasArgument(EnumeratedArgBuilder.hasValue("show")
-						        											.hasValue("print")
-						        											.hasDefaultValue("show")
-						        											.create("type"))
-										.create();
-        
-        cmdLine.addOption(output);
-        
-        Option inputFile = OptionBuilder.withName("f")
-						        		.hasArgument(StringArgBuilder.isRequired()
-					        											.acceptMinLength(7)
-					        											.acceptMaxLength(15)
-					        											.create("file_name"))
-					        			.create();
-        
-        cmdLine.addOption(inputFile);
-        
-        Option saveResult = OptionBuilder.withName("save")
-							        		.hasArgument(BooleanArgBuilder.isRequired()
-							    											.create("save or not"))
-							    			.create();
+		Option size = OptionBuilder
+				.withName("s")
+				.withNameSynonym("size")
+				.hasArgument(
+						IntegerArgBuilder.hasDefaultValue(15)
+								.acceptMinValue(-5).acceptMaxValue(20)
+								.create("block size")).create();
 
-        cmdLine.addOption(saveResult);
-        
-        parser = new CommandLineParser(cmdLine.getOptions());
+		cmdLine.addOption(size);
+
+		Option width = OptionBuilder
+				.withName("width")
+				.withNameSynonym("w")
+				.hasArgument(
+						IntegerArgBuilder.isRequired().acceptMinValue(100)
+								.acceptMaxValue(100).create("width size"))
+				.create();
+
+		Option output = OptionBuilder
+				.withName("output")
+				.hasArgument(
+						EnumeratedArgBuilder.hasValue("show").hasValue("print")
+								.hasDefaultValue("show").create("type"))
+				.create();
+
+		cmdLine.addOption(output);
+
+		Option inputFile = OptionBuilder
+				.withName("f")
+				.hasArgument(
+						StringArgBuilder.isRequired().acceptMinLength(7)
+								.acceptMaxLength(15).create("file_name"))
+				.create();
+
+		cmdLine.addOption(inputFile);
+
+		Option saveResult = OptionBuilder
+				.withName("save")
+				.hasArgument(
+						BooleanArgBuilder.isRequired().create("save or not"))
+				.create();
+
+		cmdLine.addOption(saveResult);
+
+		parser = new CommandLineParser(cmdLine.getOptions());
 	}
-	
+
 	@Test
 	public void testRequiredOption() {
+
 		String[] arguments = "--verbose --save true".split(" ");
-		
-        try {
-        	parser.parse(arguments);            
-        } catch(ParseException exception) {
-        	fail(exception.toString());
-        }
-        
-        assertTrue(parser.hasOption("v"));
-        assertTrue(parser.hasOption("verbose"));
-        assertEquals("true", parser.getOptionValue("save"));  
-        assertTrue(parser.getCommonArguments().isEmpty());
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertTrue(parser.hasOption("v"));
+		assertTrue(parser.hasOption("verbose"));
+		assertEquals("true", parser.getOptionValue("save"));
+		assertTrue(parser.getCommonArguments().isEmpty());
 	}
-	
+
 	@Test
 	public void testDefaultValue() {
+
 		String[] arguments = "-v -s -- -input.txt moje".split(" ");
-		
-        try {
-        	parser.parse(arguments);            
-        } catch(ParseException exception) {
-        	fail(exception.toString());
-        }
-        
-        assertEquals("15", parser.getOptionValue("size"));
-        assertEquals("15", parser.getOptionValue("s"));
-        assertEquals(2, parser.getCommonArguments().size()); 
-        assertEquals("-input.txt moje", String.join(" ", parser.getCommonArguments()));
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertEquals("15", parser.getOptionValue("size"));
+		assertEquals("15", parser.getOptionValue("s"));
+		assertEquals(2, parser.getCommonArguments().size());
+		assertEquals("-input.txt moje",
+				String.join(" ", parser.getCommonArguments()));
 	}
-	
-	@Test(expected=ParseException.class)
+
+	@Test(expected = ParseException.class)
 	public void testIntegerMinValue() throws ParseException {
+
 		String[] arguments = "-v -s -50".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
-	
-	@Test(expected=ParseException.class)
+
+	@Test(expected = ParseException.class)
 	public void testIntegerMaxValue() throws ParseException {
+
 		String[] arguments = "-v -s 50".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
-	
+
 	@Test
 	public void testRequiredArgument() {
+
 		String[] arguments = "-v -f input.txt".split(" ");
-		
-        try {
-        	parser.parse(arguments);            
-        } catch(ParseException exception) {
-        	fail(exception.toString());
-        }
-        
-        assertEquals("input.txt", parser.getOptionValue("f"));
-	}	
-	
-	@Test(expected=ParseException.class)
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertEquals("input.txt", parser.getOptionValue("f"));
+	}
+
+	@Test(expected = ParseException.class)
 	public void testStringMinLength() throws ParseException {
+
 		String[] arguments = "-v -f t.xt".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
-	
-	@Test(expected=ParseException.class)
+
+	@Test(expected = ParseException.class)
 	public void testStringMaxLength() throws ParseException {
+
 		String[] arguments = "-v -f verylongfilename.txt".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
-	
+
 	@Test
 	public void testEnumValue() {
+
 		String[] arguments = "-v --output print".split(" ");
-		
-        try {
-        	parser.parse(arguments);            
-        } catch(ParseException exception) {
-        	fail(exception.toString());
-        }
-        
-        assertEquals("print", parser.getOptionValue("output"));
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertEquals("print", parser.getOptionValue("output"));
 	}
-	
-	@Test(expected=ParseException.class)
+
+	@Test(expected = ParseException.class)
 	public void testBadEnumValue() throws ParseException {
+
 		String[] arguments = "-v --output shoow".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
 
 	@Test
 	public void testBooleanValue() {
+
 		String[] arguments = "-v --save false".split(" ");
-		
-        try {
-        	parser.parse(arguments);            
-        } catch(ParseException exception) {
-        	fail(exception.toString());
-        }
-        
-        assertEquals("false", parser.getOptionValue("save"));	
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertEquals("false", parser.getOptionValue("save"));
 	}
-	
-	@Test(expected=ParseException.class)
+
+	@Test(expected = ParseException.class)
 	public void testBadBooleanValue() throws ParseException {
+
 		String[] arguments = "-v --save ano".split(" ");
-		
-		parser.parse(arguments);  	
+
+		parser.parse(arguments);
 	}
 
 }

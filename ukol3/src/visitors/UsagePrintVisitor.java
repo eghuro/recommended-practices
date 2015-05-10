@@ -31,31 +31,33 @@ public class UsagePrintVisitor implements Visitor {
 
 	@Override
 	public void visit(Option option) {
-		System.out.print(" ");
 		
+		System.out.print(" ");
+
 		if (!option.isRequired()) {
 			System.out.print("[");
 		}
-		
+
 		System.out.print(option.getNameWithPrefix());
-		
+
 		if (option.hasArgument()) {
 			option.getArgument().accept(this);
 		}
-		
+
 		if (!option.isRequired()) {
 			System.out.print("]");
-		}		
-	}	
+		}
+		
+	}
 
 	@Override
 	public void visit(BooleanArgument argument, Option option) {
-		// do nothing		
+		// do nothing
 	}
 
 	@Override
 	public void visit(EnumeratedArgument argument, Option option) {
-		// do nothing		
+		// do nothing
 	}
 
 	@Override
@@ -65,21 +67,23 @@ public class UsagePrintVisitor implements Visitor {
 
 	@Override
 	public void visit(StringArgument argument, Option option) {
-		// do nothing		
+		// do nothing
 	}
-	
+
 	private void printArgument(Argument argument) {
+
 		System.out.print(" ");
-		
+
 		if (!argument.isRequired()) {
 			System.out.print("[");
 		}
-		
+
 		System.out.print("<" + argument.getName() + ">");
-		
+
 		if (!argument.isRequired()) {
 			System.out.print("]");
 		}
+		
 	}
 
 }
