@@ -98,13 +98,8 @@ public class Option implements Visitable {
      * Get option name with prefix
      * @return option name with prefix
      */
-    public String getNameWithPrefix() {
-    	if (this.name.length() > 1) {    		
-    		return LONG_PREFIX + this.name;
-    	}
-    	else {
-    		return SHORT_PREFIX + this.name;
-    	}    	
+    public String getNameWithPrefix() {   	
+    	return Option.createOptionNameWithPrefix(this.name);
     }
     
     /**
@@ -159,12 +154,7 @@ public class Option implements Visitable {
     	Set<String> namesWithPrefix = new HashSet<>();    	
     	
     	for (String argumentSynonym: this.synonyms) {
-    		String synonymWithPrefix = SHORT_PREFIX + argumentSynonym;
-    		
-    		if (argumentSynonym.length() > 1) {
-    			synonymWithPrefix = LONG_PREFIX + argumentSynonym;
-    		}
-    		
+    		String synonymWithPrefix = Option.createOptionNameWithPrefix(argumentSynonym);
     		namesWithPrefix.add(synonymWithPrefix);
     	}
     	
@@ -238,8 +228,24 @@ public class Option implements Visitable {
     	return (this.argument != null);
     }
     
+    /**
+     * Create option name with prefix
+     * @param optionName processed option name
+     * @return option name with prefix
+     */
+    public static String createOptionNameWithPrefix(String optionName) {
+		if (optionName.length() > 1) {
+			return Option.LONG_PREFIX + optionName;
+		}
+		else {
+			return Option.SHORT_PREFIX + optionName;
+		}
+    }
+    
     public void accept(Visitor visitor) {
         visitor.visit(this);
      }
+    
+    
 
 }

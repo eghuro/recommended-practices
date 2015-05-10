@@ -117,7 +117,7 @@ public class CommandLineParser {
 	 * @return whether it was in command line arguments 
 	 */
 	public boolean hasOption(String optionName) {
-		String optionNameWithPrefix = getOptionPrefixName(optionName);
+		String optionNameWithPrefix = Option.createOptionNameWithPrefix(optionName);
 		Set<Option> parsedOptions = this.optionsValues.keySet();
 		
 		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(optionNameWithPrefix);
@@ -135,7 +135,7 @@ public class CommandLineParser {
 	 * @return option argument value
 	 */
 	public String getOptionValue(String optionName) {
-		String optionNameWithPrefix = getOptionPrefixName(optionName);
+		String optionNameWithPrefix = Option.createOptionNameWithPrefix(optionName);
 		String optionValue = null;
 		Set<Option> parsedOptions = this.optionsValues.keySet();		
 		
@@ -162,15 +162,6 @@ public class CommandLineParser {
     	}
     	
     	return optionValue;
-	}
-	
-	private String getOptionPrefixName(String optionName) {
-		if (optionName.length() > 1) {
-			return Option.LONG_PREFIX + optionName;
-		}
-		else {
-			return Option.SHORT_PREFIX + optionName;
-		}
 	}
 	
 	/**
