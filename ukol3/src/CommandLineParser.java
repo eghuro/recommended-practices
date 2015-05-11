@@ -44,14 +44,27 @@ public class CommandLineParser {
 		Option previousOption = null;
 		boolean isCommonArgument = false;
 
-		for (String argument : arguments) {
-			Option argumentOption = getOptionByArgument(argument);
+		for (String argument : arguments) {			
 
 			if (isCommonArgument) {
 				
 				commonArguments.add(argument);
+				continue;
+			} 
 			
-			} else if (argument.equals("--")) {
+			Option argumentOption = getOptionByArgument(argument);
+			
+			if (argument.indexOf("=") > 0) {
+				if (previousOption != null) {
+					this.optionsValues.put(previousOption, null);
+				}
+				String[] argumentParts = argument.split("=", 2);
+				
+				previousOption = getOptionByArgument(argumentParts[0]);
+				argument = argumentParts[1];
+			}
+			
+			if (argument.equals("--")) {
 			
 				if (previousOption != null) {
 					this.optionsValues.put(previousOption, null);
