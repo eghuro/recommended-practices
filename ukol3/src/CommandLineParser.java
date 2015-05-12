@@ -1,5 +1,8 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import visitors.SearchByNameVisitor;
@@ -17,7 +20,8 @@ public class CommandLineParser {
 	private HashSet<String> commonArguments = new HashSet<>();
 
 	/** Options values from command line **/
-	private HashMap<Option, String> optionsValues = new HashMap<Option, String>();
+	private HashMap<Option, String> optionsValues = 
+			new HashMap<Option, String>();
 
 	/**
 	 * Create command line parser with selected options
@@ -36,65 +40,66 @@ public class CommandLineParser {
 	 * @throws ParseException
 	 */
 	public void parse(String[] arguments) throws ParseException {
-
 		if (arguments == null) {
 			arguments = new String[0];
 		}
-
-		Option previousOption = null;
-		boolean isCommonArgument = false;
-
-		for (String argument : arguments) {			
-
-			if (isCommonArgument) {
+		
+		List<String> argumentsList = 
+				new ArrayList<String>(Arrays.asList(arguments));
+		
+		boolean isArgumentCommon = false;
+		
+		while (!argumentsList.isEmpty()) {
+			String argument = argumentsList.remove(0); 
+			
+			if (isArgumentCommon) {
 				
 				commonArguments.add(argument);
-				continue;
-			} 
-			
-			Option argumentOption = getOptionByArgument(argument);
-			
-			if (argument.indexOf("=") > 0) {
-				if (previousOption != null) {
-					this.optionsValues.put(previousOption, null);
-				}
-				String[] argumentParts = argument.split("=", 2);
 				
-				previousOption = getOptionByArgument(argumentParts[0]);
-				argument = argumentParts[1];
 			}
-			
-			if (argument.equals("--")) {
-			
-				if (previousOption != null) {
-					this.optionsValues.put(previousOption, null);
-				}
+			else if (argument.equals("--")) {
 				
-				previousOption = null;
-				isCommonArgument = true;
-			
-			} else if (argumentOption != null) {
+				isArgumentCommon = true;
 				
-				if (previousOption != null) {
-					this.optionsValues.put(previousOption, null);
-				}
-				
-				previousOption = argumentOption;
-			
-			} else if (previousOption != null && previousOption.hasArgument()) {
-				
-				this.optionsValues.put(previousOption, argument);
-				previousOption = null;
-			
-			} else {
-				
-				throw new ParseException("Unexpected option/argument: "
-						+ argument);
 			}
-		}
-
-		if (previousOption != null) {
-			this.optionsValues.put(previousOption, null);
+			else {
+				
+				if (argument.indexOf("=") > 0) {
+					String[] argumentParts = argument.split("=", 2);
+					argument = argumentParts[0];
+					argumentsList.add(0, argumentParts[1]);
+				}
+				
+				Option argumentOption = getOptionByArgument(argument);
+				
+				boolean isNextArgumentValue = false;
+				
+				if (!argumentsList.isEmpty()) {
+					
+					String nextArgument = argumentsList.get(0);
+					
+					if (!nextArgument.equals("--")) {
+						isNextArgumentValue = !isArgumentOption(nextArgument);
+					}
+					
+				}
+				
+				if (argumentOption != null && isNextArgumentValue 
+						&& argumentOption.hasArgument()) {
+					
+					this.optionsValues.put(argumentOption, 
+							argumentsList.remove(0));
+				}
+				else if (argumentOption != null && !isNextArgumentValue) {
+					this.optionsValues.put(argumentOption, null);
+				}
+				else {
+					throw new ParseException("Unexpected option/argument: "
+							+ argument);
+				}
+				
+			}			
+			
 		}
 
 		validateArguments();
@@ -140,6 +145,16 @@ public class CommandLineParser {
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * Check if argument name from command line is option name
+	 * @param argument 
+	 *            argument name from command line
+	 * @return whether it is option name
+	 */
+	private boolean isArgumentOption(String argument) {
+		return (getOptionByArgument(argument) != null);
 	}
 
 	/**
