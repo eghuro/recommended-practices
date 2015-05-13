@@ -65,8 +65,7 @@ public class StringArgBuilder {
     /**
      * Set argument default value
      * 
-     * @param defaultValue
-     *            argument default value
+     * @param defaultValue argument default value
      * @return self (StringArgBuilder)
      */
     public static StringArgBuilder hasDefaultValue(String defaultValue) {
@@ -134,8 +133,7 @@ public class StringArgBuilder {
     /**
      * Create StringArgument(object) with desired parameters
      * 
-     * @param argumentName
-     *            argument name
+     * @param argumentName argument name
      * @return created argument
      * @throws IllegalArgumentException
      */

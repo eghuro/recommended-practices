@@ -7,297 +7,270 @@ import visitors.Visitor;
 
 public class Option implements Visitable {
 
-	/** Option short prefix **/
-	public static final String SHORT_PREFIX = "-";
+    /** Option short prefix **/
+    public static final String SHORT_PREFIX = "-";
 
-	/** Option long prefix **/
-	public static final String LONG_PREFIX = "--";
+    /** Option long prefix **/
+    public static final String LONG_PREFIX = "--";
 
-	/** Option name **/
-	private String name = "";
+    /** Option name **/
+    private String name = "";
 
-	/** Option synonyms **/
-	private Set<String> synonyms = new HashSet<>();
+    /** Option synonyms **/
+    private Set<String> synonyms = new HashSet<>();
 
-	/** Option description **/
-	private String description = "";
+    /** Option description **/
+    private String description = "";
 
-	/** Is option required? **/
-	private boolean required = false;
+    /** Is option required? **/
+    private boolean required = false;
 
-	/** Option argument object **/
-	private Argument argument = null;
+    /** Option argument object **/
+    private Argument argument = null;
 
-	/**
-	 * Constructor for Option
-	 * 
-	 * @param name
-	 *            option name
-	 * @throws IllegalArgumentException
-	 */
-	public Option(String name) throws IllegalArgumentException {
-		setName(name);
-	}
+    /**
+     * Constructor for Option
+     * 
+     * @param name option name
+     * @throws IllegalArgumentException
+     */
+    public Option(String name) throws IllegalArgumentException {
+        setName(name);
+    }
 
-	/**
-	 * Constructor for Option
-	 * 
-	 * @param name
-	 *            option name
-	 * @param description
-	 *            option description
-	 * @throws IllegalArgumentException
-	 */
-	public Option(String name, String description)
-			throws IllegalArgumentException {
+    /**
+     * Constructor for Option
+     * 
+     * @param name option name
+     * @param description option description
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description)
+                throws IllegalArgumentException {
+        setName(name);
+        setDescription(description);
+    }
 
-		setName(name);
-		setDescription(description);
-	}
+    /**
+     * Constructor for Option
+     * 
+     * @param name option name
+     * @param description option description
+     * @param required is option required
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description, boolean required)
+                    throws IllegalArgumentException {
+        setName(name);
+        setDescription(description);
+        setRequired(required);
+    }
 
-	/**
-	 * Constructor for Option
-	 * 
-	 * @param name
-	 *            option name
-	 * @param description
-	 *            option description
-	 * @param required
-	 *            is option required
-	 * @throws IllegalArgumentException
-	 */
-	public Option(String name, String description, boolean required)
-			throws IllegalArgumentException {
+    /**
+     * Constructor for Option
+     * 
+     * @param name option name
+     * @param description option description
+     * @param required is option required
+     * @param argument option Argument(object)
+     * @throws IllegalArgumentException
+     */
+    public Option(String name, String description, boolean required,
+                    Argument argument) throws IllegalArgumentException {
+        setName(name);
+        setDescription(description);
+        setRequired(required);
+        setArgument(argument);
+    }
 
-		setName(name);
-		setDescription(description);
-		setRequired(required);
-	}
+    /**
+     * Set option name
+     * 
+     * @param name
+     * @throws IllegalArgumentException
+     */
+    private void setName(String name) throws IllegalArgumentException {
+        nameValidation(name);
+        this.name = name;
+    }
 
-	/**
-	 * Constructor for Option
-	 * 
-	 * @param name
-	 *            option name
-	 * @param description
-	 *            option description
-	 * @param required
-	 *            is option required
-	 * @param argument
-	 *            option Argument(object)
-	 * @throws IllegalArgumentException
-	 */
-	public Option(String name, String description, boolean required,
-			Argument argument) throws IllegalArgumentException {
+    /**
+     * Get option name
+     * 
+     * @return option name
+     */
+    public String getName() {
+        return this.name;
+    }
 
-		setName(name);
-		setDescription(description);
-		setRequired(required);
-		setArgument(argument);
-	}
+    /**
+     * Get option name with prefix
+     * 
+     * @return option name with prefix
+     */
+    public String getNameWithPrefix() {
+        return Option.createOptionNameWithPrefix(this.name);
+    }
 
-	/**
-	 * Set option name
-	 * 
-	 * @param name
-	 * @throws IllegalArgumentException
-	 */
-	private void setName(String name) throws IllegalArgumentException {
-		nameValidation(name);
-		this.name = name;
-	}
+    /**
+     * Set option name synonym
+     * 
+     * @param name option name
+     * @throws IllegalArgumentException
+     */
+    public void addSynonym(String name) throws IllegalArgumentException {
+        nameValidation(name);
+        synonyms.add(name);
+    }
 
-	/**
-	 * Get option name
-	 * 
-	 * @return option name
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Set option name synonyms
+     * 
+     * @param nameSynonyms set of name synonyms
+     * @throws IllegalArgumentException
+     */
+    public void addSynonyms(Set<String> nameSynonyms) 
+            throws IllegalArgumentException {
+        for (String otherName : nameSynonyms) {
+            addSynonym(otherName);
+        }
+    }
 
-	/**
-	 * Get option name with prefix
-	 * 
-	 * @return option name with prefix
-	 */
-	public String getNameWithPrefix() {
-		return Option.createOptionNameWithPrefix(this.name);
-	}
+    /**
+     * Validate option name
+     * 
+     * @param name option name
+     * @throws IllegalArgumentException
+     */
+    private void nameValidation(String name) throws IllegalArgumentException {
+        if (name == null || name.length() == 0) {
+            throw new IllegalArgumentException("Option name can't be empty.");
+        }
 
-	/**
-	 * Set option name synonym
-	 * 
-	 * @param name
-	 *            option name
-	 * @throws IllegalArgumentException
-	 */
-	public void addSynonym(String name) throws IllegalArgumentException {
+        if (!name.matches("^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$")) {
+            throw new IllegalArgumentException(
+                "Invalid option name - accepts letters, numbers, spaces and underscores.");
+        }
+    }
 
-		nameValidation(name);
-		synonyms.add(name);
-	}
+    /**
+     * Get option names
+     * 
+     * @return set of names for this option
+     */
+    public Set<String> getNames() {
+        return this.synonyms;
+    }
 
-	/**
-	 * Set option name synonyms
-	 * 
-	 * @param nameSynonyms
-	 *            set of name synonyms
-	 * @throws IllegalArgumentException
-	 */
-	public void
-			addSynonyms(Set<String> nameSynonyms) throws IllegalArgumentException {
+    /**
+     * Get option names with prefix
+     * 
+     * @return set of names for this option with prefix
+     */
+    public Set<String> getNamesWithPrefix() {
+        Set<String> namesWithPrefix = new HashSet<>();
 
-		for (String otherName : nameSynonyms) {
-			addSynonym(otherName);
-		}
-	}
+        for (String argumentSynonym : this.synonyms) {
+            String synonymWithPrefix = Option
+                .createOptionNameWithPrefix(argumentSynonym);
+            namesWithPrefix.add(synonymWithPrefix);
+        }
 
-	/**
-	 * Validate option name
-	 * 
-	 * @param name
-	 *            option name
-	 * @throws IllegalArgumentException
-	 */
-	private void nameValidation(String name) throws IllegalArgumentException {
+        return namesWithPrefix;
+    }
 
-		if (name == null || name.length() == 0) {
-			throw new IllegalArgumentException("Option name can't be empty.");
-		}
+    /**
+     * Set option description
+     * 
+     * @param description description of the option
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-		if (!name.matches("^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$")) {
-			throw new IllegalArgumentException(
-					"Invalid option name - accepts letters, numbers, spaces and underscores.");
-		}
-	}
+    /**
+     * Get description of the option
+     * 
+     * @return description of the option
+     */
+    public String getDesription() {
+        return this.description;
+    }
 
-	/**
-	 * Get option names
-	 * 
-	 * @return set of names for this option
-	 */
-	public Set<String> getNames() {
+    /**
+     * Option will be required
+     */
+    public void setRequired() {
+        setRequired(true);
+    }
 
-		return this.synonyms;
-	}
+    /**
+     * Set required option
+     * 
+     * @param required will be option required?
+     */
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 
-	/**
-	 * Get option names with prefix
-	 * 
-	 * @return set of names for this option with prefix
-	 */
-	public Set<String> getNamesWithPrefix() {
+    /**
+     * Whether is option required
+     * 
+     * @return is option required?
+     */
+    public boolean isRequired() {
+        return this.required;
+    }
 
-		Set<String> namesWithPrefix = new HashSet<>();
+    /**
+     * Set option Argument(object)
+     * 
+     * @param argument option argument
+     * @throws IllegalArgumentException
+     */
+    public void setArgument(Argument argument) throws IllegalArgumentException {
+        if (argument == null) {
+            throw new IllegalArgumentException(
+                "Option argument can't be null object.");
+        }
 
-		for (String argumentSynonym : this.synonyms) {
-			String synonymWithPrefix = Option
-					.createOptionNameWithPrefix(argumentSynonym);
-			namesWithPrefix.add(synonymWithPrefix);
-		}
+        this.argument = argument;
+    }
 
-		return namesWithPrefix;
-	}
+    /**
+     * Get Argument(object) for this option
+     * 
+     * @return Argument for this option
+     */
+    public Argument getArgument() {
+        return this.argument;
+    }
 
-	/**
-	 * Set option description
-	 * 
-	 * @param description description of the option
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Whether has option argument
+     * 
+     * @return has this option argument?
+     */
+    public boolean hasArgument() {
+        return (this.argument != null);
+    }
 
-	/**
-	 * Get description of the option
-	 * 
-	 * @return description of the option
-	 */
-	public String getDesription() {
-		return this.description;
-	}
+    /**
+     * Create option name with prefix
+     * 
+     * @param optionName
+     *            processed option name
+     * @return option name with prefix
+     */
+    public static String createOptionNameWithPrefix(String optionName) {
+        if (optionName.length() > 1) {
+            return Option.LONG_PREFIX + optionName;
+        } else {
+            return Option.SHORT_PREFIX + optionName;
+        }
+    }
 
-	/**
-	 * Option will be required
-	 */
-	public void setRequired() {
-		setRequired(true);
-	}
-
-	/**
-	 * Set required option
-	 * 
-	 * @param required
-	 *            will be option required?
-	 */
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
-
-	/**
-	 * Whether is option required
-	 * 
-	 * @return is option required?
-	 */
-	public boolean isRequired() {
-		return this.required;
-	}
-
-	/**
-	 * Set option Argument(object)
-	 * 
-	 * @param argument
-	 *            option argument
-	 * @throws IllegalArgumentException
-	 */
-	public void setArgument(Argument argument) throws IllegalArgumentException {
-
-		if (argument == null) {
-			throw new IllegalArgumentException(
-					"Option argument can't be null object.");
-		}
-		
-		this.argument = argument;
-	}
-
-	/**
-	 * Get Argument(object) for this option
-	 * 
-	 * @return Argument for this option
-	 */
-	public Argument getArgument() {
-		return this.argument;
-	}
-
-	/**
-	 * Whether has option argument
-	 * 
-	 * @return has this option argument?
-	 */
-	public boolean hasArgument() {
-		return (this.argument != null);
-	}
-
-	/**
-	 * Create option name with prefix
-	 * 
-	 * @param optionName
-	 *            processed option name
-	 * @return option name with prefix
-	 */
-	public static String createOptionNameWithPrefix(String optionName) {
-
-		if (optionName.length() > 1) {
-			return Option.LONG_PREFIX + optionName;
-		} else {
-			return Option.SHORT_PREFIX + optionName;
-		}
-		
-	}
-
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
-	}
-
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

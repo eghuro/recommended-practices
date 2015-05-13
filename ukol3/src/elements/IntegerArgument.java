@@ -19,63 +19,53 @@ public class IntegerArgument extends Argument {
 	 * @param name argument name
 	 */
 	public IntegerArgument(String name) {
-		super(name);
+            super(name);
 	}
 
 	/**
 	 * Create argument with specific name and default value
 	 * 
-	 * @param name
-	 *            argument name
-	 * @param defaultValue
-	 *            argument default value
+	 * @param name  argument name
+	 * @param defaultValue argument default value
 	 * @throws IllegalArgumentException
 	 */
 	public IntegerArgument(String name, int defaultValue)
 			throws IllegalArgumentException {
-
-		super(name);
-		setDefaultValue(defaultValue);
+            super(name);
+            setDefaultValue(defaultValue);
 	}
 
 	/**
 	 * Create argument with specific name, default value, min. and max. value
 	 * 
-	 * @param name
-	 *            argument name
-	 * @param defaultValue
-	 *            argument default value
-	 * @param minValue
-	 *            argument max. value
-	 * @param maxValue
-	 *            argument min. value
+	 * @param name argument name
+	 * @param defaultValue argument default value
+	 * @param minValue argument max. value
+	 * @param maxValue argument min. value
 	 * @throws IllegalArgumentException
 	 */
 	public IntegerArgument(String name, int defaultValue, int minValue,
 			int maxValue) throws IllegalArgumentException {
-
-		super(name);
-		setDefaultValue(defaultValue);
-		setMinValue(minValue);
-		setMaxValue(maxValue);
+            super(name);
+            setDefaultValue(defaultValue);
+            setMinValue(minValue);
+            setMaxValue(maxValue);
 	}
 
 	/**
 	 * Set default value
 	 * 
-	 * @param defaultValue
-	 *            default value
+	 * @param defaultValue default value
 	 * @throws IllegalArgumentException
 	 */
-	public void
-			setDefaultValue(int defaultValue) throws IllegalArgumentException {
+	public void setDefaultValue(int defaultValue) 
+                throws IllegalArgumentException {
+            super.setDefaultValue();
 
-		super.setDefaultValue();
+            validateDefaultValue(defaultValue, this.minValue, this.maxValue);
 
-		validateDefaultValue(defaultValue, this.minValue, this.maxValue);
-
-		this.defaultValue = defaultValue;
-		this.hasDefaultValue = true;
+            this.defaultValue = defaultValue;
+            this.hasDefaultValue = true;
 	}
 
 	/**
@@ -84,29 +74,26 @@ public class IntegerArgument extends Argument {
 	 * @return argument default value
 	 */
 	public int getDefaultValue() {
-
-		return this.defaultValue;
+            return this.defaultValue;
 	}
 
 	/**
 	 * Set argument min. value
 	 * 
-	 * @param minValue
-	 *            argument min. value
+	 * @param minValue argument min. value
 	 * @throws IllegalArgumentException
 	 */
 	public void setMinValue(int minValue) throws IllegalArgumentException {
+            if (minValue > this.maxValue) {
+                throw new IllegalArgumentException(
+                    "Minimum value can't be greater than maximum value.");
+            }
 
-		if (minValue > this.maxValue) {
-			throw new IllegalArgumentException(
-					"Minimum value can't be greater than maximum value.");
-		}
+            if (this.hasDefaultValue) {
+                validateDefaultValue(this.defaultValue, minValue, this.maxValue);
+            }
 
-		if (this.hasDefaultValue) {
-			validateDefaultValue(this.defaultValue, minValue, this.maxValue);
-		}
-
-		this.minValue = minValue;
+            this.minValue = minValue;
 	}
 
 	/**
@@ -115,28 +102,26 @@ public class IntegerArgument extends Argument {
 	 * @return argument min. value
 	 */
 	public int getMinValue() {
-		return this.minValue;
+            return this.minValue;
 	}
 
 	/**
 	 * Set argument max. value
 	 * 
-	 * @param maxValue
-	 *            argument max. value
+	 * @param maxValue argument max. value
 	 * @throws IllegalArgumentException
 	 */
 	public void setMaxValue(int maxValue) throws IllegalArgumentException {
+            if (maxValue < this.minValue) {
+                throw new IllegalArgumentException(
+                    "Maximum value can't be lesser than minimum value.");
+            }
 
-		if (maxValue < this.minValue) {
-			throw new IllegalArgumentException(
-					"Maximum value can't be lesser than minimum value.");
-		}
+            if (this.hasDefaultValue) {
+                validateDefaultValue(this.defaultValue, this.minValue, maxValue);
+            }
 
-		if (this.hasDefaultValue) {
-			validateDefaultValue(this.defaultValue, this.minValue, maxValue);
-		}
-
-		this.maxValue = maxValue;
+            this.maxValue = maxValue;
 	}
 
 	/**
@@ -151,43 +136,36 @@ public class IntegerArgument extends Argument {
 	/**
 	 * Validate default, min. and max. value before setting
 	 * 
-	 * @param defaultValue
-	 *            default value
-	 * @param minValue
-	 *            min value
-	 * @param maxValue
-	 *            max. value
+	 * @param defaultValue default value
+	 * @param minValue min value
+	 * @param maxValue max. value
 	 * @throws IllegalArgumentException
 	 */
-	protected void validateDefaultValue(int defaultValue,
-			int minValue,
-			int maxValue) throws IllegalArgumentException {
+	protected void validateDefaultValue(int defaultValue, int minValue,
+                int maxValue) throws IllegalArgumentException {
+            if (defaultValue < minValue) {
+                throw new IllegalArgumentException(
+                    "Default value can't be lesser than minimum value.");
+            }
 
-		if (defaultValue < minValue) {
-			throw new IllegalArgumentException(
-					"Default value can't be lesser than minimum value.");
-		}
-
-		if (defaultValue > maxValue) {
-			throw new IllegalArgumentException(
-					"Default value can't be greater than maximum value.");
-		}
-		
+            if (defaultValue > maxValue) {
+                throw new IllegalArgumentException(
+                    "Default value can't be greater than maximum value.");
+            }	
 	}
 
 	@Override
 	public String getDefaulValueToString() {
-		return Integer.toString(this.defaultValue);
+            return Integer.toString(this.defaultValue);
 	}
 
 	@Override
 	public void accept(Visitor visitor) {
-		visitor.visit(this);
+            visitor.visit(this);
 	}
 
 	@Override
 	public void accept(Visitor visitor, Option option) {
-		visitor.visit(this, option);
+            visitor.visit(this, option);
 	}
-
 }
