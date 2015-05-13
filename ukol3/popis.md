@@ -14,6 +14,11 @@ jméno, lze specifikovat, že je parametr povinný či implicitní hodnotu.
 Pro každý typ parametru je k dispozici Builder, který má na starosti vytvoření
 příslušné instance.
 
+Typ volby (krátká nebo dlouhá) rozlišujeme podle jejich délky. Pokud uživatel
+zadá volbu "v", je brána automaticky jako krátká a bude se vyžadovat přepínač 
+"-v", zatímco volba "verbose" bude brána jako dlouhá volba a bude se vyžadovat
+"--verbose" jako parametr.
+
 Pro vlastní parsování se používá třída CommandLineParser a metodou parse načte
 vstup z příkazové řádky. Při načítání dojde i k validaci a pokud není splněno
 některé nastavené omezení je vyhozena výjimka.
@@ -41,6 +46,11 @@ Knihovnu lze snadno rozšířit přidáním nového typu argumentu vytvořením 
 která dědí od abstaktní třídy Argument. Funkcionalitu nad načtenou konfigurací
 nebo naparsovanou příkazovou řádkou lze doplnit naimplementováním dalšího 
 Visitoru.
+
+Pokud má být knihovna uživatelsky použitelná, rozhodli jsme se ponechat 
+uživateli prostor pro využití dat bez zvláštních omezení. Uživatel má možnost
+se zeptat, zda je nastavena některá volba, může získat hodnotu argumentu a
+může získat seznam obyčejných argumentů.
 
 Zdůvodnění návrhu
 ===
