@@ -81,3 +81,8 @@ Bylo nám vytčeno nedotažení návrhového vzoru Builder. Jednotlivé implemen
 jsme vylepšili. Opravili jsme typy parametrů ve fukncích setMin/MaxValue/Length
 Neopravovali jsme Argument::min/maxListValue, jelikož Java nemá bezznaménkové
 typy. Výtku o předávání vícenásobných hodnot pomocí řetězce jsme nepochopili.
+API třídy Argument jsme změnili tak, aby se veškerá omezení nastavovala v 
+odvozených třídách. Jelikož se v Javě nedají předávat funkce jako parametry
+rozhodli jsme se pouze ponechat možnost specifikovat jistá integritní omezení
+na jednotlivých argumentech, avšak již zásadním způsobem neměnit způsob 
+omezení hodnot.
