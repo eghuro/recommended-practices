@@ -6,6 +6,10 @@ import elements.IntegerArgument;
 import elements.Option;
 import elements.StringArgument;
 
+
+/**
+ * Visitor pattern
+ */
 public interface Visitor {
 
 	public void visit(BooleanArgument argument);

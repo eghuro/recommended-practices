@@ -6,118 +6,114 @@ import visitors.OptionsPrintVisitor;
 import visitors.SearchByNameVisitor;
 import visitors.UsagePrintVisitor;
 
+/**
+ * Configuration consisting of accepted command line options
+ */
 public class CommandLine {
+    
+    /** Command line options **/
+    private HashSet<Option> options;
 
-	/** Command line options **/
-	private HashSet<Option> options;
+    /**
+     * Create command line with empty options
+     */
+    public CommandLine() {
+        this.options = new HashSet<>();
+    }
 
-	/**
-	 * Create command line with empty options
-	 */
-	public CommandLine() {
-		this.options = new HashSet<>();
-	}
+    /**
+     * Add option to command line
+     * 
+     * @param option option to add
+     * @throws IllegalArgumentException
+     */
+    public void addOption(Option option) throws IllegalArgumentException {
+        if (hasOptionUniqueNames(option)) {
+            throw new IllegalArgumentException(
+                "Option name is consistent with other option name.");
+        }
 
-	/**
-	 * Add option to command line
-	 * 
-	 * @param option
-	 * @throws IllegalArgumentException
-	 */
-	public void addOption(Option option) throws IllegalArgumentException {
+        this.options.add(option);
+    }
 
-		if (hasOptionUniqueNames(option)) {
-			throw new IllegalArgumentException(
-					"Option name is consistent with other option name.");
-		}
-		
-		this.options.add(option);
-	}
+    /**
+     * Check if option has unique name/names
+     * 
+     * @param option checked option
+     * @return whether option has unique name/names
+     */
+    private boolean hasOptionUniqueNames(Option option) {
+        if (existsOptionName(option.getNameWithPrefix())) {
+            return true;
+        }
 
-	/**
-	 * Check if option has unique name/names
-	 * 
-	 * @param option
-	 *            checked option
-	 * @return whether option has unique name/names
-	 */
-	private boolean hasOptionUniqueNames(Option option) {
+        if (!option.getNames().isEmpty()) {
+            for (String argumentSynonym : option.getNamesWithPrefix()) {
+                if (existsOptionName(argumentSynonym)) {
+                    return true;
+                }
+            }
+        }
 
-		if (existsOptionName(option.getNameWithPrefix())) {
-			return true;
-		}
+        return false;
+    }
 
-		if (!option.getNames().isEmpty()) {
-			for (String argumentSynonym : option.getNamesWithPrefix()) {
-				if (existsOptionName(argumentSynonym)) {
-					return true;
-				}
-			}
-		}
+    /**
+     * Check if option name exists
+     * 
+     * @param name checked option name
+     * @return whether option name exists
+     */
+    private boolean existsOptionName(String name) {
+        SearchByNameVisitor searchVisitor = new SearchByNameVisitor(name);
 
-		return false;
-	}
+        for (Visitable option : this.options) {
+            option.accept(searchVisitor);
+        }
 
-	/**
-	 * Check if option name exists
-	 * 
-	 * @param name
-	 *            checked option name
-	 * @return whether option name exists
-	 */
-	private boolean existsOptionName(String name) {
+        return searchVisitor.optionNameFound();
+    }
 
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(name);
+    /**
+     * Print program usage
+     */
+    public void printUsage() {
+        UsagePrintVisitor usageVisitor = new UsagePrintVisitor();
 
-		for (Visitable option : this.options) {
-			option.accept(searchVisitor);
-		}
+        System.out.print("Usage: " + getProgramName());
 
-		return searchVisitor.optionNameFound();
-	}
+        for (Visitable option : this.options) {
+                option.accept(usageVisitor);
+        }
 
-	/**
-	 * Print program usage
-	 */
-	public void printUsage() {
+        System.out.println();
+        System.out.println("Options: ");
 
-		UsagePrintVisitor usageVisitor = new UsagePrintVisitor();
+        OptionsPrintVisitor optionsVisitor = new OptionsPrintVisitor();
 
-		System.out.print("Usage: " + getProgramName());
+        for (Visitable option : this.options) {
+                option.accept(optionsVisitor);
+        }
+    }
 
-		for (Visitable option : this.options) {
-			option.accept(usageVisitor);
-		}
+    /**
+     * Get program name
+     * 
+     * @return prigram name
+     */
+    private String getProgramName() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        StackTraceElement main = stack[stack.length - 1];
 
-		System.out.println();
-		System.out.println("Options: ");
+        return main.getClassName();
+    }
 
-		OptionsPrintVisitor optionsVisitor = new OptionsPrintVisitor();
-
-		for (Visitable option : this.options) {
-			option.accept(optionsVisitor);
-		}
-	}
-
-	/**
-	 * Get program name
-	 * 
-	 * @return
-	 */
-	private String getProgramName() {
-
-		StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-		StackTraceElement main = stack[stack.length - 1];
-		
-		return main.getClassName();
-	}
-
-	/**
-	 * Get command line options
-	 * 
-	 * @return command line option
-	 */
-	public HashSet<Option> getOptions() {
-		return this.options;
-	}
+    /**
+     * Get command line options
+     * 
+     * @return command line option
+     */
+    public HashSet<Option> getOptions() {
+        return this.options;
+    }
 }

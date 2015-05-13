@@ -9,173 +9,159 @@ import elements.IntegerArgument;
 import elements.Option;
 import elements.StringArgument;
 
+/**
+ * Validate argument for option
+ */
 public class ValidateVisitor implements Visitor {
 
-	private HashMap<Option, String> optionsValues;
+    private HashMap<Option, String> optionsValues;
 
-	private HashSet<String> errors = new HashSet<String>();
+    private HashSet<String> errors = new HashSet<String>();
 
-	public ValidateVisitor(HashMap<Option, String> optionsValues) {
-		this.optionsValues = optionsValues;
-	}
+    public ValidateVisitor(HashMap<Option, String> optionsValues) {
+        this.optionsValues = optionsValues;
+    }
 
-	@Override
-	public void visit(BooleanArgument argument) {
-		// do nothing;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(BooleanArgument argument) {
+        // do nothing;
+    }
 
-	@Override
-	public void visit(EnumeratedArgument argument) {
-		// do nothing;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(EnumeratedArgument argument) {
+        // do nothing;
+    }
 
-	@Override
-	public void visit(IntegerArgument argument) {
-		// do nothing;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(IntegerArgument argument) {
+        // do nothing;
+    }
 
-	@Override
-	public void visit(StringArgument argument) {
-		// do nothing;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(StringArgument argument) {
+        // do nothing;
+    }
 
-	@Override
-	public void visit(BooleanArgument argument, Option option) {
+    /**
+     * Validate boolean argument for option
+     * @param argument an argument
+     * @param option an option
+     */
+    @Override
+    public void visit(BooleanArgument argument, Option option) {
+        String optionValue = this.optionsValues.get(option);
 
-		String optionValue = this.optionsValues.get(option);
+        if (argument.isRequired() && optionValue == null) {
+            this.errors.add("Argument for option '"
+                + option.getNameWithPrefix() + "' is required.");
+        } else if (optionValue != null) {
+            if (!optionValue.equals("true") && !optionValue.equals("false")) {
+                this.errors.add("Argument for option '"
+                    + option.getNameWithPrefix() + "' must be true/false.");
+            }
+        }
+    }
 
-		if (argument.isRequired() && optionValue == null) {
-			
-			this.errors.add("Argument for option '"
-					+ option.getNameWithPrefix() + "' is required.");
-		
-		} else if (optionValue != null) {
-			
-			if (!optionValue.equals("true") && !optionValue.equals("false")) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix() + "' must be true/false.");
-			
-			}		
-		}
-		
-	}
+    /**
+     * Validate enum argument for option
+     * @param argument argument
+     * @param option option
+     */
+    @Override
+    public void visit(EnumeratedArgument argument, Option option) {
+        String optionValue = this.optionsValues.get(option);
 
-	@Override
-	public void visit(EnumeratedArgument argument, Option option) {
+        if (argument.isRequired() && optionValue == null) {
+            this.errors.add("Argument for option '"
+                + option.getNameWithPrefix() + "' is required.");
+        } else if (optionValue != null) {
+            if (!argument.getValues().contains(optionValue)) {
+                this.errors.add("Argument for option '"
+                    + option.getNameWithPrefix() + "' must be "
+                    + String.join("/", argument.getValues()) + ".");
+            }			
+        }
+    }	
 
-		String optionValue = this.optionsValues.get(option);
+    /**
+     * Validate integer argument for option
+     * @param argument argument
+     * @param option option
+     */
+    @Override
+    public void visit(IntegerArgument argument, Option option) {
+        String optionValue = this.optionsValues.get(option);
 
-		if (argument.isRequired() && optionValue == null) {
-			
-			this.errors.add("Argument for option '"
-					+ option.getNameWithPrefix() + "' is required.");
-		
-		} else if (optionValue != null) {
-			
-			if (!argument.getValues().contains(optionValue)) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix() + "' must be "
-						+ String.join("/", argument.getValues()) + ".");
-			
-			}			
-		}
-		
-	}	
+        if (argument.isRequired() && optionValue == null) {
+            this.errors.add("Argument for option '"
+                + option.getNameWithPrefix() + "' is required.");
+        } else if (optionValue != null) {
+            if (!optionValue.matches("^[0-9]*$")) {
+                this.errors.add("Argument for option '"
+                    + option.getNameWithPrefix() + "' must be integer.");
+            } else if (Integer.parseInt(optionValue) < argument.getMinValue()) {
+                this.errors.add("Argument for option '" 
+                    + option.getNameWithPrefix()
+                    + "' must have minimum value " + argument.getMinValue()
+                    + ".");
+            } else if (Integer.parseInt(optionValue) > argument.getMaxValue()) {
+                this.errors.add("Argument for option '"
+                    + option.getNameWithPrefix()
+                    + "' must have maximum value " + argument.getMaxValue()
+                    + ".");
+            }
+        }
+    }
 
-	@Override
-	public void visit(IntegerArgument argument, Option option) {
+    /**
+     * Validate string argument for option
+     * @param argument argument
+     * @param option option
+     */
+    @Override
+    public void visit(StringArgument argument, Option option) {
+        
+    }
 
-		String optionValue = this.optionsValues.get(option);
+    /**
+     * Validate option
+     * @param option option
+     */
+    @Override
+    public void visit(Option option) {
+        boolean isOptionUsed = this.optionsValues.containsKey(option);
 
-		if (argument.isRequired() && optionValue == null) {
-			
-			this.errors.add("Argument for option '"
-					+ option.getNameWithPrefix() + "' is required.");
-			
-		} else if (optionValue != null) {
-			
-			if (!optionValue.matches("^[0-9]*$")) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix() + "' must be integer.");
-			
-			} else if (Integer.parseInt(optionValue) < argument.getMinValue()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have minimum value " + argument.getMinValue()
-						+ ".");
-			
-			} else if (Integer.parseInt(optionValue) > argument.getMaxValue()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have maximum value " + argument.getMaxValue()
-						+ ".");
-			
-			}
-		}
-		
-	}
+        if (isOptionUsed) {
+            if (option.hasArgument()) {
+                option.getArgument().accept(this, option);
+            }
+        } else if (option.isRequired()) {
+            this.errors.add("Option '" + option.getNameWithPrefix()
+                + "' is required.");
+        }
+    }
 
-	@Override
-	public void visit(StringArgument argument, Option option) {
-
-		String optionValue = this.optionsValues.get(option);
-
-		if (argument.isRequired() && optionValue == null) {
-			
-			this.errors.add("Argument for option '"
-					+ option.getNameWithPrefix() + "' is required.");
-		
-		} else if (optionValue != null) {
-			
-			if (optionValue.length() < argument.getMinLength()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have minimum length of "
-						+ argument.getMinLength() + ".");
-			
-			} else if (optionValue.length() > argument.getMaxLength()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have maximum length of "
-						+ argument.getMaxLength() + ".");
-			
-			}
-		}
-		
-	}
-
-	@Override
-	public void visit(Option option) {
-
-		boolean isOptionUsed = this.optionsValues.containsKey(option);
-
-		if (isOptionUsed) {
-		
-			if (option.hasArgument()) {
-				option.getArgument().accept(this, option);
-			}
-		
-		} else if (option.isRequired()) {
-			
-			this.errors.add("Option '" + option.getNameWithPrefix()
-					+ "' is required.");
-		
-		}
-	}
-
-	/**
-	 * Get validator errors
-	 * @return errors
-	 */
-	public HashSet<String> getErrors() {
-		return this.errors;
-	}
-
+    /**
+     * Get validator errors
+     * @return errors
+     */
+    public HashSet<String> getErrors() {
+        return this.errors;
+    }
 }

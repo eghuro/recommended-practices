@@ -4,55 +4,50 @@ import builders.IntegerArgBuilder;
 import builders.OptionBuilder;
 
 public final class Example {
+    public static void main(final String[] args) {
+        CommandLine cmdLine = new CommandLine();
+        
+        Option verbose = OptionBuilder
+                .withName("v")
+                .withNameSynonym("verbose")
+                .withDescription("Output message about ...")
+                .create();
 
-	public static void main(final String[] args) {
+        cmdLine.addOption(verbose);
 
-		CommandLine cmdLine = new CommandLine();
+        Option size = OptionBuilder
+                .withName("size")
+                .withNameSynonym("s")
+                .isRequired()
+                .withDescription("Size of ...")
+                .hasArgument(
+                    IntegerArgBuilder
+                        .hasDefaultValue(42)
+                        .create("BLOCK SIZE"))
+                    .create();
 
-		Option verbose = OptionBuilder
-				.withName("v")
-				.withNameSynonym("verbose")
-				.withDescription("Output message about ...")
-				.create();
+        cmdLine.addOption(size);
 
-		cmdLine.addOption(verbose);
+        CommandLineParser parser = new CommandLineParser(cmdLine.getOptions());
 
-		Option size = OptionBuilder
-				.withName("size")
-				.withNameSynonym("s")
-				.isRequired()
-				.withDescription("Size of ...")
-				.hasArgument(
-						IntegerArgBuilder
-							.hasDefaultValue(42)
-							.create("BLOCK SIZE"))
-				.create();
+        try {
+            parser.parse(args);
 
-		cmdLine.addOption(size);
+            String hasOptionVerbose;
 
-		CommandLineParser parser = new CommandLineParser(cmdLine.getOptions());
+            if (parser.hasOption("verbose")) {
+                hasOptionVerbose = "true";
+            } else {
+                hasOptionVerbose = "false";
+            }
 
-		try {
-			parser.parse(args);
-
-			String hasOptionVerbose;
-
-			if (parser.hasOption("verbose")) {
-				hasOptionVerbose = "true";
-			} else {
-				hasOptionVerbose = "false";
-			}
-
-			System.out.println("verbose = " + hasOptionVerbose);
-			System.out.println("size = " + parser.getOptionValue("size"));
-			System.out.println("args = "
-					+ String.join(" ", parser.getCommonArguments()));
-
-		} catch (ParseException exception) {
-			
-			System.out.println(exception);
-			cmdLine.printUsage();
-		
-		}
-	}
+            System.out.println("verbose = " + hasOptionVerbose);
+            System.out.println("size = " + parser.getOptionValue("size"));
+            System.out.println("args = "
+                    + String.join(" ", parser.getCommonArguments()));
+        } catch (ParseException exception) {
+            System.out.println(exception);
+            cmdLine.printUsage();	
+        }
+    }
 }

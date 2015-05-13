@@ -11,146 +11,171 @@ import elements.IntegerArgument;
 import elements.Option;
 import elements.StringArgument;
 
+/**
+ * Visitor for printing options
+ */
 public class OptionsPrintVisitor implements Visitor {
 
-	@Override
-	public void visit(BooleanArgument argument) {
+    /**
+     * Print argument - type: boolean
+     * @param argument argument to print
+     */
+    @Override
+    public void visit(BooleanArgument argument) {
+        List<String> argumentConditions = new ArrayList<String>();
 
-		List<String> argumentConditions = new ArrayList<String>();
+        argumentConditions.add("true/false");
 
-		argumentConditions.add("true/false");
+        if (argument.hasDefaultValue()) {
+            String defaultValue = (argument.getDefaultValue()) ? "true" 
+                    : "false";
+            
+            argumentConditions.add("default value: " + defaultValue);
+        }
 
-		if (argument.hasDefaultValue()) {
-			String defaultValue = (argument.getDefaultValue()) ? "true"
-					: "false";
+        printArgument(argument, argumentConditions);
+    }
 
-			argumentConditions.add("default value: " + defaultValue);
-		}
+    /**
+     * Print argument - type: enum
+     * @param argument  argument to print
+     */	
+    @Override
+    public void visit(EnumeratedArgument argument) {
+        List<String> argumentConditions = new ArrayList<String>();
 
-		printArgument(argument, argumentConditions);
-	}
+        Set<String> enumeratedValues = argument.getValues();
 
-	@Override
-	public void visit(EnumeratedArgument argument) {
+        argumentConditions.add("use value: "
+                        + String.join("/", enumeratedValues));
 
-		List<String> argumentConditions = new ArrayList<String>();
+        if (argument.hasDefaultValue()) {
+                argumentConditions.add("default value: "
+                                + argument.getDefaultValue());
+        }
 
-		Set<String> enumeratedValues = argument.getValues();
+        printArgument(argument, argumentConditions);
+    }
 
-		argumentConditions.add("use value: "
-				+ String.join("/", enumeratedValues));
+    /**
+     * Print argument - type: integer
+     * @param argument argument to print
+     */
+    @Override
+    public void visit(IntegerArgument argument) {
+        List<String> argumentConditions = new ArrayList<String>();
 
-		if (argument.hasDefaultValue()) {
-			argumentConditions.add("default value: "
-					+ argument.getDefaultValue());
-		}
+        if (argument.getMinValue() > Integer.MIN_VALUE) {
+                argumentConditions.add("min. value: " + argument.getMinValue());
+        }
 
-		printArgument(argument, argumentConditions);
-	}
+        if (argument.getMaxValue() < Integer.MAX_VALUE) {
+                argumentConditions.add("max. value: " + argument.getMaxValue());
+        }
 
-	@Override
-	public void visit(IntegerArgument argument) {
+        if (argument.hasDefaultValue()) {
+            argumentConditions.add("default value: "
+                + argument.getDefaultValue());
+        }
 
-		List<String> argumentConditions = new ArrayList<String>();
+        printArgument(argument, argumentConditions);
+    }
 
-		if (argument.getMinValue() > Integer.MIN_VALUE) {
-			argumentConditions.add("min. value: " + argument.getMinValue());
-		}
+    /**
+     * Print argument - type: string
+     * @param argument argument to print
+     */
+    @Override
+    public void visit(StringArgument argument) {
+        List<String> argumentConditions = new ArrayList<String>();
 
-		if (argument.getMaxValue() < Integer.MAX_VALUE) {
-			argumentConditions.add("max. value: " + argument.getMaxValue());
-		}
+        if (argument.getMinLength() > 0) {
+            argumentConditions.add("min. length: " + argument.getMinLength());
+        }
 
-		if (argument.hasDefaultValue()) {
-			argumentConditions.add("default value: "
-					+ argument.getDefaultValue());
-		}
+        if (argument.getMaxLength() < Integer.MAX_VALUE) {
+            argumentConditions.add("max. length: " + argument.getMaxLength());
+        }
 
-		printArgument(argument, argumentConditions);
-	}
+        if (argument.hasDefaultValue()) {
+            argumentConditions.add("default value: " 
+                + argument.getDefaultValue());
+        }
 
-	@Override
-	public void visit(StringArgument argument) {
+        printArgument(argument, argumentConditions);
+    }
 
-		List<String> argumentConditions = new ArrayList<String>();
+    /**
+     * Print an option
+     * @param option 
+     */
+    @Override
+    public void visit(Option option) {
+        System.out.print(" ");
 
-		if (argument.getMinLength() > 0) {
-			argumentConditions.add("min. length: " + argument.getMinLength());
-		}
+        System.out.print(option.getNameWithPrefix());
 
-		if (argument.getMaxLength() < Integer.MAX_VALUE) {
-			argumentConditions.add("max. length: " + argument.getMaxLength());
-		}
+        if (option.hasArgument()) {
+            option.getArgument().accept(this);
+        }
 
-		if (argument.hasDefaultValue()) {
-			argumentConditions.add("default value: "
-					+ argument.getDefaultValue());
-		}
+        System.out.println("\t" + option.getDesription());
 
-		printArgument(argument, argumentConditions);
-	}
+        if (!option.getNames().isEmpty()) {
+            for (String argumentSynonym : option.getNamesWithPrefix()) {
+                System.out.println("  " + argumentSynonym);
+            }
+        }
+    }
 
-	@Override
-	public void visit(Option option) {
+    private void printArgument(Argument argument, 
+            List<String> argumentConditions) {
+        System.out.print(" ");
 
-		System.out.print(" ");
+        if (!argument.isRequired()) {
+            System.out.print("[");
+        }
 
-		System.out.print(option.getNameWithPrefix());
+        System.out.print("<" + argument.getName() + ">");
 
-		if (option.hasArgument()) {
-			option.getArgument().accept(this);
-		}
+        if (!argumentConditions.isEmpty()) {
+            System.out.print(" { " + String.join(", ", argumentConditions)
+            + " }");
+        }
 
-		System.out.println("\t" + option.getDesription());
+        if (!argument.isRequired()) {
+            System.out.print("]");
+        }
+    }
 
-		if (!option.getNames().isEmpty()) {
-			
-			for (String argumentSynonym : option.getNamesWithPrefix()) {
-				System.out.println("  " + argumentSynonym);
-			}
-			
-		}
-	}
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(BooleanArgument argument, Option option) {
+        // do nothing
+    }
 
-	private void printArgument(Argument argument,
-			List<String> argumentConditions) {
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(EnumeratedArgument argument, Option option) {
+        // do nothing
+    }
 
-		System.out.print(" ");
+    @Override
+    public void visit(IntegerArgument argument, Option option) {
+            // do nothing
+    }
 
-		if (!argument.isRequired()) {
-			System.out.print("[");
-		}
-
-		System.out.print("<" + argument.getName() + ">");
-
-		if (!argumentConditions.isEmpty()) {
-			System.out.print(" { " + String.join(", ", argumentConditions)
-					+ " }");
-		}
-
-		if (!argument.isRequired()) {
-			System.out.print("]");
-		}
-	}
-
-	@Override
-	public void visit(BooleanArgument argument, Option option) {
-		// do nothing
-	}
-
-	@Override
-	public void visit(EnumeratedArgument argument, Option option) {
-		// do nothing
-	}
-
-	@Override
-	public void visit(IntegerArgument argument, Option option) {
-		// do nothing
-	}
-
-	@Override
-	public void visit(StringArgument argument, Option option) {
-		// do nothing
-	}
+    @Override
+    public void visit(StringArgument argument, Option option) {
+            // do nothing
+    }
 
 }

@@ -11,236 +11,217 @@ import elements.Option;
 import elements.Visitable;
 import exceptions.ParseException;
 
+/**
+ * Parser of provided command line arguments
+ */
 public class CommandLineParser {
 
-	/** Command line options **/
-	private HashSet<Option> options;
+    /** Command line options **/
+    private HashSet<Option> options;
 
-	/** Command line common argument - not specified **/
-	private HashSet<String> commonArguments = new HashSet<>();
+    /** Command line common argument - not specified **/
+    private HashSet<String> commonArguments = new HashSet<>();
 
-	/** Options values from command line **/
-	private HashMap<Option, String> optionsValues = 
-			new HashMap<Option, String>();
+    /** Options values from command line **/
+    private HashMap<Option, String> optionsValues = 
+        new HashMap<Option, String>();
 
-	/**
-	 * Create command line parser with selected options
-	 * 
-	 * @param options
-	 */
-	public CommandLineParser(HashSet<Option> options) {
-		this.options = options;
-	}
+    /**
+     * Create command line parser with selected options
+     * 
+     * @param options
+     */
+    public CommandLineParser(HashSet<Option> options) {
+        this.options = options;
+    }
 
-	/**
-	 * Parse command line arguments
-	 * 
-	 * @param arguments
-	 *            command line arugments
-	 * @throws ParseException
-	 */
-	public void parse(String[] arguments) throws ParseException {
-		if (arguments == null) {
-			arguments = new String[0];
-		}
-		
-		List<String> argumentsList = 
-				new ArrayList<String>(Arrays.asList(arguments));
-		
-		boolean isArgumentCommon = false;
-		
-		while (!argumentsList.isEmpty()) {
-			String argument = argumentsList.remove(0); 
-			
-			if (isArgumentCommon) {
-				
-				commonArguments.add(argument);
-				
-			}
-			else if (argument.equals("--")) {
-				
-				isArgumentCommon = true;
-				
-			}
-			else {
-				
-				if (argument.indexOf("=") > 0) {
-					String[] argumentParts = argument.split("=", 2);
-					argument = argumentParts[0];
-					argumentsList.add(0, argumentParts[1]);
-				}
-				
-				Option argumentOption = getOptionByArgument(argument);
-				
-				boolean isNextArgumentValue = false;
-				
-				if (!argumentsList.isEmpty()) {
-					
-					String nextArgument = argumentsList.get(0);
-					
-					if (!nextArgument.equals("--")) {
-						
-						if (nextArgument.indexOf("=") > 0) {
-						
-							String[] nextArgumentParts = nextArgument.split("=", 2);
-							nextArgument = nextArgumentParts[0];
-						
-						}
-						
-						isNextArgumentValue = !isArgumentOption(nextArgument);
-					}
-					
-				}
-				
-				if (argumentOption != null && isNextArgumentValue 
-						&& argumentOption.hasArgument()) {
-					
-					this.optionsValues.put(argumentOption, 
-							argumentsList.remove(0));
-				}
-				else if (argumentOption != null && !isNextArgumentValue) {
-					this.optionsValues.put(argumentOption, null);
-				}
-				else {
-					throw new ParseException("Unexpected option/argument: "
-							+ argument);
-				}
-				
-			}			
-			
-		}
+    /**
+     * Parse command line arguments
+     * 
+     * @param arguments command line arguments
+     * @throws ParseException
+     */
+    public void parse(String[] arguments) throws ParseException {
+        if (arguments == null) {
+            arguments = new String[0];
+        }
 
-		validateArguments();
-	}
+        List<String> argumentsList = 
+            new ArrayList<String>(Arrays.asList(arguments));
 
-	/**
-	 * Validate arguments from command line
-	 * 
-	 * @throws ParseException
-	 */
-	private void validateArguments() throws ParseException {
+        boolean isArgumentCommon = false;
 
-		ValidateVisitor validateVisitor = new ValidateVisitor(
-				this.optionsValues);
+        while (!argumentsList.isEmpty()) {
+            String argument = argumentsList.remove(0); 
 
-		for (Visitable option : this.options) {
-			option.accept(validateVisitor);
-		}
+            if (isArgumentCommon) {
+                commonArguments.add(argument);
+            }
+            else if (argument.equals("--")) {
+                isArgumentCommon = true;
+            }
+            else {
+                if (argument.indexOf("=") > 0) {
+                    String[] argumentParts = argument.split("=", 2);
+                    argument = argumentParts[0];
+                    argumentsList.add(0, argumentParts[1]);
+                }
 
-		if (!validateVisitor.getErrors().isEmpty()) {
-			throw new ParseException(String.join("\n",
-					validateVisitor.getErrors()));
-		}
-	}
+                Option argumentOption = getOptionByArgument(argument);
 
-	/**
-	 * Get Option(object) by argument name
-	 * 
-	 * @param argument
-	 *            searched option name
-	 * @return Option(object) or null
-	 */
-	private Option getOptionByArgument(String argument) {
+                boolean isNextArgumentValue = false;
 
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(argument);
+                if (!argumentsList.isEmpty()) {
+                    String nextArgument = argumentsList.get(0);
 
-		for (Visitable option : this.options) {
-			option.accept(searchVisitor);
-		}
+                    if (!nextArgument.equals("--")) {
+                        if (nextArgument.indexOf("=") > 0) {
+                            String[] nextArgumentParts = nextArgument.split("=", 2);
+                            nextArgument = nextArgumentParts[0];
+                        }
 
-		if (searchVisitor.optionNameFound()) {
-			return searchVisitor.getFoundOption();
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * Check if argument name from command line is option name
-	 * @param argument 
-	 *            argument name from command line
-	 * @return whether it is option name
-	 */
-	private boolean isArgumentOption(String argument) {
-		return (getOptionByArgument(argument) != null);
-	}
+                        isNextArgumentValue = !isArgumentOption(nextArgument);
+                    }
+                }
 
-	/**
-	 * Check if option with specific name was in command line arguments
-	 * 
-	 * @param optionName
-	 *            option name
-	 * @return whether it was in command line arguments
-	 */
-	public boolean hasOption(String optionName) {
+                if (argumentOption != null && isNextArgumentValue 
+                    && argumentOption.hasArgument()) {
+                        this.optionsValues.put(argumentOption, 
+                            argumentsList.remove(0));
+                }
+                else if (argumentOption != null && !isNextArgumentValue) {
+                    this.optionsValues.put(argumentOption, null);
+                }
+                else {
+                    throw new ParseException("Unexpected option/argument: "
+                        + argument);
+                }
+            }			
+        }
 
-		String optionNameWithPrefix = Option
-				.createOptionNameWithPrefix(optionName);
-		
-		Set<Option> parsedOptions = this.optionsValues.keySet();
+        validateArguments();
+    }
 
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(
-				optionNameWithPrefix);
+    /**
+     * Validate arguments from command line
+     * 
+     * @throws ParseException
+     */
+    private void validateArguments() throws ParseException {
 
-		for (Visitable option : parsedOptions) {
-			option.accept(searchVisitor);
-		}
+            ValidateVisitor validateVisitor = new ValidateVisitor(
+                this.optionsValues);
 
-		return searchVisitor.optionNameFound();
-	}
+            for (Visitable option : this.options) {
+                    option.accept(validateVisitor);
+            }
 
-	/**
-	 * Get option argument value
-	 * 
-	 * @param optionName
-	 *            option name
-	 * @return option argument value
-	 */
-	public String getOptionValue(String optionName) {
+            if (!validateVisitor.getErrors().isEmpty()) {
+                throw new ParseException(String.join("\n",
+                    validateVisitor.getErrors()));
+            }
+    }
 
-		String optionNameWithPrefix = Option
-				.createOptionNameWithPrefix(optionName);
-		
-		String optionValue = null;
-		
-		Set<Option> parsedOptions = this.optionsValues.keySet();
+    /**
+     * Get Option instance by argument name
+     * 
+     * @param argument searched option name
+     * @return Option instance or null
+     */
+    private Option getOptionByArgument(String argument) {
+        SearchByNameVisitor searchVisitor = new SearchByNameVisitor(argument);
 
-		SearchByNameVisitor searchVisitor = new SearchByNameVisitor(
-				optionNameWithPrefix);
+        for (Visitable option : this.options) {
+            option.accept(searchVisitor);
+        }
 
-		for (Visitable option : parsedOptions) {
-			option.accept(searchVisitor);
-		}
+        if (searchVisitor.optionNameFound()) {
+            return searchVisitor.getFoundOption();
+        } else {
+            return null;
+        }
+    }
 
-		if (searchVisitor.optionNameFound()) {			
-			optionValue = this.optionsValues
-					.get(searchVisitor.getFoundOption());
-		}
+    /**
+     * Check if argument name from command line is option name
+     * @param argument argument name from command line
+     * @return whether it is option name
+     */
+    private boolean isArgumentOption(String argument) {
+        return (getOptionByArgument(argument) != null);
+    }
 
-		if (optionValue == null) {
-			
-			searchVisitor.reset();
+    /**
+     * Check if option with specific name was in command line arguments
+     * 
+     * @param optionName option name
+     * @return whether it was in command line arguments
+     */
+    public boolean hasOption(String optionName) {
+        String optionNameWithPrefix = Option
+            .createOptionNameWithPrefix(optionName);
 
-			for (Visitable option : this.options) {
-				option.accept(searchVisitor);
-			}
+        Set<Option> parsedOptions = this.optionsValues.keySet();
 
-			if (searchVisitor.optionNameFound()) {
-				optionValue = searchVisitor.getFoundOption().getArgument()
-						.getDefaulValueToString();
-			}
-		}
+        SearchByNameVisitor searchVisitor = new SearchByNameVisitor(
+            optionNameWithPrefix);
 
-		return optionValue;
-	}
+        for (Visitable option : parsedOptions) {
+            option.accept(searchVisitor);
+        }
 
-	/**
-	 * Get command line common arguments
-	 * 
-	 * @return command line common arguments
-	 */
-	public Set<String> getCommonArguments() {
-		return this.commonArguments;
-	}
+        return searchVisitor.optionNameFound();
+    }
 
+    /**
+     * Get option argument value
+     * 
+     * @param optionName
+     *            option name
+     * @return option argument value
+     */
+    public String getOptionValue(String optionName) {
+        String optionNameWithPrefix = Option
+            .createOptionNameWithPrefix(optionName);
+
+        String optionValue = null;
+
+        Set<Option> parsedOptions = this.optionsValues.keySet();
+
+        SearchByNameVisitor searchVisitor = new SearchByNameVisitor(
+            optionNameWithPrefix);
+
+        for (Visitable option : parsedOptions) {
+            option.accept(searchVisitor);
+        }
+
+        if (searchVisitor.optionNameFound()) {			
+            optionValue = this.optionsValues
+                .get(searchVisitor.getFoundOption());
+        }
+
+        if (optionValue == null) {
+            searchVisitor.reset();
+
+            for (Visitable option : this.options) {
+                option.accept(searchVisitor);
+            }
+
+            if (searchVisitor.optionNameFound()) {
+                optionValue = searchVisitor.getFoundOption().getArgument()
+                    .getDefaulValueToString();
+            }
+        }
+
+        return optionValue;
+    }
+
+    /**
+     * Get command line common arguments
+     * 
+     * @return command line common arguments
+     */
+    public Set<String> getCommonArguments() {
+        return this.commonArguments;
+    }
 }

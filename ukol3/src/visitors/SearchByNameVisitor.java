@@ -6,90 +6,140 @@ import elements.IntegerArgument;
 import elements.Option;
 import elements.StringArgument;
 
+/**
+ * Lookup option by name
+ */
 public class SearchByNameVisitor implements Visitor {
+    private final String optionSearchName;
+    
+    private boolean optionNameExists;
+    private Option foundOption;
 
-	private String optionSearchName;
+    public SearchByNameVisitor(String optionSearchName) {
+        this.optionSearchName = optionSearchName;
+        reset();
+    }
 
-	private boolean optionNameExists = false;
+    /**
+     * Reset 
+     */
+    public void reset() {
+        optionNameExists = false;
+        foundOption = null;
+    }
 
-	private Option foundOption = null;
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(BooleanArgument argument) {
+        // do nothing
+    }
 
-	public SearchByNameVisitor(String optionSearchName) {
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(EnumeratedArgument argument) {
+        // do nothing
+    }
 
-		this.optionSearchName = optionSearchName;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(IntegerArgument argument) {
+        // do nothing
+    }
 
-	public void reset() {
-		optionNameExists = false;
-		foundOption = null;
-	}
+    /**
+     * Do nothing
+     * @param argument 
+     */
+    @Override
+    public void visit(StringArgument argument) {
+        // do nothing
+    }
 
-	@Override
-	public void visit(BooleanArgument argument) {
-		// do nothing
-	}
+    /**
+     * Process an option and alter internal state if looking for this particular
+     * option name.
+     * @param option option to process
+     */
+    @Override
+    public void visit(Option option) {
+        boolean found = false;
 
-	@Override
-	public void visit(EnumeratedArgument argument) {
-		// do nothing
-	}
+        found |= this.optionSearchName.equals(option.getNameWithPrefix());
 
-	@Override
-	public void visit(IntegerArgument argument) {
-		// do nothing
-	}
+        for (String argumentSynonym : option.getNamesWithPrefix()) {
+            found |= this.optionSearchName.equals(argumentSynonym);
+        }
 
-	@Override
-	public void visit(StringArgument argument) {
-		// do nothing
-	}
+        this.optionNameExists |= found;
 
-	@Override
-	public void visit(Option option) {
+        if (found) {
+            foundOption = option;
+        }
+    }
 
-		boolean found = false;
-		
-		found |= this.optionSearchName.equals(option.getNameWithPrefix());
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(BooleanArgument argument, Option option) {
+        // do nothing
+    }
 
-		for (String argumentSynonym : option.getNamesWithPrefix()) {
-			found |= this.optionSearchName.equals(argumentSynonym);
-		}
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(EnumeratedArgument argument, Option option) {
+        // do nothing
+    }
 
-		this.optionNameExists |= found;
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(IntegerArgument argument, Option option) {
+        // do nothing
+    }
 
-		if (found) {
-			foundOption = option;
-		}
-		
-	}
+    /**
+     * Do nothing
+     * @param argument
+     * @param option 
+     */
+    @Override
+    public void visit(StringArgument argument, Option option) {
+        // do nothing
+    }
 
-	@Override
-	public void visit(BooleanArgument argument, Option option) {
-		// do nothing
-	}
+    /**
+     * If option name was already found
+     * @return Option name was already found
+     */
+    public boolean optionNameFound() {
+        return this.optionNameExists;
+    }
 
-	@Override
-	public void visit(EnumeratedArgument argument, Option option) {
-		// do nothing
-	}
-
-	@Override
-	public void visit(IntegerArgument argument, Option option) {
-		// do nothing
-	}
-
-	@Override
-	public void visit(StringArgument argument, Option option) {
-		// do nothing
-	}
-
-	public boolean optionNameFound() {
-		return this.optionNameExists;
-	}
-
-	public Option getFoundOption() {
-
-		return this.foundOption;
-	}
-
+    /**
+     * Access to the found option
+     * @return the option found or null if not found
+     * @see SearchByNameVisitor.optionNameFound()
+     */
+    public Option getFoundOption() {
+        return this.foundOption;
+    }
 }
