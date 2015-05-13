@@ -75,6 +75,14 @@ uživateli prostor pro využití dat bez zvláštních omezení. Uživatel má m
 se zeptat, zda je nastavena některá volba, může získat hodnotu argumentu a
 může získat seznam obyčejných argumentů.
 
+Testy
+===
+Definujeme sadu 43 testů k otestování funkcionality knihovny. U testů, které 
+očekávají výjimku jsme doplnili dokumentaci se zdůvodněním, v ostatních
+případech je z assertů poznat, co je testováno.
+
+Testy se spouštějí pomocí TestSuite AllTests.
+
 Připomínky od oponentů
 ===
 Bylo nám vytčeno nedotažení návrhového vzoru Builder. Jednotlivé implementace

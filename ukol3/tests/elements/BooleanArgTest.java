@@ -5,59 +5,53 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class BooleanArgTest {
+    @Test
+    public void testConstructors() {
+        BooleanArgument argument = new BooleanArgument("printable");
 
-	@Test
-	public void testConstructors() {
+        assertFalse(argument.isRequired());
+        assertFalse(argument.hasDefaultValue());
 
-		BooleanArgument argument = new BooleanArgument("printable");
+        BooleanArgument defaultArgument = new BooleanArgument("printable", true);
 
-		assertFalse(argument.isRequired());
-		assertFalse(argument.hasDefaultValue());
+        assertTrue(defaultArgument.hasDefaultValue());
+        assertEquals(true, defaultArgument.getDefaultValue());
+    }
 
-		BooleanArgument defaultArgument = new BooleanArgument("printable", true);
+    @Test
+    public void testSetRequired() {
+        BooleanArgument argument = new BooleanArgument("printable");
 
-		assertTrue(defaultArgument.hasDefaultValue());
-		assertEquals(true, defaultArgument.getDefaultValue());
-	}
+        assertFalse(argument.isRequired());
 
-	@Test
-	public void testSetRequired() {
+        argument.setRequired();
 
-		BooleanArgument argument = new BooleanArgument("printable");
+        assertTrue(argument.isRequired());
+    }
 
-		assertFalse(argument.isRequired());
+    /**
+     * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+     * a zaroven byt povinna/pozadovana
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetRequiredException() {
+        BooleanArgument argument = new BooleanArgument("printable", true);
 
-		argument.setRequired();
+        argument.setRequired();
+    }
 
-		assertTrue(argument.isRequired());
-	}
+    /**
+     * Vyhodi vynimku, lebo argument nemoze byt povinna/pozadovana 
+     * a zaroven mat defaultnu hodnotu
+     */
+    @Test
+    public void testSetDefaultValue() {
+        BooleanArgument argument = new BooleanArgument("printable");
 
-	/**
-	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
-	 * a zaroven byt povinna/pozadovana
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testSetRequiredException() {
+        assertFalse(argument.hasDefaultValue());
 
-		BooleanArgument argument = new BooleanArgument("printable", true);
+        argument.setDefaultValue(false);
 
-		argument.setRequired();
-	}
-
-	/**
-	 * Vyhodi vynimku, lebo argument nemoze byt povinna/pozadovana 
-	 * a zaroven mat defaultnu hodnotu
-	 */
-	@Test
-	public void testSetDefaultValue() {
-
-		BooleanArgument argument = new BooleanArgument("printable");
-
-		assertFalse(argument.hasDefaultValue());
-
-		argument.setDefaultValue(false);
-
-		assertTrue(argument.hasDefaultValue());
-	}
-
+        assertTrue(argument.hasDefaultValue());
+    }
 }

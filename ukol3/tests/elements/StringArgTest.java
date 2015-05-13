@@ -5,61 +5,55 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class StringArgTest {
+    @Test
+    public void testStringArgument() {
+        StringArgument argument = new StringArgument("nazov");
 
-	@Test
-	public void testStringArgument() {
+        assertFalse(argument.isRequired());
+        assertFalse(argument.hasDefaultValue());
 
-		StringArgument argument = new StringArgument("nazov");
+        StringArgument defaultArgument = new StringArgument("nazov", "retazec");
 
-		assertFalse(argument.isRequired());
-		assertFalse(argument.hasDefaultValue());
+        assertTrue(defaultArgument.hasDefaultValue());
+        assertEquals("retazec", defaultArgument.getDefaultValue());
 
-		StringArgument defaultArgument = new StringArgument("nazov", "retazec");
+        StringArgument minMaxArgument = new StringArgument("nazov", "retazec",
+                        5, 10);
 
-		assertTrue(defaultArgument.hasDefaultValue());
-		assertEquals("retazec", defaultArgument.getDefaultValue());
+        assertEquals(5, minMaxArgument.getMinLength());
+        assertEquals(10, minMaxArgument.getMaxLength());
+    }
 
-		StringArgument minMaxArgument = new StringArgument("nazov", "retazec",
-				5, 10);
+    @Test
+    public void testSetDefaultValue() {
+        StringArgument argument = new StringArgument("nazov");
 
-		assertEquals(5, minMaxArgument.getMinLength());
-		assertEquals(10, minMaxArgument.getMaxLength());
-	}
+        assertFalse(argument.hasDefaultValue());
 
-	@Test
-	public void testSetDefaultValue() {
+        argument.setDefaultValue("retazec");
 
-		StringArgument argument = new StringArgument("nazov");
+        assertTrue(argument.hasDefaultValue());
+    }
 
-		assertFalse(argument.hasDefaultValue());
+    /**
+     * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
+     * a minimalna dlzka retazca ma byt 20 
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMinLength() {
+        StringArgument argument = new StringArgument("nazov", "retazec");
 
-		argument.setDefaultValue("retazec");
+        argument.setMinLength(20);
+    }
 
-		assertTrue(argument.hasDefaultValue());
-	}
+    /**
+     * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
+     * a maximalna dlzka retazca ma byt 5 
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMaxLength() {
+        StringArgument argument = new StringArgument("nazov", "retazec");
 
-	/**
-	 * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
-	 * a minimalna dlzka retazca ma byt 20 
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testSetMinLength() {
-
-		StringArgument argument = new StringArgument("nazov", "retazec");
-
-		argument.setMinLength(20);
-	}
-
-	/**
-	 * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
-	 * a maximalna dlzka retazca ma byt 5 
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testSetMaxLength() {
-
-		StringArgument argument = new StringArgument("nazov", "retazec");
-
-		argument.setMaxLength(5);
-	}
-
+        argument.setMaxLength(5);
+    }
 }

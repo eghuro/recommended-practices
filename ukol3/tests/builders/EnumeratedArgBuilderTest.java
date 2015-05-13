@@ -14,55 +14,52 @@ import elements.EnumeratedArgument;
 
 public class EnumeratedArgBuilderTest {
 
-	Set<String> values;
+    Set<String> values;
 
-	@Before
-	public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
+        values = new HashSet<String>(Arrays.asList("print", "show"));
+    }
 
-		values = new HashSet<String>(Arrays.asList("print", "show"));
-	}
+    @Test
+    public void testArgumentCreationWithValues() {
+        EnumeratedArgument argument = new EnumeratedArgBuilder()
+                .hasValues(values)
+                .isRequired().create("data");
 
-	@Test
-	public void testArgumentCreationWithValues() {
+        assertFalse(argument.hasDefaultValue());
+        assertTrue(argument.isRequired());
+    }
 
-		EnumeratedArgument argument = new EnumeratedArgBuilder().hasValues(values)
-				.isRequired().create("data");
+    @Test
+    public void testArgumentCreationWithValue() {
+        EnumeratedArgument argument = new EnumeratedArgBuilder()
+                .withName("data")
+                .hasValue("print")
+                .hasDefaultValue("print").create();
 
-		assertFalse(argument.hasDefaultValue());
-		assertTrue(argument.isRequired());
-	}
+        assertTrue(argument.hasDefaultValue());
+        assertFalse(argument.isRequired());
+    }
 
-	@Test
-	public void testArgumentCreationWithValue() {
+    /**
+     * Vyhodi vynimku, lebo argument musi mat nejake meno, 
+     * ktore sa zobrazi pre usage
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testArgumentCreationNoNameException() {
+        BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
+                        .create();
+    }
 
-		EnumeratedArgument argument = new EnumeratedArgBuilder().withName("data")
-				.hasValue("print").hasDefaultValue("print").create();
-
-		assertTrue(argument.hasDefaultValue());
-		assertFalse(argument.isRequired());
-	}
-
-	/**
-	 * Vyhodi vynimku, lebo argument musi mat nejake meno, 
-	 * ktore sa zobrazi pre usage
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testArgumentCreationNoNameException() {
-
-		BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
-				.create();
-	}
-
-	/**
-	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
-	 * a zaroven byt povinna/pozadovana
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void testArgumentCreationBadDefaultException() {
-
-		EnumeratedArgument argument = new EnumeratedArgBuilder().hasValues(values)
-				.hasDefaultValue("save").create("data");
-
-	}
-
+    /**
+     * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+     * a zaroven byt povinna/pozadovana
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testArgumentCreationBadDefaultException() {
+        EnumeratedArgument argument = new EnumeratedArgBuilder()
+                .hasValues(values)
+                .hasDefaultValue("save").create("data");
+    }
 }
