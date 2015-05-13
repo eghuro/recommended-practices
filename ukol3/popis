@@ -1,4 +1,5 @@
-== Funkční požadavky ==
+Funkční požadavky a popis použití
+====
 Volby se specifikují ve třídě CommandLine pomocí metody addOption. Ta bere jako
 argument instanci třídy Option. 
 
@@ -24,7 +25,29 @@ argumenty.
 Na třídě CommandLine lze zavolat metodu pro vypsání dokumentace nastavených 
 voleb.
 
-== Připomínky od oponentů ==
+Hlubší pohled na architekturu
+====
+Základní třídy jsou CommandLine a CommandLineParser. Úlohou třídy CommandLine
+je schraňovat konfiguraci přijímaných voleb. Úkolem třídy CommandLineParser je
+parsovat argumenty příkazové řádky a umožnit nad nimi dotazování.
+
+Pro definici volby je použita třída Option, pro definici argumentu abstraktní 
+třída Argument s odvozenými třídami dle konkrétního typu. Tyto jsou vytvářeny
+s pomocí návrhového vzoru Builder jak je popsáno výše. Pro procházení voleb
+se používá návrhový vzor Visitor. Definovali jsme Visitory pro různé používané
+aktivity.
+
+Knihovnu lze snadno rozšířit přidáním nového typu argumentu vytvořením nové,
+která dědí od abstaktní třídy Argument. Funkcionalitu nad načtenou konfigurací
+nebo naparsovanou příkazovou řádkou lze doplnit naimplementováním dalšího 
+Visitoru.
+
+Zdůvodnění návrhu
+===
+
+
+Připomínky od oponentů
+===
 Bylo nám vytčeno nedotažení návrhového vzoru Builder. Jednotlivé implementace
 jsme vylepšili. Opravili jsme typy parametrů ve fukncích setMin/MaxValue/Length
 Neopravovali jsme Argument::min/maxListValue, jelikož Java nemá bezznaménkové
