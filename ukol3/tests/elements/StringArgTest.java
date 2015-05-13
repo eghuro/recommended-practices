@@ -38,6 +38,10 @@ public class StringArgTest {
 		assertTrue(argument.hasDefaultValue());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
+	 * a minimalna dlzka retazca ma byt 20 
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMinLength() {
 
@@ -46,6 +50,10 @@ public class StringArgTest {
 		argument.setMinLength(20);
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaultna hodnota obsahuje retazec dlzky 7 
+	 * a maximalna dlzka retazca ma byt 5 
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMaxLength() {
 

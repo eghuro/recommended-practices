@@ -42,13 +42,21 @@ public class EnumeratedArgBuilderTest {
 		assertFalse(argument.isRequired());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument musi mat nejake meno, 
+	 * ktore sa zobrazi pre usage
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationNoNameException() {
 
 		BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
-				.isRequired().create();
+				.create();
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+	 * a zaroven byt povinna/pozadovana
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationBadDefaultException() {
 

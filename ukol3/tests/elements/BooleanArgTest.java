@@ -32,6 +32,10 @@ public class BooleanArgTest {
 		assertTrue(argument.isRequired());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+	 * a zaroven byt povinna/pozadovana
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetRequiredException() {
 
@@ -40,6 +44,10 @@ public class BooleanArgTest {
 		argument.setRequired();
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument nemoze byt povinna/pozadovana 
+	 * a zaroven mat defaultnu hodnotu
+	 */
 	@Test
 	public void testSetDefaultValue() {
 

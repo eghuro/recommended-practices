@@ -18,6 +18,10 @@ public class BooleanArgBuilderTest {
 		assertFalse(argument.isRequired());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+	 * a zaroven byt povinna/pozadovana
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationNoNameException() {
 
