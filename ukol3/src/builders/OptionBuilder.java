@@ -9,36 +9,33 @@ import elements.Option;
 public final class OptionBuilder {
 
     /** Option name **/
-    private static String name = null;
+    private String name;
 
     /** Option synonyms **/
-    private static Set<String> nameSynonyms = null;
+    private Set<String> nameSynonyms;
 
     /** Option description **/
-    private static String description = null;
+    private String description;
 
     /** Is option required? **/
-    private static boolean required = false;
+    private boolean required;
 
     /** Option argument object **/
-    private static Argument argument = null;
+    private Argument argument;
 
-    /** OptionBuilder instance **/
-    private static OptionBuilder instance = new OptionBuilder();
-
-    private OptionBuilder() {
-        // Exists only to defeat instantiation.
+    public OptionBuilder() {
+        reset();
     }
 
     /**
      * Reset builder variables
      */
-    private static void reset() {
-        OptionBuilder.name = null;
-        OptionBuilder.nameSynonyms = null;
-        OptionBuilder.description = null;
-        OptionBuilder.required = false;
-        OptionBuilder.argument = null;
+    private void reset() {
+        this.name = null;
+        this.nameSynonyms = null;
+        this.description = null;
+        this.required = false;
+        this.argument = null;
     }
 
     /**
@@ -47,9 +44,9 @@ public final class OptionBuilder {
      * @param name option name
      * @return self (OptionBuilder)
      */
-    public static OptionBuilder withName(String name) {
-        OptionBuilder.name = name;
-        return instance;
+    public OptionBuilder withName(String name) {
+        this.name = name;
+        return this;
     }
 
     /**
@@ -58,9 +55,9 @@ public final class OptionBuilder {
      * @param description option description
      * @return self (OptionBuilder)
      */
-    public static OptionBuilder withDescription(String description) {
-        OptionBuilder.description = description;
-        return instance;
+    public OptionBuilder withDescription(String description) {
+        this.description = description;
+        return this;
     }
 
     /**
@@ -69,14 +66,14 @@ public final class OptionBuilder {
      * @param name option name synonym
      * @return self (OptionBuilder)
      */
-    public static OptionBuilder withNameSynonym(String name) {
-        if (OptionBuilder.nameSynonyms == null) {
-            OptionBuilder.nameSynonyms = new HashSet<>();
+    public OptionBuilder withNameSynonym(String name) {
+        if (this.nameSynonyms == null) {
+            this.nameSynonyms = new HashSet<>();
         }
 
-        OptionBuilder.nameSynonyms.add(name);
+        this.nameSynonyms.add(name);
 
-        return instance;
+        return this;
     }
 
     /**
@@ -84,14 +81,14 @@ public final class OptionBuilder {
      * 
      * @return self (OptionBuilder)
      */
-    public static OptionBuilder isRequired() {
-        OptionBuilder.required = true;
-        return instance;
+    public OptionBuilder isRequired() {
+        this.required = true;
+        return this;
     }
 
-    public static OptionBuilder hasArgument(Argument argument) {
-        OptionBuilder.argument = argument;
-        return instance;
+    public OptionBuilder hasArgument(Argument argument) {
+        this.argument = argument;
+        return this;
     }
 
     /**
@@ -100,29 +97,25 @@ public final class OptionBuilder {
      * @return created option
      * @throws IllegalArgumentException
      */
-    public static Option create() throws IllegalArgumentException {
+    public Option create() throws IllegalArgumentException {
         Option option = null;
 
-        try {
-            option = new Option(OptionBuilder.name);
+        option = new Option(this.name);
 
-            if (OptionBuilder.nameSynonyms != null) {
-                option.addSynonyms(OptionBuilder.nameSynonyms);
-            }
+        if (this.nameSynonyms != null) {
+            option.addSynonyms(this.nameSynonyms);
+        }
 
-            if (OptionBuilder.description != null) {
-                option.setDescription(OptionBuilder.description);
-            }
+        if (this.description != null) {
+            option.setDescription(this.description);
+        }
 
-            if (OptionBuilder.required) {
-                option.setRequired();
-            }
+        if (this.required) {
+            option.setRequired();
+        }
 
-            if (OptionBuilder.argument != null) {
-                option.setArgument(OptionBuilder.argument);
-            }	
-        } finally {
-            reset();	
+        if (this.argument != null) {
+            option.setArgument(this.argument);
         }
 
         return option;
@@ -135,9 +128,9 @@ public final class OptionBuilder {
      * @return created option
      * @throws IllegalArgumentException
      */
-    public static Option create(String optionName) 
+    public Option create(String optionName) 
             throws IllegalArgumentException {
-        OptionBuilder.name = optionName;
+        this.name = optionName;
         return create();
     }
 }

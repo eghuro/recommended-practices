@@ -5,44 +5,40 @@ import elements.BooleanArgument;
 public class BooleanArgBuilder {
     
     /** Argument name **/
-    private static String name = null;
+    private String name;
 
     /** Argument is required **/
-    protected static boolean required = false;
+    protected boolean required;
 
     /** Argument has default value **/
-    protected static boolean hasDefaultValue = false;
+    protected boolean hasDefaultValue;
 
     /** Argument default value **/
-    private static boolean defaultValue = false;
+    private boolean defaultValue;
 
-    /** BooleanArgBuilder instance **/
-    private static BooleanArgBuilder instance = new BooleanArgBuilder();
-
-    private BooleanArgBuilder() {
-            // Exists only to defeat instantiation.
+    public BooleanArgBuilder() {
+        reset();
     }
 
     /**
      * Reset builder variables
      */
-    private static void reset() {
-            BooleanArgBuilder.name = null;
-            BooleanArgBuilder.required = false;
-            BooleanArgBuilder.hasDefaultValue = false;
-            BooleanArgBuilder.defaultValue = false;
+    private void reset() {
+        this.name = null;
+        this.required = false;
+        this.hasDefaultValue = false;
+        this.defaultValue = false;
     }
 
     /**
      * Set the name of the next argument
      * 
-     * @param name
-     *            argument name
+     * @param name argument name
      * @return self (BooleanArgBuilder)
      */
-    public static BooleanArgBuilder withName(String name) {
-            BooleanArgBuilder.name = name;
-            return instance;
+    public BooleanArgBuilder withName(String name) {
+        this.name = name;
+        return this;
     }
 
     /**
@@ -50,22 +46,21 @@ public class BooleanArgBuilder {
      * 
      * @return self (BooleanArgBuilder)
      */
-    public static BooleanArgBuilder isRequired() {
-            BooleanArgBuilder.required = true;
-            return instance;
+    public BooleanArgBuilder isRequired() {
+        this.required = true;
+        return this;
     }
 
     /**
      * Set argument default value
      * 
-     * @param defaultValue
-     *            argument default value
+     * @param defaultValue argument default value
      * @return self (BooleanArgBuilder)
      */
-    public static BooleanArgBuilder hasDefaultValue(boolean defaultValue) {
-            BooleanArgBuilder.hasDefaultValue = true;
-            BooleanArgBuilder.defaultValue = defaultValue;
-            return instance;
+    public BooleanArgBuilder hasDefaultValue(boolean defaultValue) {
+        this.hasDefaultValue = true;
+        this.defaultValue = defaultValue;
+        return this;
     }
 
     /**
@@ -74,22 +69,19 @@ public class BooleanArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static BooleanArgument create() throws IllegalArgumentException {
+    public BooleanArgument create() throws IllegalArgumentException {
         BooleanArgument argument = null;
 
-        try {
-            argument = new BooleanArgument(BooleanArgBuilder.name);
+        argument = new BooleanArgument(this.name);
 
-            if (BooleanArgBuilder.required) {
-                argument.setRequired();
-            }
-
-            if (BooleanArgBuilder.hasDefaultValue) {
-                argument.setDefaultValue(BooleanArgBuilder.defaultValue);
-            }
-        } finally {		
-            reset();	
+        if (this.required) {
+            argument.setRequired();
         }
+
+        if (this.hasDefaultValue) {
+            argument.setDefaultValue(this.defaultValue);
+        }
+        
         return argument;
     }
 
@@ -100,10 +92,10 @@ public class BooleanArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static BooleanArgument create(String argumentName) 
+    public BooleanArgument create(String argumentName) 
             throws IllegalArgumentException {
 
-        BooleanArgBuilder.name = argumentName;
+        this.name = argumentName;
         return create();
     }
 }

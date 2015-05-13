@@ -25,7 +25,7 @@ public class EnumeratedArgBuilderTest {
 	@Test
 	public void testArgumentCreationWithValues() {
 
-		EnumeratedArgument argument = EnumeratedArgBuilder.hasValues(values)
+		EnumeratedArgument argument = new EnumeratedArgBuilder().hasValues(values)
 				.isRequired().create("data");
 
 		assertFalse(argument.hasDefaultValue());
@@ -35,7 +35,7 @@ public class EnumeratedArgBuilderTest {
 	@Test
 	public void testArgumentCreationWithValue() {
 
-		EnumeratedArgument argument = EnumeratedArgBuilder.withName("data")
+		EnumeratedArgument argument = new EnumeratedArgBuilder().withName("data")
 				.hasValue("print").hasDefaultValue("print").create();
 
 		assertTrue(argument.hasDefaultValue());
@@ -45,14 +45,14 @@ public class EnumeratedArgBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationNoNameException() {
 
-		BooleanArgument argument = BooleanArgBuilder.hasDefaultValue(true)
+		BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
 				.isRequired().create();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationBadDefaultException() {
 
-		EnumeratedArgument argument = EnumeratedArgBuilder.hasValues(values)
+		EnumeratedArgument argument = new EnumeratedArgBuilder().hasValues(values)
 				.hasDefaultValue("save").create("data");
 
 	}

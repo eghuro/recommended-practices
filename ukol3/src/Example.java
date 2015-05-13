@@ -7,7 +7,7 @@ public final class Example {
     public static void main(final String[] args) {
         CommandLine cmdLine = new CommandLine();
         
-        Option verbose = OptionBuilder
+        Option verbose = new OptionBuilder()
                 .withName("v")
                 .withNameSynonym("verbose")
                 .withDescription("Output message about ...")
@@ -15,13 +15,13 @@ public final class Example {
 
         cmdLine.addOption(verbose);
 
-        Option size = OptionBuilder
+        Option size = new OptionBuilder()
                 .withName("size")
                 .withNameSynonym("s")
                 .isRequired()
                 .withDescription("Size of ...")
                 .hasArgument(
-                    IntegerArgBuilder
+                    new IntegerArgBuilder()
                         .hasDefaultValue(42)
                         .create("BLOCK SIZE"))
                     .create();

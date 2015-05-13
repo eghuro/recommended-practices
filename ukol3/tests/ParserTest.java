@@ -20,53 +20,53 @@ public class ParserTest {
 
 		CommandLine cmdLine = new CommandLine();
 
-		Option verbose = OptionBuilder.withName("v").isRequired()
+		Option verbose = new OptionBuilder().withName("v").isRequired()
 				.withNameSynonym("verbose").create();
 
 		cmdLine.addOption(verbose);
 
-		Option size = OptionBuilder
+		Option size = new OptionBuilder()
 				.withName("s")
 				.withNameSynonym("size")
 				.hasArgument(
-						IntegerArgBuilder.hasDefaultValue(15)
+						new IntegerArgBuilder().hasDefaultValue(15)
 								.acceptMinValue(-5).acceptMaxValue(20)
 								.create("block size")).create();
 
 		cmdLine.addOption(size);
 
-		Option width = OptionBuilder
+		Option width = new OptionBuilder()
 				.withName("width")
 				.withNameSynonym("w")
 				.hasArgument(
-						IntegerArgBuilder.isRequired().acceptMinValue(100)
+						new IntegerArgBuilder().isRequired().acceptMinValue(100)
 								.acceptMaxValue(100).create("width size"))
 				.create();
 
 		cmdLine.addOption(width);
 		
-		Option output = OptionBuilder
+		Option output = new OptionBuilder()
 				.withName("output")
 				.hasArgument(
-						EnumeratedArgBuilder.hasValue("show").hasValue("print")
+						new EnumeratedArgBuilder().hasValue("show").hasValue("print")
 								.hasDefaultValue("show").create("type"))
 				.create();
 
 		cmdLine.addOption(output);
 
-		Option inputFile = OptionBuilder
+		Option inputFile = new OptionBuilder()
 				.withName("f")
 				.hasArgument(
-						StringArgBuilder.isRequired().acceptMinLength(7)
+						new StringArgBuilder().isRequired().acceptMinLength(7)
 								.acceptMaxLength(15).create("file_name"))
 				.create();
 
 		cmdLine.addOption(inputFile);
 
-		Option saveResult = OptionBuilder
+		Option saveResult = new OptionBuilder()
 				.withName("save")
 				.hasArgument(
-						BooleanArgBuilder.isRequired().create("save or not"))
+						new BooleanArgBuilder().isRequired().create("save or not"))
 				.create();
 
 		cmdLine.addOption(saveResult);

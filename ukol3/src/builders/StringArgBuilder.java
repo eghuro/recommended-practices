@@ -5,40 +5,37 @@ import elements.StringArgument;
 public class StringArgBuilder {
 
     /** Argument name **/
-    private static String name = null;
+    private String name;
 
     /** Argument is required **/
-    protected static boolean required = false;
+    protected boolean required;
 
     /** Argument has default value **/
-    protected static boolean hasDefaultValue = false;
+    protected boolean hasDefaultValue;
 
     /** Argument default value **/
-    private static String defaultValue = null;
+    private String defaultValue;
 
     /** Argument value minimum length **/
-    private static int valueMinLength = 0;
+    private int valueMinLength;
 
     /** Argument value maximum length **/
-    private static int valueMaxLength = Integer.MAX_VALUE;
+    private int valueMaxLength;
 
-    /** StringArgBuilder instance **/
-    private static StringArgBuilder instance = new StringArgBuilder();
-
-    private StringArgBuilder() {
-            // Exists only to defeat instantiation.
+    public StringArgBuilder() {
+        reset();
     }
 
     /**
      * Reset builder variables
      */
-    private static void reset() {
-        StringArgBuilder.name = null;
-        StringArgBuilder.required = false;
-        StringArgBuilder.hasDefaultValue = false;
-        StringArgBuilder.defaultValue = null;
-        StringArgBuilder.valueMinLength = 0;
-        StringArgBuilder.valueMaxLength = Integer.MAX_VALUE;
+    private void reset() {
+        this.name = null;
+        this.required = false;
+        this.hasDefaultValue = false;
+        this.defaultValue = null;
+        this.valueMinLength = 0;
+        this.valueMaxLength = Integer.MAX_VALUE;
     }
 
     /**
@@ -47,9 +44,9 @@ public class StringArgBuilder {
      * @param name argument name
      * @return self (StringArgBuilder)
      */
-    public static StringArgBuilder withName(String name) {
-        StringArgBuilder.name = name;
-        return instance;
+    public StringArgBuilder withName(String name) {
+        this.name = name;
+        return this;
     }
 
     /**
@@ -57,9 +54,9 @@ public class StringArgBuilder {
      * 
      * @return self (StringArgBuilder)
      */
-    public static StringArgBuilder isRequired() {
-        StringArgBuilder.required = true;
-        return instance;
+    public StringArgBuilder isRequired() {
+        this.required = true;
+        return this;
     }
 
     /**
@@ -68,10 +65,10 @@ public class StringArgBuilder {
      * @param defaultValue argument default value
      * @return self (StringArgBuilder)
      */
-    public static StringArgBuilder hasDefaultValue(String defaultValue) {
-        StringArgBuilder.hasDefaultValue = true;
-        StringArgBuilder.defaultValue = defaultValue;
-        return instance;
+    public StringArgBuilder hasDefaultValue(String defaultValue) {
+        this.hasDefaultValue = true;
+        this.defaultValue = defaultValue;
+        return this;
     }
 
     /**
@@ -80,9 +77,9 @@ public class StringArgBuilder {
      * @param minLength minimum required length
      * @return self (StringArgBuilder)
      */
-    public static StringArgBuilder acceptMinLength(int minLength) {
-        StringArgBuilder.valueMinLength = minLength;
-        return instance;
+    public StringArgBuilder acceptMinLength(int minLength) {
+        this.valueMinLength = minLength;
+        return this;
     }
 
     /**
@@ -91,9 +88,9 @@ public class StringArgBuilder {
      * @param maxLength maximum required length
      * @return self (StringArgBuilder)
      */
-    public static StringArgBuilder acceptMaxLength(int maxLength) {
-        StringArgBuilder.valueMaxLength = maxLength;
-        return instance;
+    public StringArgBuilder acceptMaxLength(int maxLength) {
+        this.valueMaxLength = maxLength;
+        return this;
     }
 
     /**
@@ -102,29 +99,25 @@ public class StringArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static StringArgument create() throws IllegalArgumentException {
+    public StringArgument create() throws IllegalArgumentException {
         StringArgument argument = null;
 
-        try {
-            argument = new StringArgument(StringArgBuilder.name);
+        argument = new StringArgument(this.name);
 
-            if (StringArgBuilder.required) {
-                argument.setRequired();
-            }
+        if (this.required) {
+            argument.setRequired();
+        }
 
-            if (StringArgBuilder.hasDefaultValue) {
-                argument.setDefaultValue(StringArgBuilder.defaultValue);
-            }
+        if (this.hasDefaultValue) {
+            argument.setDefaultValue(this.defaultValue);
+        }
 
-            if (StringArgBuilder.valueMinLength > 0) {
-                argument.setMinLength(StringArgBuilder.valueMinLength);
-            }
+        if (this.valueMinLength > 0) {
+            argument.setMinLength(this.valueMinLength);
+        }
 
-            if (StringArgBuilder.valueMaxLength < Integer.MAX_VALUE) {
-                argument.setMaxLength(StringArgBuilder.valueMaxLength);
-            }	
-        } finally {
-            reset();
+        if (this.valueMaxLength < Integer.MAX_VALUE) {
+            argument.setMaxLength(this.valueMaxLength);
         }
 
         return argument;
@@ -137,9 +130,9 @@ public class StringArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static StringArgument create(String argumentName) 
+    public StringArgument create(String argumentName) 
             throws IllegalArgumentException {
-        StringArgBuilder.name = argumentName;
+        this.name = argumentName;
         return create();
     }
 }

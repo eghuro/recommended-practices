@@ -136,31 +136,24 @@ public class ValidateVisitor implements Visitor {
      */
     @Override
     public void visit(StringArgument argument, Option option) {
-		String optionValue = this.optionsValues.get(option);
+        String optionValue = this.optionsValues.get(option);
 
-		if (argument.isRequired() && optionValue == null) {
-			
-			this.errors.add("Argument for option '"
-					+ option.getNameWithPrefix() + "' is required.");
-		
-		} else if (optionValue != null) {
-			
-			if (optionValue.length() < argument.getMinLength()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have minimum length of "
-						+ argument.getMinLength() + ".");
-			
-			} else if (optionValue.length() > argument.getMaxLength()) {
-				
-				this.errors.add("Argument for option '"
-						+ option.getNameWithPrefix()
-						+ "' must have maximum length of "
-						+ argument.getMaxLength() + ".");
-			
-			}
-		}        
+        if (argument.isRequired() && optionValue == null) {
+            this.errors.add("Argument for option '"
+                + option.getNameWithPrefix() + "' is required.");
+        } else if (optionValue != null) {
+            if (optionValue.length() < argument.getMinLength()) {
+                this.errors.add("Argument for option '"
+                    + option.getNameWithPrefix()
+                    + "' must have minimum length of "
+                    + argument.getMinLength() + ".");
+                } else if (optionValue.length() > argument.getMaxLength()) {
+                    this.errors.add("Argument for option '"
+                            + option.getNameWithPrefix()
+                            + "' must have maximum length of "
+                            + argument.getMaxLength() + ".");
+                }
+        }        
     }
 
     /**

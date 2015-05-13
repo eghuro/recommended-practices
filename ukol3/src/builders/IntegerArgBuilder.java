@@ -5,40 +5,37 @@ import elements.IntegerArgument;
 public class IntegerArgBuilder {
 
     /** Argument name **/
-    private static String name = null;
+    private String name;
 
     /** Argument is required **/
-    protected static boolean required = false;
+    protected boolean required;
 
     /** Argument has default value **/
-    protected static boolean hasDefaultValue = false;
+    protected boolean hasDefaultValue;
 
     /** Argument default value **/
-    private static int defaultValue = 0;
+    private int defaultValue;
 
     /** Argument min value **/
-    private static int minValue = Integer.MIN_VALUE;
+    private int minValue;
 
     /** Argument max value **/
-    private static int maxValue = Integer.MAX_VALUE;
+    private int maxValue;
 
-    /** IntegerArgBuilder instance **/
-    private static IntegerArgBuilder instance = new IntegerArgBuilder();
-
-    private IntegerArgBuilder() {
-            // Exists only to defeat instantiation.
+    public IntegerArgBuilder() {
+        reset();
     }
 
     /**
      * Reset builder variables
      */
-    private static void reset() {
-        IntegerArgBuilder.name = null;
-        IntegerArgBuilder.required = false;
-        IntegerArgBuilder.hasDefaultValue = false;
-        IntegerArgBuilder.defaultValue = 0;
-        IntegerArgBuilder.minValue = Integer.MIN_VALUE;
-        IntegerArgBuilder.maxValue = Integer.MAX_VALUE;
+    private void reset() {
+        this.name = null;
+        this.required = false;
+        this.hasDefaultValue = false;
+        this.defaultValue = 0;
+        this.minValue = Integer.MIN_VALUE;
+        this.maxValue = Integer.MAX_VALUE;
     }
 
     /**
@@ -47,9 +44,9 @@ public class IntegerArgBuilder {
      * @param name argument name
      * @return self (IntegerArgBuilder)
      */
-    public static IntegerArgBuilder withName(String name) {
-        IntegerArgBuilder.name = name;
-        return instance;
+    public IntegerArgBuilder withName(String name) {
+        this.name = name;
+        return this;
     }
 
     /**
@@ -57,9 +54,9 @@ public class IntegerArgBuilder {
      * 
      * @return self (IntegerArgBuilder)
      */
-    public static IntegerArgBuilder isRequired() {
-        IntegerArgBuilder.required = true;
-        return instance;
+    public IntegerArgBuilder isRequired() {
+        this.required = true;
+        return this;
     }
 
     /**
@@ -68,10 +65,10 @@ public class IntegerArgBuilder {
      * @param defaultValue argument default value
      * @return self (IntegerArgBuilder)
      */
-    public static IntegerArgBuilder hasDefaultValue(int defaultValue) {
-        IntegerArgBuilder.hasDefaultValue = true;
-        IntegerArgBuilder.defaultValue = defaultValue;
-        return instance;
+    public IntegerArgBuilder hasDefaultValue(int defaultValue) {
+        this.hasDefaultValue = true;
+        this.defaultValue = defaultValue;
+        return this;
     }
 
     /**
@@ -80,9 +77,9 @@ public class IntegerArgBuilder {
      * @param minValue minimum required value
      * @return self (IntegerArgBuilder)
      */
-    public static IntegerArgBuilder acceptMinValue(int minValue) {
-        IntegerArgBuilder.minValue = minValue;
-        return instance;
+    public IntegerArgBuilder acceptMinValue(int minValue) {
+        this.minValue = minValue;
+        return this;
     }
 
     /**
@@ -91,9 +88,9 @@ public class IntegerArgBuilder {
      * @param maxValue maximum required value
      * @return self (IntegerArgBuilder)
      */
-    public static IntegerArgBuilder acceptMaxValue(int maxValue) {
-        IntegerArgBuilder.maxValue = maxValue;
-        return instance;
+    public IntegerArgBuilder acceptMaxValue(int maxValue) {
+        this.maxValue = maxValue;
+        return this;
     }
 
     /**
@@ -102,29 +99,25 @@ public class IntegerArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static IntegerArgument create() throws IllegalArgumentException {
+    public IntegerArgument create() throws IllegalArgumentException {
         IntegerArgument argument = null;
+        
+        argument = new IntegerArgument(this.name);
 
-        try {
-            argument = new IntegerArgument(IntegerArgBuilder.name);
+        if (this.required) {
+            argument.setRequired();
+        }
 
-            if (IntegerArgBuilder.required) {
-                argument.setRequired();
-            }
+        if (this.hasDefaultValue) {
+            argument.setDefaultValue(this.defaultValue);
+        }
 
-            if (IntegerArgBuilder.hasDefaultValue) {
-                argument.setDefaultValue(IntegerArgBuilder.defaultValue);
-            }
+        if (this.minValue > Integer.MIN_VALUE) {
+            argument.setMinValue(this.minValue);
+        }
 
-            if (IntegerArgBuilder.minValue > Integer.MIN_VALUE) {
-                argument.setMinValue(IntegerArgBuilder.minValue);
-            }
-
-            if (IntegerArgBuilder.maxValue < Integer.MAX_VALUE) {
-                argument.setMaxValue(IntegerArgBuilder.maxValue);
-            }
-        } finally {
-            reset();
+        if (this.maxValue < Integer.MAX_VALUE) {
+            argument.setMaxValue(this.maxValue);
         }
 
         return argument;
@@ -137,9 +130,9 @@ public class IntegerArgBuilder {
      * @return created argument
      * @throws IllegalArgumentException
      */
-    public static IntegerArgument create(String argumentName) 
+    public IntegerArgument create(String argumentName) 
             throws IllegalArgumentException {
-        IntegerArgBuilder.name = argumentName;
+        this.name = argumentName;
         return create();
     }
 }

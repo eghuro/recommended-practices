@@ -11,7 +11,7 @@ public class BooleanArgBuilderTest {
 	@Test
 	public void testArgumentCreation() {
 
-		BooleanArgument argument = BooleanArgBuilder.hasDefaultValue(true)
+		BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
 				.create("visible");
 
 		assertTrue(argument.hasDefaultValue());
@@ -21,7 +21,7 @@ public class BooleanArgBuilderTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationNoNameException() {
 
-		BooleanArgument argument = BooleanArgBuilder.hasDefaultValue(true)
+		BooleanArgument argument = new BooleanArgBuilder().hasDefaultValue(true)
 				.isRequired().create();
 	}
 
