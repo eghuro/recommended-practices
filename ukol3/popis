@@ -1,0 +1,31 @@
+== Funkční požadavky ==
+Volby se specifikují ve třídě CommandLine pomocí metody addOption. Ta bere jako
+argument instanci třídy Option. 
+
+Option se vytváří pomocí třídy OptionBuilder, ve které se doplní specifikace
+volby - jméno a synonyma, zda se jedná o povinnou volbu, nastavit typ parametru
+volby a doplnit slovní popis.
+
+Parametry jsou vždy odvozeny od abstraktní třídy Argument. K dispozici jsou
+třídy pro parametry typu Boolean, Enum, Integer a String. Parametry mají vždy
+jméno, lze specifikovat, že je parametr povinný či implicitní hodnotu.
+
+Pro každý typ parametru je k dispozici Builder, který má na starosti vytvoření
+příslušné instance.
+
+Pro vlastní parsování se používá třída CommandLineParser a metodou parse načte
+vstup z příkazové řádky. Při načítání dojde i k validaci a pokud není splněno
+některé nastavené omezení je vyhozena výjimka.
+
+Následné zpracování je ponecháno uživateli. Ten má možnost se zeptat, zda byla
+nějaká volba zadána, zjistit její případnou hodnotu a nechat si vypsat obyčejné
+argumenty.
+
+Na třídě CommandLine lze zavolat metodu pro vypsání dokumentace nastavených 
+voleb.
+
+== Připomínky od oponentů ==
+Bylo nám vytčeno nedotažení návrhového vzoru Builder. Jednotlivé implementace
+jsme vylepšili. Opravili jsme typy parametrů ve fukncích setMin/MaxValue/Length
+Neopravovali jsme Argument::min/maxListValue, jelikož Java nemá bezznaménkové
+typy. Výtku o předávání vícenásobných hodnot pomocí řetězce jsme nepochopili.

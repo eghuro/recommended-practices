@@ -42,7 +42,7 @@ public class StringArgBuilder {
      * Set the name of the next argument
      * 
      * @param name argument name
-     * @return self (StringArgBuilder)
+     * @return modified self
      */
     public StringArgBuilder withName(String name) {
         this.name = name;
@@ -52,7 +52,7 @@ public class StringArgBuilder {
     /**
      * The next argument will be required
      * 
-     * @return self (StringArgBuilder)
+     * @return modified self
      */
     public StringArgBuilder isRequired() {
         this.required = true;
@@ -63,7 +63,7 @@ public class StringArgBuilder {
      * Set argument default value
      * 
      * @param defaultValue argument default value
-     * @return self (StringArgBuilder)
+     * @return modified self
      */
     public StringArgBuilder hasDefaultValue(String defaultValue) {
         this.hasDefaultValue = true;
@@ -75,7 +75,7 @@ public class StringArgBuilder {
      * Set argument minimum required length
      * 
      * @param minLength minimum required length
-     * @return self (StringArgBuilder)
+     * @return modified self
      */
     public StringArgBuilder acceptMinLength(int minLength) {
         this.valueMinLength = minLength;
@@ -86,7 +86,7 @@ public class StringArgBuilder {
      * Set argument maximum required length
      * 
      * @param maxLength maximum required length
-     * @return self (StringArgBuilder)
+     * @return modified self
      */
     public StringArgBuilder acceptMaxLength(int maxLength) {
         this.valueMaxLength = maxLength;
@@ -94,7 +94,7 @@ public class StringArgBuilder {
     }
 
     /**
-     * Create StringArgument(object) with desired parameters
+     * Create StringArgument instance with desired parameters
      * 
      * @return created argument
      * @throws IllegalArgumentException
@@ -124,7 +124,7 @@ public class StringArgBuilder {
     }
 
     /**
-     * Create StringArgument(object) with desired parameters
+     * Create StringArgument instance with desired parameters
      * 
      * @param argumentName argument name
      * @return created argument

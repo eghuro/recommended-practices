@@ -24,7 +24,7 @@ public final class Example {
                     new IntegerArgBuilder()
                         .hasDefaultValue(42)
                         .create("BLOCK SIZE"))
-                    .create();
+                .create();
 
         cmdLine.addOption(size);
 

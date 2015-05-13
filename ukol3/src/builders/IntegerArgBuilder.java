@@ -42,7 +42,7 @@ public class IntegerArgBuilder {
      * Set the name of the next argument
      * 
      * @param name argument name
-     * @return self (IntegerArgBuilder)
+     * @return modified self
      */
     public IntegerArgBuilder withName(String name) {
         this.name = name;
@@ -52,7 +52,7 @@ public class IntegerArgBuilder {
     /**
      * The next argument will be required
      * 
-     * @return self (IntegerArgBuilder)
+     * @return modified self
      */
     public IntegerArgBuilder isRequired() {
         this.required = true;
@@ -63,7 +63,7 @@ public class IntegerArgBuilder {
      * Set argument default value
      * 
      * @param defaultValue argument default value
-     * @return self (IntegerArgBuilder)
+     * @return modified self
      */
     public IntegerArgBuilder hasDefaultValue(int defaultValue) {
         this.hasDefaultValue = true;
@@ -75,7 +75,7 @@ public class IntegerArgBuilder {
      * Set argument minimum required value
      * 
      * @param minValue minimum required value
-     * @return self (IntegerArgBuilder)
+     * @return modified self
      */
     public IntegerArgBuilder acceptMinValue(int minValue) {
         this.minValue = minValue;
@@ -86,7 +86,7 @@ public class IntegerArgBuilder {
      * Set argument maximum required value
      * 
      * @param maxValue maximum required value
-     * @return self (IntegerArgBuilder)
+     * @return modified self
      */
     public IntegerArgBuilder acceptMaxValue(int maxValue) {
         this.maxValue = maxValue;
@@ -94,7 +94,7 @@ public class IntegerArgBuilder {
     }
 
     /**
-     * Create IntegerArgument(object) with desired parameters
+     * Create IntegerArgument instance with desired parameters
      * 
      * @return created argument
      * @throws IllegalArgumentException
@@ -124,7 +124,7 @@ public class IntegerArgBuilder {
     }
 
     /**
-     * Create IntegerArgument(object) with desired parameters
+     * Create IntegerArgument instance with desired parameters
      * 
      * @param argumentName argument name
      * @return created argument

@@ -225,5 +225,4 @@ public class CommandLineParser {
 	public Set<String> getCommonArguments() {
             return this.commonArguments;
 	}
-
 }

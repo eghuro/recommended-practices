@@ -42,7 +42,7 @@ public final class OptionBuilder {
      * Set the name of the next option
      * 
      * @param name option name
-     * @return self (OptionBuilder)
+     * @return modified self
      */
     public OptionBuilder withName(String name) {
         this.name = name;
@@ -53,7 +53,7 @@ public final class OptionBuilder {
      * Set the description of the next option
      * 
      * @param description option description
-     * @return self (OptionBuilder)
+     * @return modified self
      */
     public OptionBuilder withDescription(String description) {
         this.description = description;
@@ -64,7 +64,7 @@ public final class OptionBuilder {
      * Add name synonym of the next option
      * 
      * @param name option name synonym
-     * @return self (OptionBuilder)
+     * @return modified self
      */
     public OptionBuilder withNameSynonym(String name) {
         if (this.nameSynonyms == null) {
@@ -79,7 +79,7 @@ public final class OptionBuilder {
     /**
      * The next option will be required
      * 
-     * @return self (OptionBuilder)
+     * @return modified self
      */
     public OptionBuilder isRequired() {
         this.required = true;
@@ -92,7 +92,7 @@ public final class OptionBuilder {
     }
 
     /**
-     * Create Option(object) with desired parameters
+     * Create Option instance with desired parameters
      * 
      * @return created option
      * @throws IllegalArgumentException
@@ -122,7 +122,7 @@ public final class OptionBuilder {
     }
 
     /**
-     * Create Option(object) with desired parameters
+     * Create Option instance with desired parameters
      * 
      * @param optionName option name
      * @return created option

@@ -34,7 +34,7 @@ public class BooleanArgBuilder {
      * Set the name of the next argument
      * 
      * @param name argument name
-     * @return self (BooleanArgBuilder)
+     * @return modified self
      */
     public BooleanArgBuilder withName(String name) {
         this.name = name;
@@ -44,7 +44,7 @@ public class BooleanArgBuilder {
     /**
      * The next argument will be required
      * 
-     * @return self (BooleanArgBuilder)
+     * @return modified self
      */
     public BooleanArgBuilder isRequired() {
         this.required = true;
@@ -55,7 +55,7 @@ public class BooleanArgBuilder {
      * Set argument default value
      * 
      * @param defaultValue argument default value
-     * @return self (BooleanArgBuilder)
+     * @return modified self
      */
     public BooleanArgBuilder hasDefaultValue(boolean defaultValue) {
         this.hasDefaultValue = true;
@@ -64,7 +64,7 @@ public class BooleanArgBuilder {
     }
 
     /**
-     * Create BooleanArgument(object) with desired parameters
+     * Create BooleanArgument instance with desired parameters
      * 
      * @return created argument
      * @throws IllegalArgumentException
@@ -86,7 +86,7 @@ public class BooleanArgBuilder {
     }
 
     /**
-     * Create BooleanArgument(object) with desired parameters
+     * Create BooleanArgument instance with desired parameters
      * 
      * @param argumentName argument name
      * @return created argument

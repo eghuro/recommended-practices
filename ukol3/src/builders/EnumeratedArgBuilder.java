@@ -40,7 +40,7 @@ public class EnumeratedArgBuilder {
      * Set the name of the next argument
      * 
      * @param name argument name
-     * @return self (EnumeratedArgBuilder)
+     * @return modified self
      */
     public EnumeratedArgBuilder withName(String name) {
         this.name = name;
@@ -50,7 +50,7 @@ public class EnumeratedArgBuilder {
     /**
      * The next argument will be required
      * 
-     * @return self (EnumeratedArgBuilder)
+     * @return modified self
      */
     public EnumeratedArgBuilder isRequired() {
         this.required = true;
@@ -61,7 +61,7 @@ public class EnumeratedArgBuilder {
      * Set argument default value
      * 
      * @param defaultValue argument default value
-     * @return self (EnumeratedArgBuilder)
+     * @return modified self
      */
     public EnumeratedArgBuilder hasDefaultValue(String defaultValue) {
         this.hasDefaultValue = true;
@@ -73,7 +73,7 @@ public class EnumeratedArgBuilder {
      * Set argument enumerated value
      * 
      * @param value argument enumerated value
-     * @return self (EnumeratedArgBuilder)
+     * @return modified self
      */
     public EnumeratedArgBuilder hasValue(String value) {
         if (this.values == null) {
@@ -89,7 +89,7 @@ public class EnumeratedArgBuilder {
      * Set argument enumerated list of values
      * 
      * @param enumerated list of values
-     * @return self (EnumeratedArgBuilder)
+     * @return modified self
      */
     public EnumeratedArgBuilder hasValues(Set<String> values) {
         if (this.values == null) {
@@ -102,7 +102,7 @@ public class EnumeratedArgBuilder {
     }
 
     /**
-     * Create EnumeratedArgument(object) with desired parameters
+     * Create EnumeratedArgument instance with desired parameters
      * 
      * @return created argument
      * @throws IllegalArgumentException
@@ -124,7 +124,7 @@ public class EnumeratedArgBuilder {
     }
 
     /**
-     * Create EnumeratedArgBuilder(object) with desired parameters
+     * Create EnumeratedArgBuilder instance with desired parameters
      * 
      * @param argumentName argument name
      * @return created argument

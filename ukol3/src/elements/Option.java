@@ -238,7 +238,7 @@ public class Option implements Visitable {
     }
 
     /**
-     * Get Argument(object) for this option
+     * Get Argument instance for this option
      * 
      * @return Argument for this option
      */
@@ -258,8 +258,7 @@ public class Option implements Visitable {
     /**
      * Create option name with prefix
      * 
-     * @param optionName
-     *            processed option name
+     * @param optionName processed option name
      * @return option name with prefix
      */
     public static String createOptionNameWithPrefix(String optionName) {
