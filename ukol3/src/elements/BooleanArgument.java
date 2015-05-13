@@ -11,7 +11,8 @@ public class BooleanArgument extends Argument {
      * Create argument with specific name
      * 
      * @param name argument name
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Argument name can't be empty, accepts 
+     * letters, numbers, spaces and underscores.
      */
     public BooleanArgument(String name) throws IllegalArgumentException {
         super(name);
@@ -22,7 +23,9 @@ public class BooleanArgument extends Argument {
      * 
      * @param name  argument name
      * @param defaultValue  default value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument. Argument name can't be 
+     * empty, accepts letters, numbers, spaces and underscores.
      */
     public BooleanArgument(String name, boolean defaultValue)
                     throws IllegalArgumentException {
@@ -34,7 +37,8 @@ public class BooleanArgument extends Argument {
      * Set argument default value
      * 
      * @param defaultValue argument default value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public void setDefaultValue(boolean defaultValue) 
             throws IllegalArgumentException {

@@ -32,7 +32,8 @@ public class Option implements Visitable {
      * Constructor for Option
      * 
      * @param name option name
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public Option(String name) throws IllegalArgumentException {
         setName(name);
@@ -43,7 +44,8 @@ public class Option implements Visitable {
      * 
      * @param name option name
      * @param description option description
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public Option(String name, String description)
                 throws IllegalArgumentException {
@@ -57,7 +59,8 @@ public class Option implements Visitable {
      * @param name option name
      * @param description option description
      * @param required is option required
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public Option(String name, String description, boolean required)
                     throws IllegalArgumentException {
@@ -73,7 +76,8 @@ public class Option implements Visitable {
      * @param description option description
      * @param required is option required
      * @param argument option Argument(object)
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public Option(String name, String description, boolean required,
                     Argument argument) throws IllegalArgumentException {
@@ -86,8 +90,9 @@ public class Option implements Visitable {
     /**
      * Set option name
      * 
-     * @param name
-     * @throws IllegalArgumentException
+     * @param name Option name
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     private void setName(String name) throws IllegalArgumentException {
         nameValidation(name);
@@ -116,7 +121,8 @@ public class Option implements Visitable {
      * Set option name synonym
      * 
      * @param name option name
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public void addSynonym(String name) throws IllegalArgumentException {
         nameValidation(name);
@@ -127,7 +133,8 @@ public class Option implements Visitable {
      * Set option name synonyms
      * 
      * @param nameSynonyms set of name synonyms
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name.
      */
     public void addSynonyms(Set<String> nameSynonyms) 
             throws IllegalArgumentException {
@@ -140,7 +147,8 @@ public class Option implements Visitable {
      * Validate option name
      * 
      * @param name option name
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty or invalid 
+     * option name - accepts letters, numbers, spaces and underscores.
      */
     private void nameValidation(String name) throws IllegalArgumentException {
         if (name == null || name.length() == 0) {
@@ -226,7 +234,7 @@ public class Option implements Visitable {
      * Set option Argument(object)
      * 
      * @param argument option argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option argument can't be null object.
      */
     public void setArgument(Argument argument) throws IllegalArgumentException {
         if (argument == null) {

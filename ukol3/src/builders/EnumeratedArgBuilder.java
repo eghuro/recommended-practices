@@ -88,7 +88,7 @@ public class EnumeratedArgBuilder {
     /**
      * Set argument enumerated list of values
      * 
-     * @param enumerated list of values
+     * @param values list of values
      * @return modified self
      */
     public EnumeratedArgBuilder hasValues(Set<String> values) {
@@ -105,22 +105,23 @@ public class EnumeratedArgBuilder {
      * Create EnumeratedArgument instance with desired parameters
      * 
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public EnumeratedArgument create() throws IllegalArgumentException {
-            EnumeratedArgument argument = null;
+        EnumeratedArgument argument = null;
 
-            argument = new EnumeratedArgument(this.name, values);
+        argument = new EnumeratedArgument(this.name, values);
 
-            if (this.required) {
-                argument.setRequired();
-            }
+        if (this.required) {
+            argument.setRequired();
+        }
 
-            if (this.hasDefaultValue) {
-                argument.setDefaultValue(this.defaultValue);
-            }
+        if (this.hasDefaultValue) {
+            argument.setDefaultValue(this.defaultValue);
+        }
 
-            return argument;
+        return argument;
     }
 
     /**
@@ -128,7 +129,8 @@ public class EnumeratedArgBuilder {
      * 
      * @param argumentName argument name
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public EnumeratedArgument create(String argumentName) 
             throws IllegalArgumentException {

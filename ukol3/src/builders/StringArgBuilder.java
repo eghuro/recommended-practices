@@ -97,7 +97,11 @@ public class StringArgBuilder {
      * Create StringArgument instance with desired parameters
      * 
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length. Minimum length 
+     * can't be negative number nor can't be greater than maximum length. 
+     * Maximum length can't be lesser than minimum length nor can't be lesser 
+     * than 1.
      */
     public StringArgument create() throws IllegalArgumentException {
         StringArgument argument = null;
@@ -128,7 +132,11 @@ public class StringArgBuilder {
      * 
      * @param argumentName argument name
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length. Minimum length 
+     * can't be negative number nor can't be greater than maximum length. 
+     * Maximum length can't be lesser than minimum length nor can't be lesser 
+     * than 1.
      */
     public StringArgument create(String argumentName) 
             throws IllegalArgumentException {

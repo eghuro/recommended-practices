@@ -21,35 +21,4 @@
     <target name="run" depends="jar">
         <java jar="build/jar/CommandLineParser.jar" fork="true"/>
     </target>
-
- <target name="compile-tests" depends="compile">
-        <mkdir dir="build/tests"/>
-        <javac srcdir="tests" destdir="build/tests"/>
-    </target>
-
-<target name="test" depends="compile-tests">
-
-    <mkdir dir="results/"/>
-
-    <junit printsummary="yes" haltonfailure="yes">
-      <classpath>
-        <pathelement location="${project.class.path}"/>
-        <pathelement location="build/tests"/>
-        <pathelement path="${java.class.path}"/>
-      </classpath>
-
-      <formatter type="plain"/>
-      <formatter type="xml"/>
-
-      <batchtest fork="yes" todir="results/">
-        <fileset dir="tests/">
-          <include name="**/*Test*.java"/>
-        </fileset>
-      </batchtest>
-
-    </junit>
-
-</target>
-
-
 </project>

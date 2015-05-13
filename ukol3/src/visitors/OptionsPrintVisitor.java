@@ -107,7 +107,7 @@ public class OptionsPrintVisitor implements Visitor {
 
     /**
      * Print an option
-     * @param option 
+     * @param option option to print
      */
     @Override
     public void visit(Option option) {

@@ -97,7 +97,8 @@ public class IntegerArgBuilder {
      * Create IntegerArgument instance with desired parameters
      * 
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument or range error.
      */
     public IntegerArgument create() throws IllegalArgumentException {
         IntegerArgument argument = null;
@@ -128,7 +129,8 @@ public class IntegerArgBuilder {
      * 
      * @param argumentName argument name
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument or range error.
      */
     public IntegerArgument create(String argumentName) 
             throws IllegalArgumentException {

@@ -95,7 +95,7 @@ public final class OptionBuilder {
      * Create Option instance with desired parameters
      * 
      * @return created option
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty.
      */
     public Option create() throws IllegalArgumentException {
         Option option = null;
@@ -126,7 +126,7 @@ public final class OptionBuilder {
      * 
      * @param optionName option name
      * @return created option
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name can't be empty.
      */
     public Option create(String optionName) 
             throws IllegalArgumentException {

@@ -67,7 +67,8 @@ public class BooleanArgBuilder {
      * Create BooleanArgument instance with desired parameters
      * 
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public BooleanArgument create() throws IllegalArgumentException {
         BooleanArgument argument = null;
@@ -90,7 +91,8 @@ public class BooleanArgBuilder {
      * 
      * @param argumentName argument name
      * @return created argument
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public BooleanArgument create(String argumentName) 
             throws IllegalArgumentException {

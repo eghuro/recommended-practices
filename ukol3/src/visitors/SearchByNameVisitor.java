@@ -137,7 +137,6 @@ public class SearchByNameVisitor implements Visitor {
     /**
      * Access to the found option
      * @return the option found or null if not found
-     * @see SearchByNameVisitor.optionNameFound()
      */
     public Option getFoundOption() {
         return this.foundOption;

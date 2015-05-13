@@ -18,7 +18,8 @@ public class EnumeratedArgument extends Argument {
      * 
      * @param name argument name
      * @param values argument enumerated values
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Argument name can't be empty, accepts 
+     * letters, numbers, spaces and underscores.
      */
     public EnumeratedArgument(String name, Set<String> values)
                 throws IllegalArgumentException {
@@ -32,7 +33,8 @@ public class EnumeratedArgument extends Argument {
      * @param name argument name
      * @param values argument enumerated values
      * @param defaultValue argument default value			
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Argument name can't be empty, accepts 
+     * letters, numbers, spaces and underscores.
      */
     public EnumeratedArgument(String name, Set<String> values,
                     String defaultValue) throws IllegalArgumentException {
@@ -75,7 +77,8 @@ public class EnumeratedArgument extends Argument {
      * Validate enumerated value before adding
      * 
      * @param value enumerated value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Invalid enumerated value - accepts 
+     * letters, numbers and underscores - or duplicate enumerated value
      */
     private void validateValue(String value) throws IllegalArgumentException {
         if (value == null || value.length() == 0) {
@@ -101,7 +104,7 @@ public class EnumeratedArgument extends Argument {
      * Set default enumerated value
      * 
      * @param defaultValue  default enumerated value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value isn't in the list of values.
      */
     public void setDefaultValue(String defaultValue) throws IllegalArgumentException {
         super.setDefaultValue();

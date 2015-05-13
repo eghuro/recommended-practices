@@ -29,7 +29,7 @@ public class CommandLineParser {
 	/**
 	 * Create command line parser with selected options
 	 * 
-	 * @param options
+	 * @param options selected options
 	 */
 	public CommandLineParser(HashSet<Option> options) {
             this.options = options;
@@ -39,7 +39,7 @@ public class CommandLineParser {
 	 * Parse command line arguments
 	 * 
 	 * @param arguments command line arugments
-	 * @throws ParseException
+	 * @throws ParseException unexpected option/argument
 	 */
 	public void parse(String[] arguments) throws ParseException {	
             final String VALUE_DELIMITER = "=";

@@ -27,7 +27,11 @@ public class StringArgument extends Argument {
      * 
      * @param name argument name
      * @param defaultValue default value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length. Minimum length 
+     * can't be negative number nor can't be greater than maximum length. 
+     * Maximum length can't be lesser than minimum length nor can't be lesser 
+     * than 1.
      */
     public StringArgument(String name, String defaultValue)
                     throws IllegalArgumentException {
@@ -43,7 +47,11 @@ public class StringArgument extends Argument {
      * @param defaultValue argument default value
      * @param minLength argument string min. length
      * @param maxLength argument string max. length
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length. Minimum length 
+     * can't be negative number nor can't be greater than maximum length. 
+     * Maximum length can't be lesser than minimum length nor can't be lesser 
+     * than 1.
      */
     public StringArgument(String name, String defaultValue, int minLength,
                     int maxLength) throws IllegalArgumentException {
@@ -57,7 +65,8 @@ public class StringArgument extends Argument {
      * Set default value
      * 
      * @param defaultValue default value
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length.
      */
     public void setDefaultValue(String defaultValue) throws IllegalArgumentException {
         super.setDefaultValue();
@@ -81,12 +90,13 @@ public class StringArgument extends Argument {
      * Set argument string min. length
      * 
      * @param minLength argument string min. length
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Minimum length can't be negative number
+     * nor can't be greater than maximum length
      */
     public void setMinLength(int minLength) throws IllegalArgumentException {
         if (minLength < 0) {
             throw new IllegalArgumentException(
-                            "Minimum length can't be negative number.");
+                        "Minimum length can't be negative number.");
         }
 
         if (minLength > this.maxLength) {
@@ -113,9 +123,9 @@ public class StringArgument extends Argument {
     /**
      * Set argument string max. length
      * 
-     * @param maxLength
-     *            argument string max. length
-     * @throws IllegalArgumentException
+     * @param maxLength  argument string max. length
+     * @throws IllegalArgumentException Maximum length can't be lesser than 
+     * minimum length nor can't be lesser than 1.
      */
     public void setMaxLength(int maxLength) throws IllegalArgumentException {
         if (maxLength < this.minLength) {
@@ -151,7 +161,8 @@ public class StringArgument extends Argument {
      * @param defaultValue argument default value
      * @param minLength argument string min. length
      * @param maxLength argument string max. length
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Default value length can't be lesser 
+     * than minimum length nor be greater than maximum length.
      */
     protected void validateDefaultValue(String defaultValue, int minLength,
                     int maxLength) throws IllegalArgumentException {

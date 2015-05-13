@@ -14,9 +14,9 @@ public abstract class Argument implements VisitableArgument {
     /**
      * Create argument with specific name
      * 
-     * @param name
-     *            argument name
-     * @throws IllegalArgumentException
+     * @param name argument name
+     * @throws IllegalArgumentException Argument name can't be empty, accepts 
+     * letters, numbers, spaces and underscores.
      */
     public Argument(String name) throws IllegalArgumentException {
         if (name == null || name.length() == 0) {
@@ -43,7 +43,8 @@ public abstract class Argument implements VisitableArgument {
     /**
      * Set required argument
      * 
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument as required argument,
+     * because argument has default value.
      */
     public void setRequired() throws IllegalArgumentException {
         setRequired(true);
@@ -52,9 +53,9 @@ public abstract class Argument implements VisitableArgument {
     /**
      * Set required argument
      * 
-     * @param required
-     *            will be option required?
-     * @throws IllegalArgumentException
+     * @param required will be option required?
+     * @throws IllegalArgumentException Can't set argument as required argument,
+     * because argument has default value.
      */
     public void setRequired(boolean required) throws IllegalArgumentException {
         if (this.hasDefaultValue) {
@@ -68,7 +69,8 @@ public abstract class Argument implements VisitableArgument {
     /**
      * Set argument default value
      * 
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Can't set argument default value, 
+     * because argument is set as required argument.
      */
     public void setDefaultValue() throws IllegalArgumentException {
         if (this.required) {

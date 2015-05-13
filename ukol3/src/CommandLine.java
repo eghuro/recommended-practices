@@ -99,7 +99,7 @@ public class CommandLine {
     /**
      * Get program name
      * 
-     * @return prigram name
+     * @return program name
      */
     private String getProgramName() {
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
