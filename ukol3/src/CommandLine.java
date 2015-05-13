@@ -25,12 +25,12 @@ public class CommandLine {
      * Add option to command line
      * 
      * @param option option to add
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException Option name is equal to other option name.
      */
     public void addOption(Option option) throws IllegalArgumentException {
         if (hasOptionUniqueNames(option)) {
             throw new IllegalArgumentException(
-                "Option name is consistent with other option name.");
+                "Option name is equal to other option name.");
         }
 
         this.options.add(option);

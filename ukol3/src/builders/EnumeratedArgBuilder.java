@@ -26,30 +26,29 @@ public class EnumeratedArgBuilder {
 	private static EnumeratedArgBuilder instance = new EnumeratedArgBuilder();
 
 	private EnumeratedArgBuilder() {
-		// Exists only to defeat instantiation.
+            // Exists only to defeat instantiation.
 	}
 
 	/**
 	 * Reset builder variables
 	 */
 	private static void reset() {
-		EnumeratedArgBuilder.name = null;
-		EnumeratedArgBuilder.required = false;
-		EnumeratedArgBuilder.hasDefaultValue = false;
-		EnumeratedArgBuilder.defaultValue = null;
-		EnumeratedArgBuilder.values = null;
+            EnumeratedArgBuilder.name = null;
+            EnumeratedArgBuilder.required = false;
+            EnumeratedArgBuilder.hasDefaultValue = false;
+            EnumeratedArgBuilder.defaultValue = null;
+            EnumeratedArgBuilder.values = null;
 	}
 
 	/**
 	 * Set the name of the next argument
 	 * 
-	 * @param name
-	 *            argument name
+	 * @param name argument name
 	 * @return self (EnumeratedArgBuilder)
 	 */
 	public static EnumeratedArgBuilder withName(String name) {
-		EnumeratedArgBuilder.name = name;
-		return instance;
+            EnumeratedArgBuilder.name = name;
+            return instance;
 	}
 
 	/**
@@ -58,57 +57,52 @@ public class EnumeratedArgBuilder {
 	 * @return self (EnumeratedArgBuilder)
 	 */
 	public static EnumeratedArgBuilder isRequired() {
-		EnumeratedArgBuilder.required = true;
-		return instance;
+            EnumeratedArgBuilder.required = true;
+            return instance;
 	}
 
 	/**
 	 * Set argument default value
 	 * 
-	 * @param defaultValue
-	 *            argument default value
+	 * @param defaultValue argument default value
 	 * @return self (EnumeratedArgBuilder)
 	 */
 	public static EnumeratedArgBuilder hasDefaultValue(String defaultValue) {
-		EnumeratedArgBuilder.hasDefaultValue = true;
-		EnumeratedArgBuilder.defaultValue = defaultValue;
-		return instance;
+            EnumeratedArgBuilder.hasDefaultValue = true;
+            EnumeratedArgBuilder.defaultValue = defaultValue;
+            return instance;
 	}
 
 	/**
 	 * Set argument enumerated value
 	 * 
-	 * @param value
-	 *            argument enumerated value
+	 * @param value argument enumerated value
 	 * @return self (EnumeratedArgBuilder)
 	 */
 	public static EnumeratedArgBuilder hasValue(String value) {
+            if (EnumeratedArgBuilder.values == null) {
+                EnumeratedArgBuilder.values = new HashSet<>();
+            }
 
-		if (EnumeratedArgBuilder.values == null) {
-			EnumeratedArgBuilder.values = new HashSet<>();
-		}
+            EnumeratedArgBuilder.values.add(value);
 
-		EnumeratedArgBuilder.values.add(value);
-
-		return instance;
+            return instance;
 	}
 
 	/**
 	 * Set argument enumerated list of values
 	 * 
-	 * @param enumerated
-	 *            list of values
+	 * @param enumerated list of values
 	 * @return self (EnumeratedArgBuilder)
 	 */
 	public static EnumeratedArgBuilder hasValues(Set<String> values) {
+            if (EnumeratedArgBuilder.values == null) {
+                EnumeratedArgBuilder.values = new HashSet<>();
+            }
 
-		if (EnumeratedArgBuilder.values == null) {
-			EnumeratedArgBuilder.values = new HashSet<>();
-		}
+            EnumeratedArgBuilder.values.addAll(values);
 
-		EnumeratedArgBuilder.values.addAll(values);
-
-		return instance;
+            return instance;
 	}
 
 	/**
@@ -118,25 +112,20 @@ public class EnumeratedArgBuilder {
 	 * @throws IllegalArgumentException
 	 */
 	public static EnumeratedArgument create() throws IllegalArgumentException {
-
 		EnumeratedArgument argument = null;
 
 		try {
-			
-			argument = new EnumeratedArgument(EnumeratedArgBuilder.name, values);
+                    argument = new EnumeratedArgument(EnumeratedArgBuilder.name, values);
 
-			if (EnumeratedArgBuilder.required) {
-				argument.setRequired();
-			}
+                    if (EnumeratedArgBuilder.required) {
+                        argument.setRequired();
+                    }
 
-			if (EnumeratedArgBuilder.hasDefaultValue) {
-				argument.setDefaultValue(EnumeratedArgBuilder.defaultValue);
-			}
-			
+                    if (EnumeratedArgBuilder.hasDefaultValue) {
+                        argument.setDefaultValue(EnumeratedArgBuilder.defaultValue);
+                    }
 		} finally {
-			
-			reset();
-			
+                    reset();	
 		}
 
 		return argument;
@@ -145,17 +134,14 @@ public class EnumeratedArgBuilder {
 	/**
 	 * Create EnumeratedArgBuilder(object) with desired parameters
 	 * 
-	 * @param argumentName
-	 *            argument name
+	 * @param argumentName argument name
 	 * @return created argument
 	 * @throws IllegalArgumentException
 	 */
-	public static EnumeratedArgument
-			create(String argumentName) throws IllegalArgumentException {
-
-		EnumeratedArgBuilder.name = argumentName;
-
-		return create();
+	public static EnumeratedArgument create(String argumentName) 
+                throws IllegalArgumentException {
+            EnumeratedArgBuilder.name = argumentName;
+            return create();
 	}
 
 }
