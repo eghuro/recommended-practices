@@ -40,6 +40,10 @@ public class CommandLineParser {
 	 * @throws ParseException
 	 */
 	public void parse(String[] arguments) throws ParseException {
+		
+		final String VALUE_DELIMITER = "=";
+		final String COMMON_ARGUMENTS_DELIMTIER = "--";
+		
 		if (arguments == null) {
 			arguments = new String[0];
 		}
@@ -57,15 +61,15 @@ public class CommandLineParser {
 				commonArguments.add(argument);
 				
 			}
-			else if (argument.equals("--")) {
+			else if (argument.equals(COMMON_ARGUMENTS_DELIMTIER)) {
 				
 				isArgumentCommon = true;
 				
 			}
 			else {
 				
-				if (argument.indexOf("=") > 0) {
-					String[] argumentParts = argument.split("=", 2);
+				if (argument.indexOf(VALUE_DELIMITER) > 0) {
+					String[] argumentParts = argument.split(VALUE_DELIMITER, 2);
 					argument = argumentParts[0];
 					argumentsList.add(0, argumentParts[1]);
 				}
@@ -78,11 +82,13 @@ public class CommandLineParser {
 					
 					String nextArgument = argumentsList.get(0);
 					
-					if (!nextArgument.equals("--")) {
+					if (!nextArgument.equals(COMMON_ARGUMENTS_DELIMTIER)) {
 						
-						if (nextArgument.indexOf("=") > 0) {
+						if (nextArgument.indexOf(VALUE_DELIMITER) > 0) {
 						
-							String[] nextArgumentParts = nextArgument.split("=", 2);
+							String[] nextArgumentParts = 
+									nextArgument.split(VALUE_DELIMITER, 2);
+							
 							nextArgument = nextArgumentParts[0];
 						
 						}
