@@ -79,6 +79,14 @@ public class CommandLineParser {
 					String nextArgument = argumentsList.get(0);
 					
 					if (!nextArgument.equals("--")) {
+						
+						if (nextArgument.indexOf("=") > 0) {
+						
+							String[] nextArgumentParts = nextArgument.split("=", 2);
+							nextArgument = nextArgumentParts[0];
+						
+						}
+						
 						isNextArgumentValue = !isArgumentOption(nextArgument);
 					}
 					
