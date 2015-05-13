@@ -47,11 +47,6 @@ která dědí od abstaktní třídy Argument. Funkcionalitu nad načtenou konfig
 nebo naparsovanou příkazovou řádkou lze doplnit naimplementováním dalšího 
 Visitoru.
 
-Pokud má být knihovna uživatelsky použitelná, rozhodli jsme se ponechat 
-uživateli prostor pro využití dat bez zvláštních omezení. Uživatel má možnost
-se zeptat, zda je nastavena některá volba, může získat hodnotu argumentu a
-může získat seznam obyčejných argumentů.
-
 Zdůvodnění návrhu
 ===
 První rozhodnutí při návrhu bylo použití návrhového vzoru Builder. Důvodem pro
@@ -74,6 +69,11 @@ jednom místě - typicky ve třídě CommandLine či CommandLineParser, který b
 zásadním způsobem zkomplikoval rozšiřitelnost knihovny a byl celkově méně
 čitelný. Nyní máme definované Visitory pro výpis voleb, výpis použití knihovny,
 validaci a hledání parametru podle jména.
+
+Pokud má být knihovna uživatelsky použitelná, rozhodli jsme se ponechat 
+uživateli prostor pro využití dat bez zvláštních omezení. Uživatel má možnost
+se zeptat, zda je nastavena některá volba, může získat hodnotu argumentu a
+může získat seznam obyčejných argumentů.
 
 Připomínky od oponentů
 ===
