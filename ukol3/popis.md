@@ -44,7 +44,26 @@ Visitoru.
 
 Zdůvodnění návrhu
 ===
+První rozhodnutí při návrhu bylo použití návrhového vzoru Builder. Důvodem pro
+jeho použití bylo velké množství různých kombinací nastavení, což je modelový
+případ použití tohoto vzoru. Při implementaci jsme zvažovali několik variant.
 
+Jedna varianta byla použití Builderu v Javě typickým způsobem pomocí vnořené
+třídy. Tuto jsme zavrhli, protože nám nepřišlo hezké volání typu new Option.
+OptionBuilder z hlediska uživatelského komfortu a také zanořování tříd s 
+podobným, avšak přesto různým úkolem
+
+Z tohoto důvodu jsme přešli k druhé variantě - buildery jsou vždy v kompletně
+oddělené třídě a pomocí metody create() následně vytvoří nový objekt. Zkoušeli
+jsme použítí statických metod, ale nakonec jsme vybrali cestu vytvoření nového
+objektu Builder.
+
+Další rozhodnutí bylo použití návrhového vzoru Visitor pro vykonávání různých
+činností nad předanými objekty namísto složitého algoritmu zakomponovaného na
+jednom místě - typicky ve třídě CommandLine či CommandLineParser, který by
+zásadním způsobem zkomplikoval rozšiřitelnost knihovny a byl celkově méně
+čitelný. Nyní máme definované Visitory pro výpis voleb, výpis použití knihovny,
+validaci a hledání parametru podle jména.
 
 Připomínky od oponentů
 ===
