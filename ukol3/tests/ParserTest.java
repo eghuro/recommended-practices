@@ -43,6 +43,8 @@ public class ParserTest {
 								.acceptMaxValue(100).create("width size"))
 				.create();
 
+		cmdLine.addOption(width);
+		
 		Option output = OptionBuilder
 				.withName("output")
 				.hasArgument(
@@ -71,7 +73,7 @@ public class ParserTest {
 
 		parser = new CommandLineParser(cmdLine.getOptions());
 	}
-
+	
 	@Test
 	public void testRequiredOption() {
 
@@ -106,6 +108,23 @@ public class ParserTest {
 		assertEquals("-input.txt moje",
 				String.join(" ", parser.getCommonArguments()));
 	}
+	
+	@Test
+	public void testOptionWithEqual() {
+
+		String[] arguments = "-v --width=100 -- -s 10 alpha bravo".split(" ");
+
+		try {
+			parser.parse(arguments);
+		} catch (ParseException exception) {
+			fail(exception.toString());
+		}
+
+		assertTrue(parser.hasOption("v"));
+		assertTrue(parser.hasOption("width"));
+		assertEquals("100", parser.getOptionValue("width"));		
+		assertEquals(4, parser.getCommonArguments().size());		
+	}	
 
 	@Test(expected = ParseException.class)
 	public void testIntegerMinValue() throws ParseException {
