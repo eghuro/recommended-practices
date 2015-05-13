@@ -19,6 +19,10 @@ public class StringArgBuilderTest {
 		assertFalse(argument.isRequired());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument nemoze mat defaultnu hodnotu 
+	 * a zaroven byt povinna/pozadovana
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentCreationNoNameException() {
 
@@ -26,13 +30,21 @@ public class StringArgBuilderTest {
 				.isRequired().create();
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaltna hodnota ma dlzku 7 
+	 * a minimalna pozadovana dlzka retazca ma byt 15
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentMinLengthException() {
 
 		StringArgument argument = new StringArgBuilder().hasDefaultValue("retazec")
-				.acceptMinLength(15).isRequired().create("premenna");
+				.acceptMinLength(15).create("premenna");
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaltna hodnota ma dlzku 7 
+	 * a maximalna pozadovana dlzka retazca ma byt 15
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testArgumentMaxLengthException() {
 

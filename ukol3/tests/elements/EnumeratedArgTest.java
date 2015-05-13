@@ -63,6 +63,10 @@ public class EnumeratedArgTest {
 		assertTrue(argument.hasDefaultValue());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo argument obsahuje defaultnu hodnotu, 
+	 * ktora nie je definovana
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetDefaultValue() {
 

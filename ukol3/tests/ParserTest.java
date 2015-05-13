@@ -126,6 +126,11 @@ public class ParserTest {
 		assertEquals(4, parser.getCommonArguments().size());		
 	}	
 
+	/**
+	 * Vyhodi vynimku, lebo volba "s" moze obsahovat
+	 * integer minimalnej hodnoty -5 
+	 * @throws ParseException
+	 */
 	@Test(expected = ParseException.class)
 	public void testIntegerMinValue() throws ParseException {
 
@@ -134,6 +139,11 @@ public class ParserTest {
 		parser.parse(arguments);
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo volba "s" moze obsahovat integer 
+	 * maximalnej hodnoty 20
+	 * @throws ParseException
+	 */
 	@Test(expected = ParseException.class)
 	public void testIntegerMaxValue() throws ParseException {
 
@@ -164,6 +174,11 @@ public class ParserTest {
 		parser.parse(arguments);
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo volba "f" moze obsahovat string 
+	 * maximalnej dlzky 15 znakov
+	 * @throws ParseException
+	 */
 	@Test(expected = ParseException.class)
 	public void testStringMaxLength() throws ParseException {
 
@@ -186,6 +201,10 @@ public class ParserTest {
 		assertEquals("print", parser.getOptionValue("output"));
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo volba "output" nema enum hodnotu shoow
+	 * @throws ParseException
+	 */
 	@Test(expected = ParseException.class)
 	public void testBadEnumValue() throws ParseException {
 
@@ -193,7 +212,7 @@ public class ParserTest {
 
 		parser.parse(arguments);
 	}
-
+	
 	@Test
 	public void testBooleanValue() {
 
@@ -208,6 +227,10 @@ public class ParserTest {
 		assertEquals("false", parser.getOptionValue("save"));
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo volba "save" moze byt true/false
+	 * @throws ParseException
+	 */
 	@Test(expected = ParseException.class)
 	public void testBadBooleanValue() throws ParseException {
 

@@ -39,6 +39,10 @@ public class IntegerArgTest {
 		assertTrue(argument.hasDefaultValue());
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaultna hodnota sa nastavi 
+	 * na -10 a minimalna povolena hodnota je 10 
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetDefaultValueException() {
 
@@ -47,6 +51,10 @@ public class IntegerArgTest {
 		argument.setDefaultValue(-10);
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaultna hodnota sa nastavi na 10
+	 * a minmalna hodnota ma byt 20
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMinValue() {
 
@@ -54,6 +62,10 @@ public class IntegerArgTest {
 		argument.setMinValue(20);
 	}
 
+	/**
+	 * Vyhodi vynimku, lebo defaultna hodnota sa nastavi na 20
+	 * a maximalna hodnota ma byt -10
+	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testSetMaxValue() {
 
