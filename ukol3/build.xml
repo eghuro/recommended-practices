@@ -1,24 +1,73 @@
 <?xml version="1.0"?>
 <project>
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="bin" />
+	<property name="dist.dir" location="dist" />
+	<property name="test.dir" location="tests" />
+	<property name="build.test.dir" location="bin/tests" />
+	<property name="test.report.dir" location="testreport" />
+	
+	<path id="junit.class.path">
+		<pathelement location="lib/junit-4.11.jar" />
+		<pathelement location="lib/hamcrest-core-1.3.jar" />
+		<pathelement location="${build.dir}" />
+	</path>
+	
     <target name="clean">
-        <delete dir="build"/>
+    	<delete dir="${build.dir}" />
+    	<delete dir="${dist.dir}" />
+    	<delete dir="${test.report.dir}" />
     </target>
+	
+	<target name="makedir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.test.dir}" />
+		<mkdir dir="${test.report.dir}" />
+	</target>
 
-    <target name="compile">
-        <mkdir dir="build/classes"/>
-        <javac srcdir="src" destdir="build/classes"/>
+    <target name="compile" depends="clean, makedir">    	
+    	<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>        	
     </target>
 
     <target name="jar" depends="compile">
-        <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/CommandLineParser.jar" basedir="build/classes">
+        <jar destfile="${dist.dir}\CommandLineParser.jar" basedir="${build.dir}">
             <manifest>
                 <attribute name="Main-Class" value="Example"/>
             </manifest>
         </jar>
     </target>
+	
+	<target name="compile-tests" depends="clean, makedir">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+			<classpath refid="junit.class.path" />		
+		</javac>
+		<javac srcdir="${test.dir}" destdir="${build.test.dir}" includeantruntime="false">
+			<classpath refid="junit.class.path" />		
+		</javac>	
+	</target>
+	
+	<target name="test" depends="compile-tests">
+		<junit printsummary="on" fork="true" haltonfailure="yes"> <classpath refid="junit.class.path" />
+			<classpath> 
+				<pathelement location="${build.test.dir}"/>
+			</classpath> 
+			
+			<formatter type="xml" />				
+			
+			<batchtest todir="${test.report.dir}">
+				<fileset dir="${test.dir}">
+					<include name="AllTests.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
 
     <target name="run" depends="jar">
-        <java jar="build/jar/CommandLineParser.jar" fork="true"/>
+        <java jar="${dist.dir}\CommandLineParser.jar" fork="true"/>
+    </target>
+	
+    <target name="make" depends="jar">
+        <java jar="${dist.dir}\CommandLineParser.jar" fork="true"/>
     </target>
 </project>
